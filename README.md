@@ -60,32 +60,34 @@ All planetary map layers, physical constants, coordinates, and meteorological te
   - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/1/0/0.jpg)
 
 - **Thermal Infrared (Daytime Emission):**
-  *THEMIS Day IR Controlled Mosaic* (`Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly`): 100 m/pixel day thermal emission imagery from 2001 Mars Odyssey, spanning global latitudes ($90^\circ\text{S} - 90^\circ\text{N}$).
+  *THEMIS Day IR Controlled Mosaic* (`Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly`): 100 m/pixel day thermal emission imagery from 2001 Mars Odyssey, spanning global latitudes ($90^\circ\text{S} - 90^\circ\text{N}$). Produced by the [Arizona State University (ASU) Mars Space Flight Facility](https://themis.asu.edu/).
   - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/default/default028mm/{z}/{y}/{x}.png`
   - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/default/default028mm/1/0/0.png)
 
 - **Thermal Infrared (Nighttime Inertia):**
-  *THEMIS Night IR Controlled Mosaic* (`THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018`): 100 m/pixel nighttime thermal inertia imagery from 2001 Mars Odyssey. Scientific latitude limit: $65.0^\circ\text{S} - 65.0^\circ\text{N}$.
+  *THEMIS Night IR Controlled Mosaic* (`THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018`): 100 m/pixel nighttime thermal inertia imagery from 2001 Mars Odyssey. Scientific latitude limit: $65.0^\circ\text{S} - 65.0^\circ\text{N}$. Produced by the [ASU Mars Space Flight Facility](https://themis.asu.edu/).
   - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/{z}/{y}/{x}.png`
   - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/1/0/0.png)
 
 ### 2. In-Situ Weather Stations & Planetary Climate Archives
 - **NASA Mars 2020 Perseverance (Jezero Crater):**
   *MEDA (Mars Environmental Dynamics Analyzer)* telemetry: ground and air temperatures, diurnal barometric oscillations, wind vector cycles, and dust optical depth ($\tau$).
-  Reference: [NASA PDS Atmospheres Node — MEDA](https://pds-atmospheres.nmsu.edu/)
+  References: [NASA PDS Atmospheres Node — MEDA](https://pds-atmospheres.nmsu.edu/) | [NASA Mars 2020 Mission](https://mars.nasa.gov/mars2020/) | SuperCam acoustic velocity benchmarks: [Maurice et al., *Nature* (2022)](https://www.nature.com/articles/s41586-022-04679-0)
 - **NASA Mars Science Laboratory Curiosity (Gale Crater):**
-  *REMS (Rover Environmental Monitoring Station)* and *SAM (Sample Analysis at Mars)* telemetry: intra-crater slope winds, atmospheric composition ($CO_2$ 95.32%, $N_2$ 2.59%, $^{40}Ar$ 1.93%, $O_2$ 0.161%, $CO$ 0.074%), and radiation dosimetry (RAD instrument).
-  Reference: [NASA PDS Atmospheres Node — REMS](https://pds-atmospheres.nmsu.edu/)
+  *REMS (Rover Environmental Monitoring Station)* and *SAM (Sample Analysis at Mars)* telemetry: intra-crater slope winds, atmospheric gas composition ($CO_2$ 95.32%, $N_2$ 2.59%, $^{40}Ar$ 1.93%, $O_2$ 0.161%, $CO$ 0.074%, $H_2O$ ~0.03%), and radiation dosimetry (RAD instrument).
+  References: [NASA PDS Atmospheres Node — REMS](https://pds-atmospheres.nmsu.edu/) | [NASA SAM Instrument](https://science.nasa.gov/mission/msl-curiosity/instruments/sam/) | [Mahaffy et al., *Science* (2013)](https://www.science.org/doi/10.1126/science.1237966)
 - **NASA InSight Lander (Elysium Planitia):**
   *TWINS (Temperature and Winds for InSight)* and *SEIS* atmospheric infrasound archive: vortex microbaric transients and unobstructed basalt plain drag dynamics.
-  Reference: [NASA PDS Geosciences Node — InSight](https://pds-geosciences.wustl.edu/)
+  References: [NASA PDS Geosciences Node — InSight](https://pds-geosciences.wustl.edu/) | [NASA InSight Mission](https://mars.nasa.gov/insight/)
 - **NASA Phoenix Lander (Vastitas Borealis):**
   *MET (Meteorology Station)* and atmospheric Lidar data: arctic polar boundary conditions, cryogenic virga ice precipitation at 4 km, and permafrost ice table equilibrium.
   Reference: [NASA PDS Atmospheres Node — Phoenix](https://pds-atmospheres.nmsu.edu/)
 - **Historic & Active Planetary Landers (Opportunity, Spirit, Viking 1, Pathfinder, Zhurong):**
   Comprehensive landed mission catalog spanning Meridiani Planum, Gusev Crater, Chryse Planitia, Ares Vallis, and Utopia Planitia with MOLA-calibrated touchdown elevations.
+  References: [NASA Mars Exploration Rovers](https://mars.nasa.gov/mer/) | [NASA Viking Mission](https://mars.nasa.gov/mars-exploration/missions/viking-1-2/) | CNSA Tianwen-1 / Zhurong: [CNSA](http://www.cnsa.gov.cn/) & [Li et al., *Nature Astronomy* (2022)](https://www.nature.com/articles/s41550-022-01646-9)
 - **Orbital Climate Model for Geological Landmarks:**
   Atmospheric scale height ($H \approx 11.1\text{ km}$) and barometric pressure gradients calibrated via the *Mars Climate Database (MCD v5.3 / LMD/CNRS & NASA Ames)*: from $0.6\text{ hPa}$ ($60\text{ Pa}$) near-vacuum atop Olympus Mons to $11.8\text{ hPa}$ ($1,180\text{ Pa}$) at the floor of Hellas Planitia.
+  Reference: [Laboratoire de Météorologie Dynamique (LMD/CNRS) Mars Climate Database](http://www-mars.lmd.jussieu.fr/)
 
 ### 3. Physical Constants & Geodesic Parameters
 - **Planetary Dimensions (IAU/IAG Working Group):**
@@ -93,6 +95,7 @@ All planetary map layers, physical constants, coordinates, and meteorological te
   - Equatorial Radius ($a$): $3,396.19\text{ km}$
   - Polar Radius ($b$): $3,376.20\text{ km}$
   - Flattening ($f$): $0.005886$ ($1/169.81$)
+  Reference: Archinal et al., *Report of the IAU/IAG Working Group on Cartographic Coordinates and Rotational Elements (2018)*, [Celest. Mech. Dyn. Astr.](https://doi.org/10.1007/s10569-017-9805-5)
 - **Standard Surface Gravity:** $g_{\text{Mars}} = 3.72076\text{ m/s}^2$ ($0.37943g_{\text{Earth}}$).
 - **Somigliana Latitude & Free-Air Gravity Model:**
   Local gravity varies dynamically from $3.669\text{ m/s}^2$ atop Olympus Mons ($+21.2\text{ km}$) to $3.762\text{ m/s}^2$ at Korolev Crater ($73^\circ\text{N}$) via ellipsoidal formulation and free-air lapse rate ($\Delta g = -0.002195\text{ m/s}^2\text{/km}$).
@@ -104,6 +107,7 @@ All planetary map layers, physical constants, coordinates, and meteorological te
   - Water boiling point: calibrated via inverted Magnus-Tetens curve to the $6.12\text{ hPa}$ Armstrong limit, differentiating liquid-tolerant basins from sublimation summits.
 - **Diurnal Sol Duration:** $24\text{ hours, } 39\text{ minutes, } 35.244\text{ seconds}$ ($1.02749125$ Earth days; $668.599$ Sols/Martian year).
 - **NASA Deep Space Network (DSN) Latency:** Mean Earth-Mars radio latency is $12.5\text{ min}$ one-way ($25.0\text{ min}$ RTT), demonstrating why autonomous SafeNav pathfinding is vital for planetary exploration.
+  Reference: [NASA Deep Space Network Now](https://eyes.nasa.gov/dsn/dsn.html)
 
 ---
 
@@ -150,11 +154,13 @@ In strict compliance with the **NASA Space Apps Challenge Generative AI Policy**
 - **Exact Scope of AI Assistance:**
   1. **API Endpoint & Format Diagnostics:** Diagnosed and corrected tile URL format mismatches for THEMIS thermal layers from `.jpg` to `.png`, resolving 404 tile stream errors.
   2. **NASA Trek API Verification:** Assisted in querying NASA Trek's `searchItems` service to confirm official layer bounding boxes (identifying the scientific $65^\circ\text{S} - 65^\circ\text{N}$ limit of THEMIS nighttime IR) and cross-checking landing site coordinates.
-  3. **Leaflet Engine & Math Clamping:** Implemented boundary clamping (`maxBoundsViscosity`), fixed Leaflet pointer event propagation on swipe slider handles, and assisted with great-circle spherical trigonometric formulas.
-  4. **CSS Layout & Theming:** Aided in responsive CSS glassmorphism styling and Inter typography.
-  5. **Documentation & Bilingual Proofreading:** Proofread English documentation, Project Page summaries, and 30-second pitch script.
+  3. **Planetary Physics & Aerodynamics Formulation:** Assisted in validating the Somigliana ellipsoidal latitude gravity equation, free-air elevation gradient ($-0.002195\text{ m/s}^2/\text{km}$), aerodynamic density ($\rho = P / (R_{\text{spec}} T)$), SuperCam acoustic dispersion, inverted Magnus-Tetens liquid water Armstrong boundary ($6.12\text{ hPa}$), and rover traction energy models ($E = m g C_{rr} d / \eta$).
+  4. **Interactive Navigation Architecture:** Refactored left-rail filter checkboxes into semantic camera navigation buttons (`map.flyTo` with medium zoom `5` for craters/landing sites and `4` for continent-spanning landmarks), preserving permanent marker visibility and linking telemetry cards.
+  5. **Leaflet Engine & Spatial Clamping:** Implemented boundary clamping (`maxBoundsViscosity`), fixed Leaflet pointer event propagation on swipe slider handles, and formulated great-circle spherical trigonometric traversal routines.
+  6. **CSS Glassmorphism & UI Layout:** Aided in responsive CSS glassmorphism styling, accessibility focus states, and Inter typography.
+  7. **Bilingual Localization & Proofreading:** Assisted in synchronizing 114 bilingual string table keys (EN / RU) and proofreading project documentation.
 - **Authenticity Statement:**
-  **Zero AI hallucinations were used for scientific data.** All coordinates, elevations, atmospheric parameters, and layer endpoints were pulled directly from official NASA, USGS, ASU, and IAU planetary science archives. The project concept, survival architecture, and routing mechanics were directed and implemented by the team.
+  **Zero AI hallucinations were used for scientific data.** All coordinates, elevations, atmospheric parameters, and layer endpoints were pulled directly from official NASA, USGS, ASU, IAU, and CNSA planetary science archives. All physical constants and formulas were cross-checked with automated unit tests against published mission benchmarks. The project concept, survival architecture, and routing mechanics were directed and implemented by the human team.
 
 ---
 
@@ -172,5 +178,9 @@ MartianMap/
 
 ## License & Credits
 
-Created for the **NASA International Space Apps Challenge**.
-Planetary data, altimetry, and imagery courtesy of **NASA / JPL-Caltech / USGS / ASU / ESA**.
+- **Event:** Created for the **NASA International Space Apps Challenge** (*Challenge: Interplanetary Survival Guide: Martian Map*).
+- **Planetary Data, Altimetry, and Imagery:** Courtesy of **NASA / JPL-Caltech / USGS / ASU / ESA / CNSA**.
+- **Open-Source Software & Third-Party Libraries:**
+  - [Leaflet.js](https://leafletjs.com/) (v1.9.4) by Vladimir Agafonkin & CloudMade (BSD-2-Clause License).
+  - [Google Fonts](https://fonts.google.com/) (*Inter* & *Roboto Mono*) (SIL Open Font License 1.1).
+- **Project License:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
