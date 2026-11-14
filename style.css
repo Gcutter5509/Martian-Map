@@ -287,6 +287,14 @@ button, input {
 }
 
 .mission-option {
+  width: calc(100% + 16px);
+  background: transparent;
+  border: 0;
+  border-left: 3px solid transparent;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  box-sizing: border-box;
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -296,13 +304,14 @@ button, input {
   padding: 6px 10px;
   margin: 0 -8px 3px;
   border-radius: 6px;
-  border-left: 3px solid transparent;
   transition: all 0.15s ease;
 }
 
-.mission-option:hover {
+.mission-option:hover,
+.mission-option:focus-visible {
   background: var(--panel-alt);
   border-left-color: var(--line-focus);
+  outline: none;
 }
 
 .mission-option.active {
@@ -324,7 +333,8 @@ button, input {
   margin-left: auto;
 }
 
-.mission-option:hover::after {
+.mission-option:hover::after,
+.mission-option:focus-visible::after {
   opacity: 0.65;
   transform: translateX(0);
 }
@@ -335,8 +345,7 @@ button, input {
   transform: translateX(0);
 }
 
-.layer-option input,
-.mission-option > input {
+.layer-option input {
   position: absolute;
   opacity: 0;
   width: 1px;
@@ -410,10 +419,11 @@ button, input {
 .dot-curiosity { background: #d6c083; }
 .dot-insight { background: #87a9b2; }
 .dot-phoenix { background: #bd8da1; }
-
-.mission-option:not(:has(input:checked)) {
-  opacity: 0.45;
-}
+.dot-opportunity { background: #81b29a; }
+.dot-spirit { background: #f4a261; }
+.dot-viking1 { background: #e07a5f; }
+.dot-pathfinder { background: #f2cc8f; }
+.dot-zhurong { background: #e76f51; }
 
 .sidebar__bottom {
   height: 48px;
@@ -1481,6 +1491,8 @@ button, input {
 .atmos-n2  { background: #38bdf8; }
 .atmos-ar  { background: #a78bfa; }
 .atmos-o2  { background: #34d399; }
+.atmos-co  { background: #fbbf24; }
+.atmos-h2o { background: #67e8f9; }
 
 .atmos-pct {
   width: 36px;
@@ -1518,6 +1530,30 @@ button, input {
   gap: 8px;
   font-size: 11px;
   color: var(--text-muted);
+}
+
+.gravity-options-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 2px 0;
+}
+
+.gravity-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gravity-checkbox-label input[type="checkbox"] {
+  accent-color: var(--orange);
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
 }
 
 .gravity-input-wrap {
@@ -2015,23 +2051,15 @@ button, input {
   justify-content: space-between;
 }
 
-.landmarks-toggle-all {
+.landmark-option {
+  width: calc(100% + 16px);
   background: transparent;
   border: 0;
-  color: var(--text-muted);
-  font-size: 10px;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 3px;
-  transition: all 0.15s;
-}
-
-.landmarks-toggle-all:hover {
-  color: var(--text);
-  background: var(--panel-alt);
-}
-
-.landmark-option {
+  border-left: 3px solid transparent;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  box-sizing: border-box;
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -2041,13 +2069,14 @@ button, input {
   padding: 6px 10px;
   margin: 0 -8px 3px;
   border-radius: 6px;
-  border-left: 3px solid transparent;
   transition: all 0.15s ease;
 }
 
-.landmark-option:hover {
+.landmark-option:hover,
+.landmark-option:focus-visible {
   background: var(--panel-alt);
   border-left-color: var(--line-focus);
+  outline: none;
 }
 
 .landmark-option.active {
@@ -2069,7 +2098,8 @@ button, input {
   margin-left: auto;
 }
 
-.landmark-option:hover::after {
+.landmark-option:hover::after,
+.landmark-option:focus-visible::after {
   opacity: 0.65;
   transform: translateX(0);
 }
@@ -2078,17 +2108,6 @@ button, input {
   opacity: 1;
   color: #c084fc;
   transform: translateX(0);
-}
-
-.landmark-option input {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-}
-
-.landmark-option:not(:has(input:checked)) {
-  opacity: 0.45;
 }
 
 .landmark-option__name {

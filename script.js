@@ -79,13 +79,21 @@
       btn_goto_weather_text: 'Local Weather Report',
       btn_goto_weather_sub: 'Climate & Physics →',
       card_open_trek: 'Open in NASA Mars Trek',
+      rail_heading: 'Object Information',
       weather_stat_temp: 'Air Temperature',
       weather_stat_press: 'Atmospheric Pressure',
       weather_stat_wind: 'Wind Regime',
       weather_stat_dust: 'Dust & UV Radiation',
+      weather_stat_density: 'Air Density',
+      weather_stat_sound: 'Speed of Sound',
+      weather_stat_boil: 'Water Boiling Point',
+      weather_stat_radiation: 'Radiation & Solar Flux',
       weather_atmos_title: 'Martian Atmospheric Composition:',
       weather_micro_title: 'Local Microclimate Features:',
       weather_gravity_title: 'Martian Gravity Calculator (0.38 g):',
+      weather_spacesuit_label: 'Include NASA xEMU Spacesuit (+287 lbs / 130 kg)',
+      weather_local_gravity: 'Local Surface Gravity:',
+      weather_hang_time: 'Hang time in air:',
       weather_earth_weight: 'Your weight on Earth:',
       weather_mars_weight: 'Weight at location:',
       weather_jump_height: 'Jump height:',
@@ -93,16 +101,23 @@
       weather_jump_mult: '2.64× higher (~4.3 ft)',
       gas_co2: 'Carbon Dioxide (CO₂)',
       gas_n2: 'Nitrogen (N₂)',
-      gas_ar: 'Argon (Ar)',
+      gas_ar: 'Argon (⁴⁰Ar)',
       gas_o2: 'Oxygen (O₂)',
+      gas_co: 'Carbon Monoxide (CO)',
+      gas_h2o: 'Water Vapor (H₂O)',
+      preset_olympus_hellas: 'Olympus → Hellas',
       telemetry_waiting: 'Awaiting points',
       telemetry_calculated: 'Route Computed',
       telemetry_title: 'Rover Trajectory',
       telemetry_subtitle: 'Select waypoints on map or activate a scenario to calculate safe geodesic path.',
       telemetry_stat_dist: 'Distance (Mars)',
-      telemetry_stat_time: 'Travel Time',
+      telemetry_stat_time: 'Travel Time (Robotic)',
       telemetry_stat_direct: 'Direct Path',
       telemetry_stat_safety: 'Safety Index',
+      telemetry_stat_bearing: 'Initial Azimuth',
+      telemetry_stat_energy: 'Traction Energy',
+      telemetry_stat_latency: 'DSN Radio Latency',
+      telemetry_stat_manned_time: 'Crew Rover Time',
       telemetry_hazards_title: 'Geological Trajectory Analysis:',
       telemetry_waypoints_title: 'Navigation Waypoints:',
       telemetry_no_route: 'No route calculated yet',
@@ -193,13 +208,21 @@
       btn_goto_weather_text: 'Метеосводка района',
       btn_goto_weather_sub: 'Климат и физика →',
       card_open_trek: 'Открыть в NASA Mars Trek',
+      rail_heading: 'Информация об объекте',
       weather_stat_temp: 'Температура воздуха',
       weather_stat_press: 'Атмосферное давление',
       weather_stat_wind: 'Ветровой режим',
       weather_stat_dust: 'Запыленность & UV',
+      weather_stat_density: 'Плотность атмосферы',
+      weather_stat_sound: 'Скорость звука',
+      weather_stat_boil: 'Точка кипения воды',
+      weather_stat_radiation: 'Радиация и инсоляция',
       weather_atmos_title: 'Состав марсианской атмосферы:',
       weather_micro_title: 'Микроклиматические особенности точки:',
       weather_gravity_title: 'Гравитационный калькулятор (0.38 g):',
+      weather_spacesuit_label: 'Учесть скафандр NASA xEMU (+130 кг / 287 lbs)',
+      weather_local_gravity: 'Локальная гравитация:',
+      weather_hang_time: 'Время зависания в прыжке:',
       weather_earth_weight: 'Ваш вес на Земле:',
       weather_mars_weight: 'Вес на точке:',
       weather_jump_height: 'Высота прыжка:',
@@ -207,16 +230,23 @@
       weather_jump_mult: 'в 2.64× выше (~1.3 м)',
       gas_co2: 'Углекислый газ (CO₂)',
       gas_n2: 'Азот (N₂)',
-      gas_ar: 'Аргон (Ar)',
+      gas_ar: 'Аргон (⁴⁰Ar)',
       gas_o2: 'Кислород (O₂)',
+      gas_co: 'Угарный газ (CO)',
+      gas_h2o: 'Водяной пар (H₂O)',
+      preset_olympus_hellas: 'Олимп → Эллада',
       telemetry_waiting: 'Ожидание точек',
       telemetry_calculated: 'Маршрут построен',
       telemetry_title: 'Маршрут марсохода',
       telemetry_subtitle: 'Выберите точки на карте или активируйте готовый сценарий для расчета безопасной траектории.',
       telemetry_stat_dist: 'Дистанция (Марс)',
-      telemetry_stat_time: 'Время перехода',
+      telemetry_stat_time: 'Время перехода (марсоход)',
       telemetry_stat_direct: 'Прямой путь',
       telemetry_stat_safety: 'Безопасность',
+      telemetry_stat_bearing: 'Начальный азимут',
+      telemetry_stat_energy: 'Энергия тяги',
+      telemetry_stat_latency: 'Задержка радиосвязи (DSN)',
+      telemetry_stat_manned_time: 'Пилотируемый марсоход',
       telemetry_hazards_title: 'Геологический анализ траектории:',
       telemetry_waypoints_title: 'Контрольные точки (Waypoints):',
       telemetry_no_route: 'Маршрут еще не построен',
@@ -244,9 +274,10 @@
   const loader = document.querySelector('#loading-indicator');
 
   if (!window.L) {
-    if (status) status.textContent = 'Карта недоступна (проверьте сеть)';
+    const isRu = currentLang === 'ru';
+    if (status) status.textContent = isRu ? 'Карта недоступна (проверьте сеть)' : 'Map unavailable (check network connection)';
     if (loader) {
-      loader.textContent = 'Не удалось загрузить библиотеку карты';
+      loader.textContent = isRu ? 'Не удалось загрузить библиотеку карты' : 'Failed to load Leaflet map library';
       loader.classList.remove('hidden');
     }
     return;
@@ -427,6 +458,66 @@
         ru: 'Приполярная равнина Северного полушария. Место посадки спускаемого аппарата Phoenix для изучения подповерхностного льда.'
       },
     },
+    opportunity: {
+      color: '#81b29a',
+      name: 'Opportunity',
+      crater: { en: 'Meridiani Planum', ru: 'Meridiani Planum (Меридиана)' },
+      coords: [-1.9483, -5.5266],
+      sol: 'MER-B',
+      elevation: { en: '-4,724 ft (-0.89 mi below datum)', ru: '-1 440 м (ниже нулевого уровня)' },
+      desc: {
+        en: 'Equatorial hematite plain. Legendary marathon rover that operated for 5,352 sols (over 14 years), traversing 28.06 miles (45.16 km) and verifying past liquid water.',
+        ru: 'Экваториальная равнина серого гематита. Легендарный марсоход-рекордсмен, проработавший 5 352 сола (14 лет), прошедший 45,16 км и доказавший присутствие жидкой воды в прошлом.'
+      },
+    },
+    spirit: {
+      color: '#f4a261',
+      name: 'Spirit',
+      crater: { en: 'Gusev Crater', ru: 'Gusev Crater (Гусев)' },
+      coords: [-14.5684, 175.4726],
+      sol: 'MER-A',
+      elevation: { en: '-6,266 ft (-1.19 mi crater floor)', ru: '-1 910 м (дно кратера)' },
+      desc: {
+        en: '103-mile-diameter (166 km) crater hosting Columbia Hills. Spirit rover operated for 2,210 sols, discovering hydrothermal silica deposits and paleovolcanic fumaroles.',
+        ru: 'Кратер диаметром 166 км с возвышенностями Колумбия. Марсоход Spirit проработал 2 210 солов, открыв гидротермальные кремнеземные отложения древних фумарол.'
+      },
+    },
+    viking1: {
+      color: '#e07a5f',
+      name: 'Viking 1',
+      crater: { en: 'Chryse Planitia', ru: 'Chryse Planitia (Хриса)' },
+      coords: [22.2692, -47.9493],
+      sol: 'Viking 1',
+      elevation: { en: '-11,900 ft (-2.25 mi below datum)', ru: '-3 627 м (ниже нулевого уровня)' },
+      desc: {
+        en: 'Smooth volcanic and outflow sedimentary plains. First operational lander on Mars surface, conducting pioneer biology tests and continuous meteorological tracking.',
+        ru: 'Низменная равнина древних паводковых русел. Первый успешно работавший аппарат на поверхности Марса, передавший первые цветные панорамы и зафиксировавший метеоциклы.'
+      },
+    },
+    pathfinder: {
+      color: '#f2cc8f',
+      name: 'Pathfinder',
+      crater: { en: 'Ares Vallis', ru: 'Ares Vallis (Долина Арес)' },
+      coords: [19.3274, -33.5502],
+      sol: 'Pathfinder',
+      elevation: { en: '-11,991 ft (-2.27 mi below datum)', ru: '-3 655 м (ниже нулевого уровня)' },
+      desc: {
+        en: 'Catastrophic outflow flood channel. Carl Sagan Memorial Station landing site, deploying Sojourner — humanity\'s first wheeled rover to explore another world.',
+        ru: 'Русло грандиозного катастрофического древнего паводка. Место посадки мемориальной станции Карла Сагана и марсохода Соджорнер — первого колесного планетохода человечества.'
+      },
+    },
+    zhurong: {
+      color: '#e76f51',
+      name: 'Zhurong',
+      crater: { en: 'Utopia Planitia', ru: 'Utopia Planitia (Утопия)' },
+      coords: [25.0660, 109.9250],
+      sol: 'Tianwen-1',
+      elevation: { en: '-13,448 ft (-2.55 mi lowlands)', ru: '-4 099 м (северная равнина)' },
+      desc: {
+        en: 'Vast northern sedimentary basin. Touchdown site of China\'s Zhurong rover; ground-penetrating radar imaged buried sedimentary layers formed by catastrophic paleofloods.',
+        ru: 'Гигантская северная осадочная низменность. Место посадки марсохода «Чжужун» (Тяньвэнь-1), георадар которого обнаружил слои древних катастрофических наводнений.'
+      },
+    },
   };
 
   const missionMarkers = {};
@@ -434,9 +525,10 @@
 
   function pointIcon(color, isOutOfCoverage = false) {
     const extraClass = isOutOfCoverage ? ' mission-marker__dot--out-of-bounds' : '';
+    const outTip = isOutOfCoverage ? (currentLang === 'ru' ? 'Вне зоны покрытия текущей карты' : 'Out of current basemap coverage') : '';
     return L.divIcon({
       className: 'mission-marker',
-      html: `<span style="--marker:${color};" class="mission-marker__dot${extraClass}" title="${isOutOfCoverage ? 'Вне зоны покрытия текущей карты' : ''}"></span>`,
+      html: `<span style="--marker:${color};" class="mission-marker__dot${extraClass}" title="${outTip}"></span>`,
       iconSize: [38, 38],
       iconAnchor: [19, 19],
     });
@@ -562,12 +654,13 @@
       }
 
       // Update sidebar mission subtext
-      const optionEl = document.querySelector(`.mission-option input[value="${id}"]`);
+      const optionEl = document.querySelector(`.mission-option[data-mission="${id}"]`);
       if (optionEl) {
-        const smallEl = optionEl.closest('.mission-option')?.querySelector('small');
+        const smallEl = optionEl.querySelector('small');
         if (smallEl) {
           if (!inCoverage && activeKey === 'thermalNight') {
-            smallEl.innerHTML = `${info.name} (${info.sol}) <span class="mission-status-out">Вне покрытия (до 65° N)</span>`;
+            const outText = currentLang === 'ru' ? 'Вне покрытия (до 65° N)' : 'Out of coverage (limit: 65° N)';
+            smallEl.innerHTML = `${info.name} (${info.sol}) <span class="mission-status-out">${outText}</span>`;
           } else {
             smallEl.textContent = `${info.name} (${info.sol})`;
           }
@@ -581,12 +674,9 @@
       el.classList.remove('active');
     });
     const selector = type === 'mission'
-      ? `.mission-option:has(input[value="${id}"])`
-      : `.landmark-option:has(input[value="${id}"])`;
-    let target = document.querySelector(selector);
-    if (!target) {
-      target = document.querySelector(`.${type}-filter[value="${id}"]`)?.closest(`.${type}-option`);
-    }
+      ? `.mission-option[data-mission="${id}"]`
+      : `.landmark-option[data-landmark="${id}"]`;
+    const target = document.querySelector(selector);
     if (target) {
       target.classList.add('active');
     }
@@ -596,20 +686,18 @@
     const info = markerStyles[id];
     if (!info) return;
 
-    // Ensure layer is visible
-    const input = document.querySelector(`.mission-filter[value="${id}"]`);
-    if (input && !input.checked) {
-      input.checked = true;
-      if (missionLayers[id] && !map.hasLayer(missionLayers[id])) {
-        missionLayers[id].addTo(map);
-      }
+    // Ensure marker layer is visible on the map
+    if (missionLayers[id] && !map.hasLayer(missionLayers[id])) {
+      missionLayers[id].addTo(map);
     }
 
+    // Средний масштаб (Regional/medium zoom: 5)
+    const targetZoom = 5;
     const inCoverage = isMissionInCoverage(info, activeKey);
     if (!inCoverage && activeKey === 'thermalNight') {
-      map.flyTo([65.0, info.coords[1]], 5, { duration: 1.1 });
+      map.flyTo([65.0, info.coords[1]], targetZoom, { duration: 1.1 });
     } else {
-      map.flyTo(info.coords, 5, { duration: 1.1 });
+      map.flyTo(info.coords, targetZoom, { duration: 1.1 });
     }
 
     mapCoordinates(info.coords);
@@ -786,16 +874,13 @@
     const info = landmarkData[id];
     if (!info) return;
 
-    // Ensure layer is visible
-    const input = document.querySelector(`.landmark-filter[value="${id}"]`);
-    if (input && !input.checked) {
-      input.checked = true;
-      if (landmarkLayers[id] && !map.hasLayer(landmarkLayers[id])) {
-        landmarkLayers[id].addTo(map);
-      }
+    // Ensure marker layer is visible on the map
+    if (landmarkLayers[id] && !map.hasLayer(landmarkLayers[id])) {
+      landmarkLayers[id].addTo(map);
     }
 
-    const targetZoom = id === 'olympus' ? 4 : (id === 'valles' ? 4 : (id === 'hellas' ? 4 : 5));
+    // Средний масштаб (Regional/medium zoom: 4 для гигантских формаций, 5 для остальных)
+    const targetZoom = (id === 'olympus' || id === 'valles' || id === 'hellas') ? 4 : 5;
     map.flyTo(info.coords, targetZoom, { duration: 1.1 });
 
     mapCoordinates(info.coords);
@@ -820,43 +905,14 @@
     landmarkLayers[id] = L.layerGroup([marker]).addTo(map);
   });
 
-  document.querySelectorAll('.landmark-filter').forEach((input) => {
-    input.addEventListener('change', () => {
-      const layer = landmarkLayers[input.value];
-      if (!layer) return;
-      if (input.checked) layer.addTo(map);
-      else map.removeLayer(layer);
-    });
-  });
-
-  document.querySelectorAll('.landmark-option').forEach((opt) => {
-    opt.addEventListener('click', (e) => {
-      const input = opt.querySelector('input');
-      if (!input) return;
-      const id = input.value;
-      if (e.target === input) {
-        if (input.checked) {
-          focusLandmark(id);
-        }
-        return;
+  document.querySelectorAll('.landmark-option').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-landmark');
+      if (id) {
+        focusLandmark(id);
       }
-      e.preventDefault();
-      focusLandmark(id);
     });
   });
-
-  const toggleAllLandmarksBtn = document.querySelector('#landmarks-toggle-all');
-  if (toggleAllLandmarksBtn) {
-    let allShown = true;
-    toggleAllLandmarksBtn.addEventListener('click', () => {
-      allShown = !allShown;
-      toggleAllLandmarksBtn.textContent = allShown ? 'Скрыть все' : 'Показать все';
-      document.querySelectorAll('.landmark-filter').forEach((input) => {
-        input.checked = allShown;
-        input.dispatchEvent(new Event('change'));
-      });
-    });
-  }
 
   document.querySelectorAll('input[name="basemap"]').forEach((input) => {
     input.addEventListener('change', () => {
@@ -885,13 +941,14 @@
         map.removeLayer(nightCoverageLines);
       }
 
-      loader.textContent = `Загрузка: ${targetConfig.name}...`;
+      const loadPrefix = currentLang === 'ru' ? 'Загрузка:' : 'Loading:';
+      loader.textContent = `${loadPrefix} ${t(targetConfig.name)}...`;
       loader.classList.remove('hidden');
-      status.textContent = `Загрузка: ${targetConfig.name}`;
+      status.textContent = `${loadPrefix} ${t(targetConfig.name)}`;
 
       const attribution = document.querySelector('#map-attribution');
       if (attribution) {
-        attribution.textContent = `Слой: NASA, ${targetConfig.name}`;
+        attribution.textContent = `${currentLang === 'ru' ? 'Слой:' : 'Layer:'} NASA ${t(targetConfig.name)}`;
       }
 
       updateMissionUIForActiveLayer();
@@ -910,31 +967,12 @@
     });
   });
 
-  document.querySelectorAll('.mission-filter').forEach((input) => {
-    input.addEventListener('change', () => {
-      const layer = missionLayers[input.value];
-      if (!layer) return;
-      if (input.checked) {
-        layer.addTo(map);
-      } else {
-        map.removeLayer(layer);
+  document.querySelectorAll('.mission-option').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-mission');
+      if (id) {
+        focusMission(id);
       }
-    });
-  });
-
-  document.querySelectorAll('.mission-option').forEach((opt) => {
-    opt.addEventListener('click', (e) => {
-      const input = opt.querySelector('input');
-      if (!input) return;
-      const id = input.value;
-      if (e.target === input) {
-        if (input.checked) {
-          focusMission(id);
-        }
-        return;
-      }
-      e.preventDefault();
-      focusMission(id);
     });
   });
 
@@ -969,11 +1007,12 @@
     if (fullscreenBtn) {
       fullscreenBtn.classList.toggle('active', active);
       fullscreenBtn.textContent = active ? '⤓' : '⛶';
+      const isRu = currentLang === 'ru';
       fullscreenBtn.setAttribute(
         'title',
-        active
-          ? 'Выйти из полноэкранного режима (F, F11 или Esc)'
-          : 'Полноэкранный режим (F или F11)'
+        isRu
+          ? (active ? 'Выйти из полноэкранного режима (F, F11 или Esc)' : 'Полноэкранный режим (F или F11)')
+          : (active ? 'Exit fullscreen mode (F, F11 or Esc)' : 'Fullscreen mode (F or F11)')
       );
     }
   }
@@ -1034,7 +1073,10 @@
   map.on('zoomend', () => {
     const readout = document.querySelector('#zoom-readout');
     if (readout) {
-      readout.textContent = map.getZoom() <= 2 ? 'Общий вид' : `Уровень ${map.getZoom()}`;
+      const z = map.getZoom();
+      if (z <= 2) readout.textContent = i18n[currentLang]?.zoom_global || 'Global View';
+      else if (z <= 5) readout.textContent = i18n[currentLang]?.zoom_regional || 'Regional View';
+      else readout.textContent = i18n[currentLang]?.zoom_local || 'Local View (Detail)';
     }
   });
 
@@ -1425,7 +1467,126 @@
   // Safe Rover Routing System (SafeNav)
   // =========================================================================
 
-  const MARS_RADIUS_KM = 3389.5;
+  // =========================================================================
+  // Official NASA / IAU Planetary Constants & Physics Engine
+  // =========================================================================
+
+  const MARS_CONSTANTS = {
+    R_MEAN_KM: 3389.50,            // IAU mean volumetric radius
+    R_EQUATOR_KM: 3396.19,         // IAU equatorial radius (a)
+    R_POLAR_KM: 3376.20,           // IAU polar radius (b)
+    FLATTENING: 0.005886,          // Flattening f = (a - b) / a (1 / 169.81)
+    G_EARTH: 9.80665,              // Standard terrestrial gravity (m/s^2)
+    G_MARS_MEAN: 3.72076,          // Mean surface gravity (m/s^2, 0.37943 g_Earth)
+    G_MARS_EQ: 3.7112,             // Equatorial surface gravity (m/s^2)
+    G_MARS_POLAR: 3.7580,          // Polar surface gravity (m/s^2)
+    FREE_AIR_GRADIENT: -0.002195,  // Free-air gravity elevation lapse rate (m/s^2 per km)
+    R_SPEC: 191.843,               // Specific gas constant for 95.32% CO2 (J/(kg*K))
+    GAMMA_CO2: 1.29,               // Adiabatic heat capacity ratio Cp/Cv at 215 K
+    SOLAR_CONSTANT: 586.2,         // Top-of-atmosphere solar flux at 1.524 AU (W/m^2)
+    C_LIGHT: 299792.458,           // Speed of light in vacuum (km/s)
+    AU_KM: 149597870.7,            // km per Astronomical Unit
+    D_EARTH_MEAN_AU: 1.506,        // Mean Earth-Mars orbital distance (AU)
+    ROVER_ROBOTIC_SPEED_KMSOL: 0.35, // Nominal autonomous exploration drive (km/sol, ~140 m/h)
+    ROVER_CREW_SPEED_KMSOL: 25.0,    // Nominal pressurized crew rover drive (km/sol, ~8-10 km/h)
+    ROVER_ROBOTIC_MASS: 1025,        // kg (Perseverance / Curiosity class)
+    ROVER_CREW_MASS: 3000,           // kg (NASA Space Exploration Vehicle crew rover)
+    CRR_REGOLITH: 0.05,              // Rolling resistance coefficient on basaltic sandy regolith
+    DRIVETRAIN_EFFICIENCY: 0.85,     // Electrical-to-mechanical traction efficiency
+    SPACESUIT_MASS_KG: 130,          // NASA xEMU planetary exploration suit + PLSS life support
+  };
+
+  const MARS_RADIUS_KM = MARS_CONSTANTS.R_MEAN_KM;
+
+  function calcLocalGravity(latDeg, elevMeters) {
+    const phi = (latDeg * Math.PI) / 180;
+    const gLat = MARS_CONSTANTS.G_MARS_EQ + (MARS_CONSTANTS.G_MARS_POLAR - MARS_CONSTANTS.G_MARS_EQ) * (Math.sin(phi) ** 2);
+    const elevKm = elevMeters / 1000.0;
+    return gLat + MARS_CONSTANTS.FREE_AIR_GRADIENT * elevKm;
+  }
+
+  function calcAirDensity(pPa, tempC) {
+    const tempK = tempC + 273.15;
+    return (pPa / (MARS_CONSTANTS.R_SPEC * tempK)) * 1000.0; // g/m^3
+  }
+
+  function calcSpeedOfSound(tempC) {
+    const tempK = tempC + 273.15;
+    return Math.sqrt(MARS_CONSTANTS.GAMMA_CO2 * MARS_CONSTANTS.R_SPEC * tempK); // m/s
+  }
+
+  function calcWaterBoilingPoint(pPa) {
+    if (pPa < 611.65) return null; // Sublimation regime (< 6.12 hPa triple point)
+    const lnP = Math.log(pPa / 611.65);
+    return (237.3 * lnP) / (17.27 - lnP); // deg C
+  }
+
+  function calcInitialBearing(p1, p2) {
+    const toRad = Math.PI / 180;
+    const lat1 = p1[0] * toRad, lat2 = p2[0] * toRad;
+    const dLon = ((p2[1] - p1[1] + 540) % 360 - 180) * toRad;
+    const y = Math.sin(dLon) * Math.cos(lat2);
+    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+    const bRad = Math.atan2(y, x);
+    return (bRad * (180 / Math.PI) + 360) % 360;
+  }
+
+  function formatBearingCompass(deg) {
+    const cardinals = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+    const idx = Math.round(deg / 22.5) % 16;
+    return `${deg.toFixed(1)}° (${cardinals[idx]})`;
+  }
+
+  // Topographic elevation model anchor points across Mars (MOLA Datum)
+  const ELEV_CONTROL_POINTS = [
+    [18.65, -133.8, 21229],   // Olympus Mons summit
+    [-9.0, -120.5, 16000],    // Arsia Mons
+    [0.8, -113.0, 14000],     // Pavonis Mons
+    [11.8, -104.5, 18000],    // Ascraeus Mons
+    [25.0, 147.2, 14000],     // Elysium Mons
+    [40.5, -109.9, 6800],     // Alba Mons
+    [-13.9, -59.2, -7200],    // Valles Marineris (Melas Chasma)
+    [-42.4, 70.5, -7152],     // Hellas Planitia
+    [18.4447, 77.4508, -2575],// Jezero
+    [-4.5895, 137.4417, -4450],// Gale
+    [4.5024, 135.6234, -2600],// InSight
+    [68.2188, -125.7518, -4100],// Phoenix
+    [-1.9483, -5.5266, -1440],// Opportunity
+    [-14.5684, 175.4726, -1910],// Spirit
+    [25.066, 109.925, -4099], // Zhurong
+    [22.2692, -47.9493, -3627],// Viking 1
+    [19.3274, -33.5502, -3655],// Pathfinder
+    [73.0, 164.5, -3800],     // Korolev
+    [-7.0, -102.2, 1000],     // Noctis Labyrinthus
+    [40.75, -9.46, -2100],    // Cydonia
+  ];
+
+  function estimateElevation(lat, lon) {
+    let baseElev = lat < 0 ? 1500.0 : -3800.0;
+    if (Math.abs(lat) < 15.0) {
+      const t = (lat + 15.0) / 30.0;
+      baseElev = 1500.0 * (1 - t) + (-3800.0) * t;
+    }
+    let weightSum = 0.0;
+    let elevSum = 0.0;
+    for (const [pLat, pLon, pElev] of ELEV_CONTROL_POINTS) {
+      const dLat = lat - pLat;
+      const dLon = ((lon - pLon + 540) % 360) - 180;
+      const distDeg = Math.hypot(dLat, dLon);
+      if (distDeg < 0.15) return pElev;
+      if (distDeg < 25.0) {
+        const w = 1.0 / (distDeg ** 2.2);
+        weightSum += w;
+        elevSum += w * pElev;
+      }
+    }
+    if (weightSum > 0) {
+      const blend = Math.min(1.0, weightSum * 0.4);
+      return Math.round(baseElev * (1.0 - blend) + (elevSum / weightSum) * blend);
+    }
+    return Math.round(baseElev);
+  }
+
 
   function haversineMars(p1, p2) {
     const toRad = Math.PI / 180;
@@ -1855,12 +2016,31 @@
     }
     const directKm = haversineMars(start, goal);
 
+    // Compute minimum clearance to hazard boundaries along trajectory
+    let minHazardClearance = Infinity;
+    smoothedPath.forEach((pt) => {
+      martianHazards.forEach((h) => {
+        if (h.type === 'circle') {
+          const d = haversineMars(pt, h.center);
+          const coreDist = (h.radiusDeg * Math.PI * MARS_RADIUS_KM) / 180;
+          const clearance = d - coreDist;
+          if (clearance < minHazardClearance) minHazardClearance = clearance;
+        } else if (h.type === 'polygon') {
+          h.polygon.forEach((polyPt) => {
+            const d = haversineMars(pt, polyPt);
+            if (d < minHazardClearance) minHazardClearance = d;
+          });
+        }
+      });
+    });
+
     return {
       safePath: smoothedPath,
       directPath: directPoints,
       safeDistanceKm: totalSafeKm,
       directDistanceKm: directKm,
       hazardsAvoided: Array.from(hazardsDirectHits),
+      minHazardClearanceKm: Math.max(0, Math.round(minHazardClearance)),
     };
   }
 
@@ -2023,17 +2203,53 @@
     lastRouteResult = result;
 
     const isRu = currentLang === 'ru';
-    const distKm = Math.round(result.safeDistanceKm);
-    const distMi = Math.round(result.safeDistanceKm * 0.621371);
-    const directKm = Math.round(result.directDistanceKm);
-    const directMi = Math.round(result.directDistanceKm * 0.621371);
+    const distKm = Math.round(result.safeDistanceKm * 10) / 10;
+    const distMi = Math.round(result.safeDistanceKm * 0.621371 * 10) / 10;
+    const directKm = Math.round(result.directDistanceKm * 10) / 10;
+    const directMi = Math.round(result.directDistanceKm * 0.621371 * 10) / 10;
 
-    const sols = Math.max(1, Math.round(result.safeDistanceKm / 4.2));
-    const earthDays = Math.round(sols * 1.027);
+    // Dual traversal metrics:
+    // 1. Robotic Rover (Perseverance / AutoNav nominal 0.35 km/sol)
+    const roboticSols = Math.max(1, Math.round(result.safeDistanceKm / MARS_CONSTANTS.ROVER_ROBOTIC_SPEED_KMSOL));
+    const roboticEarthDays = Math.round(roboticSols * 1.02749);
 
-    // Update Sidebar Summary
+    // 2. Manned Crew Rover (NASA Space Exploration Vehicle nominal 25 km/sol)
+    const crewSols = Math.max(1, Math.round(result.safeDistanceKm / MARS_CONSTANTS.ROVER_CREW_SPEED_KMSOL));
+    const crewEarthDays = Math.round(crewSols * 1.02749);
+
+    // Initial Azimuth / Bearing
+    const bearingDeg = calcInitialBearing(routeState.pointA, routeState.pointB);
+    const bearingStr = formatBearingCompass(bearingDeg);
+
+    // Traction energy requirement (E = m * g * Crr * d / eff)
+    const joulesRobotic = (MARS_CONSTANTS.ROVER_ROBOTIC_MASS * MARS_CONSTANTS.G_MARS_MEAN * MARS_CONSTANTS.CRR_REGOLITH * (result.safeDistanceKm * 1000)) / MARS_CONSTANTS.DRIVETRAIN_EFFICIENCY;
+    const kwhRobotic = Math.round(joulesRobotic / 3.6e6);
+    const mjRobotic = Math.round(joulesRobotic / 1e6);
+
+    // NASA DSN Radio Latency (One-way and Round Trip)
+    const secOneway = (MARS_CONSTANTS.D_EARTH_MEAN_AU * MARS_CONSTANTS.AU_KM) / MARS_CONSTANTS.C_LIGHT;
+    const minOneway = Math.floor(secOneway / 60);
+    const remSecOneway = Math.round(secOneway % 60);
+    const minRtt = Math.round((secOneway * 2) / 60);
+
+    // Dynamic Safety Score based on hazard proximity clearance
+    const minClearanceKm = result.minHazardClearanceKm !== undefined ? result.minHazardClearanceKm : 120;
+    let safetyScoreVal = 99.9;
+    if (result.hazardsAvoided.length > 0) {
+      if (minClearanceKm < 40) safetyScoreVal = 97.4;
+      else if (minClearanceKm < 80) safetyScoreVal = 98.6;
+      else safetyScoreVal = 99.4;
+    }
+    const safetyStr = `${safetyScoreVal.toFixed(1)}% (${isRu ? 'Безопасно' : 'Safe'})`;
+
+    // Update Sidebar Summary Card
     const summaryCard = document.querySelector('#route-summary-card');
     if (summaryCard) summaryCard.classList.remove('hidden');
+
+    const scoreEl = document.querySelector('#summary-score');
+    if (scoreEl) {
+      scoreEl.textContent = isRu ? `${safetyScoreVal.toFixed(1)}% безопасность` : `${safetyScoreVal.toFixed(1)}% safety rating`;
+    }
 
     const distEl = document.querySelector('#summary-distance');
     if (distEl) {
@@ -2044,7 +2260,7 @@
 
     const timeEl = document.querySelector('#summary-time');
     if (timeEl) {
-      timeEl.textContent = isRu ? `~${sols} солов` : `~${sols} sols`;
+      timeEl.textContent = isRu ? `~${roboticSols.toLocaleString('ru-RU')} солов (марсоход)` : `~${roboticSols.toLocaleString('en-US')} sols (rover)`;
     }
 
     const avoidedEl = document.querySelector('#summary-avoided-list');
@@ -2063,6 +2279,10 @@
     const durEl = document.querySelector('#telemetry-duration');
     const directEl = document.querySelector('#telemetry-direct');
     const riskEl = document.querySelector('#telemetry-risk');
+    const bearingEl = document.querySelector('#telemetry-bearing');
+    const energyEl = document.querySelector('#telemetry-energy');
+    const latencyEl = document.querySelector('#telemetry-latency');
+    const crewTimeEl = document.querySelector('#telemetry-crew-time');
     const statusEl = document.querySelector('#telemetry-status');
     const titleEl = document.querySelector('#telemetry-title');
     const hazardsListEl = document.querySelector('#hazards-avoided-list');
@@ -2076,11 +2296,11 @@
 
     if (durEl) {
       durEl.textContent = isRu
-        ? `~${sols} солов (~${earthDays} сут.)`
-        : `~${sols} sols (~${earthDays} earth days)`;
+        ? `~${roboticSols.toLocaleString('ru-RU')} солов (~${roboticEarthDays} сут.)`
+        : `~${roboticSols.toLocaleString('en-US')} sols (~${roboticEarthDays} earth days)`;
     }
 
-    const extraDist = Math.max(0, Math.round(result.safeDistanceKm - result.directDistanceKm));
+    const extraDist = Math.max(0, Math.round((result.safeDistanceKm - result.directDistanceKm) * 10) / 10);
     const extraPct = Math.round((extraDist / (result.directDistanceKm || 1)) * 100);
     if (directEl) {
       directEl.textContent = isRu
@@ -2088,10 +2308,23 @@
         : `${directMi.toLocaleString('en-US')} mi (+${extraPct}%)`;
     }
 
-    if (riskEl) {
-      riskEl.textContent = result.hazardsAvoided.length > 0
-        ? (isRu ? '99.4% (Безопасно)' : '99.4% (Safe)')
-        : (isRu ? '99.9% (Оптимально)' : '99.9% (Optimal)');
+    if (riskEl) riskEl.textContent = safetyStr;
+    if (bearingEl) bearingEl.textContent = bearingStr;
+
+    if (energyEl) {
+      energyEl.textContent = `${kwhRobotic.toLocaleString()} kWh (${mjRobotic.toLocaleString()} MJ)`;
+    }
+
+    if (latencyEl) {
+      latencyEl.textContent = isRu
+        ? `~${minOneway}м ${remSecOneway}с (RTT ~${minRtt}м)`
+        : `~${minOneway}m ${remSecOneway}s (RTT ~${minRtt}m)`;
+    }
+
+    if (crewTimeEl) {
+      crewTimeEl.textContent = isRu
+        ? `~${crewSols} солов (~${crewEarthDays} сут.)`
+        : `~${crewSols} sols (~${crewEarthDays} days)`;
     }
 
     if (statusEl) {
@@ -2110,7 +2343,7 @@
         hazardsListEl.innerHTML = `
           <div class="hazard-item" style="border-left-color: #38d9a9; background: rgba(56, 217, 169, 0.08);">
             <span class="hazard-item__name" style="color: #38d9a9">${isRu ? 'Прямой безопасный коридор' : 'Direct Safe Corridor'}</span>
-            <span class="hazard-item__desc">${isRu ? 'Прямая линия не пересекает критических геологических провалов рельефа. Траектория оптимизирована.' : 'Direct geodesic path avoids critical geologic rift chasms. Trajectory is fuel-optimized.'}</span>
+            <span class="hazard-item__desc">${isRu ? 'Прямая геодезическая линия не пересекает критических геологических провалов рельефа. Траектория оптимизирована по расходу тяги.' : 'Direct geodesic path avoids critical geologic rift chasms. Trajectory is fuel- and power-optimized.'}</span>
           </div>
         `;
       } else {
@@ -2128,19 +2361,41 @@
 
     if (waypointsEl) {
       waypointsEl.innerHTML = '';
-      const waypoints = [
-        { label: { en: 'Expedition Departure', ru: 'Старт экспедиции' }, pt: routeState.pointA },
-        { label: { en: 'Tactical Maneuver Corridor', ru: 'Коридор маневра' }, pt: result.safePath[Math.floor(result.safePath.length * 0.33)] },
-        { label: { en: 'Safe Ridge Crossing', ru: 'Безопасный перевал' }, pt: result.safePath[Math.floor(result.safePath.length * 0.66)] },
-        { label: { en: 'Destination Base', ru: 'Пункт назначения' }, pt: routeState.pointB },
+      const sampleIndices = [0];
+      const count = result.safePath.length;
+      if (count > 4) {
+        sampleIndices.push(Math.floor(count * 0.25));
+        sampleIndices.push(Math.floor(count * 0.50));
+        sampleIndices.push(Math.floor(count * 0.75));
+      } else if (count > 2) {
+        sampleIndices.push(Math.floor(count * 0.5));
+      }
+      sampleIndices.push(count - 1);
+
+      const labels = [
+        { en: 'Expedition Departure (Point A)', ru: 'Старт экспедиции (Точка А)' },
+        { en: 'Tactical Maneuver Corridor', ru: 'Коридор тактического маневра' },
+        { en: 'Midpoint Navigation Checkpoint', ru: 'Контрольный ориентир середины пути' },
+        { en: 'Safe Ridge Approach', ru: 'Подходной перевал' },
+        { en: 'Destination Base (Point B)', ru: 'Пункт назначения (Точка Б)' },
       ];
 
-      waypoints.forEach((wp, idx) => {
+      sampleIndices.forEach((pathIdx, stepNum) => {
+        const pt = result.safePath[pathIdx];
+        const elev = estimateElevation(pt[0], pt[1]);
+        const elevStr = isRu
+          ? `${elev >= 0 ? '+' : ''}${elev.toLocaleString('ru-RU')} м`
+          : `${elev >= 0 ? '+' : ''}${Math.round(elev * 3.28084).toLocaleString('en-US')} ft`;
+        const labelObj = labels[Math.min(stepNum, labels.length - 1)];
+
         const row = document.createElement('div');
         row.className = 'waypoint-row';
         row.innerHTML = `
-          <span class="waypoint-row__name">${idx + 1}. ${t(wp.label)}</span>
-          <span class="waypoint-row__coords">${formatCoordSimple(wp.pt[0], true)}, ${formatCoordSimple(wp.pt[1], false)}</span>
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <span class="waypoint-row__name">${stepNum + 1}. ${t(labelObj)}</span>
+            <span style="font-family:var(--font-mono); font-size:11px; color:#d6c083;">${elevStr}</span>
+          </div>
+          <span class="waypoint-row__coords">${formatCoordSimple(pt[0], true)}, ${formatCoordSimple(pt[1], false)}</span>
         `;
         waypointsEl.appendChild(row);
       });
@@ -2231,7 +2486,7 @@
       routeModeBtn.classList.toggle('active', active);
       const textSpan = document.querySelector('#route-mode-text');
       if (textSpan) {
-        textSpan.textContent = active ? 'Режим выбора: кликните на карту' : 'Выбрать точки на карте';
+        textSpan.textContent = active ? (i18n[currentLang]?.route_mode_active || 'Click map to place points') : (i18n[currentLang]?.route_mode_btn || 'Select points on map');
       }
     }
 
@@ -2315,15 +2570,15 @@
 
     const coords = [e.latlng.lat, e.latlng.lng];
     if (!routeState.pointA) {
-      setPointA(coords, 'Пользовательская точка');
+      setPointA(coords, { en: 'Custom Waypoint', ru: 'Выбранная точка' });
       updatePromptBanner();
     } else if (!routeState.pointB) {
-      setPointB(coords, 'Пользовательская точка');
+      setPointB(coords, { en: 'Custom Waypoint', ru: 'Выбранная точка' });
       setRouteMode(false);
       calculateAndDrawRoute();
     } else {
       // Re-place Point B
-      setPointB(coords, 'Пользовательская точка');
+      setPointB(coords, { en: 'Custom Waypoint', ru: 'Выбранная точка' });
       setRouteMode(false);
       calculateAndDrawRoute();
     }
@@ -2397,6 +2652,8 @@
     curiosity: { name: { en: 'Curiosity (Gale)', ru: 'Curiosity (Гейл)' }, coords: [-4.5895, 137.4417] },
     insight: { name: { en: 'InSight (Elysium)', ru: 'InSight (Элизий)' }, coords: [4.5024, 135.6234] },
     valles: { name: { en: 'Valles Marineris (North Rim)', ru: 'Долины Маринер (Северный вал)' }, coords: [-1.0, -60.0] },
+    olympus: { name: { en: 'Olympus Mons Caldera', ru: 'Гора Олимп (Olympus Mons)' }, coords: [18.65, -133.8] },
+    hellas: { name: { en: 'Hellas Planitia Basin Floor', ru: 'Равнина Эллада (Hellas Planitia)' }, coords: [-42.4, 70.5] },
   };
 
   document.querySelectorAll('.preset-chip').forEach((chip) => {
@@ -2445,14 +2702,24 @@
         en: '18.4447° N, 77.4508° E • Elevation -8,448 ft (-2,575 m)',
         ru: '18.4447° N, 77.4508° E • Высота -2 575 м'
       },
-      temp: { en: '-72.4°F (-58°C)', ru: '-58°C' },
+      temp: { en: '-72.4°F (-58°C)', ru: '-58°C (-72.4°F)' },
       tempRange: { en: 'Day 5.0°F • Night -115.6°F', ru: 'День -15°C • Ночь -82°C' },
-      pressure: { en: '0.109 psi (7.5 hPa)', ru: '7.5 hPa' },
-      pressureSub: { en: '0.22 inHg • 0.0074 atm', ru: '0.0074 атм (750 Па)' },
-      wind: { en: '10.7 mph (4.8 m/s)', ru: '4.8 м/с' },
+      pressure: { en: '0.109 psi (7.5 hPa)', ru: '7.5 hPa (750 Па)' },
+      pressureSub: { en: '0.22 inHg • 0.0074 atm', ru: '0.0074 атм • 0.22 inHg' },
+      wind: { en: '10.7 mph (4.8 m/s)', ru: '4.8 м/с (17.3 км/ч)' },
       windSub: { en: 'Gusts up to 42.5 mph • WNW', ru: 'Порывы до 19 м/с • WNW' },
       tau: 'τ = 0.42',
       uvSub: { en: 'Moderate • UV Index 9', ru: 'Умеренно • УФ-индекс 9' },
+      density: { en: '18.2 g/m³ (1.48% Earth)', ru: '18.2 г/м³ (1.48% Земли)' },
+      densitySub: { en: 'Dynamic pressure: ~68× weaker than Earth', ru: 'Аэродинамический напор: в 68× слабее земного' },
+      sound: { en: '516 mph (230.7 m/s)', ru: '230.7 м/с (831 км/ч)' },
+      soundSub: { en: 'SuperCam acoustic dispersion: +10 m/s >400Hz', ru: 'SuperCam дисперсия: +10 м/с выше 400 Гц' },
+      boil: { en: '37.1°F (+2.8°C)', ru: '+2.8°C (37.1°F)' },
+      boilSub: { en: 'Armstrong Limit: Liquid phase permitted', ru: 'Предел Армстронга: жидкая фаза возможна' },
+      radiation: { en: '0.67 mSv/sol', ru: '0.67 мЗв/сол (ГКЛ)' },
+      radiationSub: { en: '357 W/m² solar • MSL RAD benchmark', ru: '357 Вт/м² инсоляция • Архив RAD' },
+      physicsLat: 18.4447,
+      physicsElev: -2575,
       microclimate: {
         en: 'Diurnal convective dust devils up to 3,280 ft (1 km) high. The MEDA instrument suite detects microbaric waves and seasonal pressure oscillations as CO₂ freezes out at polar caps.',
         ru: 'Суточные ветровые вихри («пылевые дьяволы») высотой до 1 км. Прибор MEDA фиксирует микробаровые волны и сезонное падение давления при замерзании CO₂ на полярных шапках.'
@@ -2466,14 +2733,24 @@
         en: '4.5895° S, 137.4417° E • Elevation -14,600 ft (-4,450 m)',
         ru: '4.5895° S, 137.4417° E • Высота -4 450 м'
       },
-      temp: { en: '-61.6°F (-52°C)', ru: '-52°C' },
+      temp: { en: '-61.6°F (-52°C)', ru: '-52°C (-61.6°F)' },
       tempRange: { en: 'Day 17.6°F • Night -108.4°F', ru: 'День -8°C • Ночь -78°C' },
-      pressure: { en: '0.122 psi (8.4 hPa)', ru: '8.4 hPa' },
-      pressureSub: { en: '0.25 inHg • 0.0083 atm', ru: '0.0083 атм (840 Па)' },
-      wind: { en: '7.8 mph (3.5 m/s)', ru: '3.5 м/с' },
+      pressure: { en: '0.122 psi (8.4 hPa)', ru: '8.4 hPa (840 Па)' },
+      pressureSub: { en: '0.25 inHg • 0.0083 atm', ru: '0.0083 атм • 0.25 inHg' },
+      wind: { en: '7.8 mph (3.5 m/s)', ru: '3.5 м/с (12.6 км/ч)' },
       windSub: { en: 'Gusts up to 31.3 mph • slope breeze', ru: 'Порывы до 14 м/с • бриз со склона' },
       tau: 'τ = 0.55',
       uvSub: { en: 'Equatorial • UV Index 10', ru: 'Экваториальный • УФ-индекс 10' },
+      density: { en: '19.8 g/m³ (1.62% Earth)', ru: '19.8 г/м³ (1.62% Земли)' },
+      densitySub: { en: 'Crater floor air trap: denser microclimate', ru: 'Ловушка дна кратера: повышенная плотность' },
+      sound: { en: '523 mph (233.9 m/s)', ru: '233.9 м/с (842 км/ч)' },
+      soundSub: { en: 'Equatorial warm boundary layer speed', ru: 'Скорость в экваториальном теплом слое' },
+      boil: { en: '40.0°F (+4.4°C)', ru: '+4.4°C (40.0°F)' },
+      boilSub: { en: 'Elevated barometric boiling threshold', ru: 'Повышенный порог закипания на дне' },
+      radiation: { en: '0.64 mSv/sol', ru: '0.64 мЗв/сол (ГКЛ)' },
+      radiationSub: { en: '337 W/m² solar • RAD 12-yr baseline', ru: '337 Вт/м² инсоляция • База данных RAD' },
+      physicsLat: -4.5895,
+      physicsElev: -4450,
       microclimate: {
         en: 'Intra-crater wind circulation: daytime warm upslope breezes along Mount Sharp and nocturnal drainage of cold air to crater floor. Seasonal methane background pulses.',
         ru: 'Кратерная ветровая циркуляция: теплый восходящий поток днем по склонам горы Эолида (Шарпа) и ночной сток холодного воздуха на дно кратера. Сезонные колебания фонового метана.'
@@ -2487,14 +2764,24 @@
         en: '4.5024° N, 135.6234° E • Elevation -8,530 ft (-2,600 m)',
         ru: '4.5024° N, 135.6234° E • Высота -2 600 м'
       },
-      temp: { en: '-79.6°F (-62°C)', ru: '-62°C' },
+      temp: { en: '-79.6°F (-62°C)', ru: '-62°C (-79.6°F)' },
       tempRange: { en: 'Day 1.4°F • Night -128.2°F', ru: 'День -17°C • Ночь -89°C' },
-      pressure: { en: '0.107 psi (7.4 hPa)', ru: '7.4 hPa' },
-      pressureSub: { en: '0.22 inHg • 0.0073 atm', ru: '0.0073 атм (740 Па)' },
-      wind: { en: '11.6 mph (5.2 m/s)', ru: '5.2 м/с' },
+      pressure: { en: '0.107 psi (7.4 hPa)', ru: '7.4 hPa (740 Па)' },
+      pressureSub: { en: '0.22 inHg • 0.0073 atm', ru: '0.0073 атм • 0.22 inHg' },
+      wind: { en: '11.6 mph (5.2 m/s)', ru: '5.2 м/с (18.7 км/ч)' },
       windSub: { en: 'Gusts up to 49.2 mph • SW', ru: 'Порывы до 22 м/с • SW' },
       tau: 'τ = 0.48',
       uvSub: { en: 'Equatorial • UV Index 9', ru: 'Экваториальный • УФ-индекс 9' },
+      density: { en: '18.3 g/m³ (1.49% Earth)', ru: '18.3 г/м³ (1.49% Земли)' },
+      densitySub: { en: 'Smooth basalt plains unobstructed drag', ru: 'Открытое ветровое поле базальтовых равнин' },
+      sound: { en: '511 mph (228.6 m/s)', ru: '228.6 м/с (823 км/ч)' },
+      soundSub: { en: 'Infrasound vortex regime (SEIS telemetry)', ru: 'Инфразвуковой режим вихрей SEIS' },
+      boil: { en: '36.8°F (+2.6°C)', ru: '+2.6°C (36.8°F)' },
+      boilSub: { en: 'Armstrong Limit: Transient water viable', ru: 'Предел Армстронга: вода метастабильна' },
+      radiation: { en: '0.68 mSv/sol', ru: '0.68 мЗв/сол' },
+      radiationSub: { en: '361 W/m² solar • Unshielded plains', ru: '361 Вт/м² инсоляция • Открытая равнина' },
+      physicsLat: 4.5024,
+      physicsElev: -2600,
       microclimate: {
         en: 'Smooth volcanic expanse: TWINS and SEIS recorded thousands of microbaric vortex encounters and low-frequency infrasound from unobstructed Martian surface winds.',
         ru: 'Гладкая вулканическая равнина: датчики TWINS и сейсмометр SEIS зарегистрировали тысячи микровихрей давления и инфразвуковые колебания открытого марсианского ветра.'
@@ -2508,17 +2795,182 @@
         en: '68.2188° N, 125.7518° W • Elevation -13,450 ft (-4,100 m)',
         ru: '68.2188° N, 125.7518° W • Высота -4 100 м'
       },
-      temp: { en: '-108.4°F (-78°C)', ru: '-78°C' },
+      temp: { en: '-108.4°F (-78°C)', ru: '-78°C (-108.4°F)' },
       tempRange: { en: 'Day -23.8°F • Night -140.8°F', ru: 'День -31°C • Ночь -96°C' },
-      pressure: { en: '0.117 psi (8.1 hPa)', ru: '8.1 hPa' },
-      pressureSub: { en: '0.24 inHg • 0.0080 atm', ru: '0.0080 атм (810 Па)' },
-      wind: { en: '9.2 mph (4.1 m/s)', ru: '4.1 м/с' },
+      pressure: { en: '0.117 psi (8.1 hPa)', ru: '8.1 hPa (810 Па)' },
+      pressureSub: { en: '0.24 inHg • 0.0080 atm', ru: '0.0080 атм • 0.24 inHg' },
+      wind: { en: '9.2 mph (4.1 m/s)', ru: '4.1 м/с (14.8 км/ч)' },
       windSub: { en: 'Gusts up to 35.8 mph • E', ru: 'Порывы до 16 м/с • E' },
       tau: 'τ = 0.28',
-      uvSub: { en: 'Circumpolar • UV Index 3', ru: 'Полярный • УФ-индекс 3' },
+      uvSub: { en: 'Circumpolar • UV Index 3', ru: 'Приполярный • УФ-индекс 3' },
+      density: { en: '21.6 g/m³ (1.77% Earth)', ru: '21.6 г/м³ (1.77% Земли)' },
+      densitySub: { en: 'Cryogenic air compression effect', ru: 'Криогенное сжатие плотного холодного воздуха' },
+      sound: { en: '492 mph (219.8 m/s)', ru: '219.8 м/с (791 км/ч)' },
+      soundSub: { en: 'Sub-zero acoustic slowdown in polar air', ru: 'Акустическое замедление в морозном воздухе' },
+      boil: { en: '39.1°F (+3.9°C)', ru: '+3.9°C (39.1°F)' },
+      boilSub: { en: 'Subsurface permafrost ice equilibrium', ru: 'Равновесие приповерхностного мерзлотного льда' },
+      radiation: { en: '0.71 mSv/sol', ru: '0.71 мЗв/сол' },
+      radiationSub: { en: '102 W/m² solar • High-latitude slant', ru: '102 Вт/м² инсоляция • Наклонные лучи' },
+      physicsLat: 68.2188,
+      physicsElev: -4100,
       microclimate: {
         en: 'Subarctic polar belt: the MET atmospheric lidar detected precipitation of water-ice crystal virga from 13,100 ft (4 km) altitude sublimating prior to ground impact.',
         ru: 'Субарктический приполярный пояс: атмосферный лазерный лидар MET зафиксировал снегопад из кристаллов водяного льда на высоте 4 км, сублимирующий до касания поверхности (вирга).'
+      },
+    },
+    opportunity: {
+      name: { en: 'Meridiani Planum', ru: 'Meridiani Planum (Меридиана)' },
+      station: { en: 'NASA MER-B • Mini-TES & APXS', ru: 'NASA MER-B • Приборы Mini-TES и APXS' },
+      sol: { en: 'Mission Archive (5,352 Sols)', ru: 'Архив миссии (5 352 сола)' },
+      coordsText: {
+        en: '1.9483° S, 5.5266° W • Elevation -4,724 ft (-1,440 m)',
+        ru: '1.9483° S, 5.5266° W • Высота -1 440 м'
+      },
+      temp: { en: '-67.0°F (-55°C)', ru: '-55°C (-67.0°F)' },
+      tempRange: { en: 'Day 24.8°F • Night -112.0°F', ru: 'День -4°C • Ночь -80°C' },
+      pressure: { en: '0.090 psi (6.2 hPa)', ru: '6.2 hPa (620 Па)' },
+      pressureSub: { en: '0.18 inHg • 0.0061 atm', ru: '0.0061 атм • 0.18 inHg' },
+      wind: { en: '8.5 mph (3.8 m/s)', ru: '3.8 м/с (13.7 км/ч)' },
+      windSub: { en: 'Gusts up to 40.3 mph • Dust Storm Alley', ru: 'Порывы до 18 м/с • Сезонные бури' },
+      tau: 'τ = 0.60',
+      uvSub: { en: 'Equatorial • UV Index 10', ru: 'Экваториальный • УФ-индекс 10' },
+      density: { en: '14.8 g/m³ (1.21% Earth)', ru: '14.8 г/м³ (1.21% Земли)' },
+      densitySub: { en: 'Plateau elevation attenuation', ru: 'Разрежение на возвышенном плато' },
+      sound: { en: '518 mph (231.5 m/s)', ru: '231.5 м/с (833 км/ч)' },
+      soundSub: { en: 'Equatorial plain acoustic velocity', ru: 'Акустическая скорость экваториальных равнин' },
+      boil: { en: '32.3°F (+0.2°C)', ru: '+0.2°C (32.3°F)' },
+      boilSub: { en: 'Triple point margin (near freezing limit)', ru: 'На грани тройной точки воды' },
+      radiation: { en: '0.66 mSv/sol', ru: '0.66 мЗв/сол' },
+      radiationSub: { en: '321 W/m² solar • 2018 storm blackout site', ru: '321 Вт/м² инсоляция • Эпицентр бури 2018' },
+      physicsLat: -1.9483,
+      physicsElev: -1440,
+      microclimate: {
+        en: 'Expansive gray hematite plains with ripple dunes. In 2018, an apocalyptic planet-encircling dust storm (τ > 10.8) starved Opportunity of solar power, culminating a historic 28.06-mile odyssey.',
+        ru: 'Бескрайние гематитовые равнины с рябью песчаных дюн. В 2018 году глобальная пылевая буря планетарного масштаба (τ > 10.8) обесточила марсоход, завершив исторический 14-летний марафон.'
+      },
+    },
+    spirit: {
+      name: { en: 'Gusev Crater', ru: 'Gusev Crater (Гусев)' },
+      station: { en: 'NASA MER-A • Athena Science Suite', ru: 'NASA MER-A • Комплекс Athena' },
+      sol: { en: 'Mission Archive (2,210 Sols)', ru: 'Архив миссии (2 210 солов)' },
+      coordsText: {
+        en: '14.5684° S, 175.4726° E • Elevation -6,266 ft (-1,910 m)',
+        ru: '14.5684° S, 175.4726° E • Высота -1 910 м'
+      },
+      temp: { en: '-72.4°F (-58°C)', ru: '-58°C (-72.4°F)' },
+      tempRange: { en: 'Day 21.2°F • Night -115.6°F', ru: 'День -6°C • Ночь -82°C' },
+      pressure: { en: '0.099 psi (6.8 hPa)', ru: '6.8 hPa (680 Па)' },
+      pressureSub: { en: '0.20 inHg • 0.0067 atm', ru: '0.0067 атм • 0.20 inHg' },
+      wind: { en: '10.1 mph (4.5 m/s)', ru: '4.5 м/с (16.2 км/ч)' },
+      windSub: { en: 'Vortices up to 47.0 mph • Dust Devil Alley', ru: 'Вихри до 21 м/с • Аллея вихрей' },
+      tau: 'τ = 0.52',
+      uvSub: { en: 'High Insolation • UV Index 9', ru: 'Высокая инсоляция • УФ-индекс 9' },
+      density: { en: '16.5 g/m³ (1.34% Earth)', ru: '16.5 г/м³ (1.34% Земли)' },
+      densitySub: { en: 'Thermal convective updrafts', ru: 'Термические восходящие конвективные потоки' },
+      sound: { en: '516 mph (230.7 m/s)', ru: '230.7 м/с (831 км/ч)' },
+      soundSub: { en: 'Boundary layer acoustic profile', ru: 'Акустический профиль приземного слоя' },
+      boil: { en: '34.6°F (+1.5°C)', ru: '+1.5°C (34.6°F)' },
+      boilSub: { en: 'Armstrong Limit: Narrow liquid window', ru: 'Предел Армстронга: узкое окно жидкой фазы' },
+      radiation: { en: '0.67 mSv/sol', ru: '0.67 мЗв/сол' },
+      radiationSub: { en: '332 W/m² solar • Columbia Hills flank', ru: '332 Вт/м² инсоляция • Склоны Колумбия' },
+      physicsLat: -14.5684,
+      physicsElev: -1910,
+      microclimate: {
+        en: 'Dust Devil Alley: Spirit recorded hundreds of active convective whirlwinds sweeping across Gusev floor, periodically cleaning dust off solar arrays and exposing ancient hydrothermal opaline silica.',
+        ru: '«Аллея пылевых дьяволов»: Spirit заснял сотни активных вихрей, регулярно сдувавших пыль с солнечных батарей и обнаживших чистейшие гидротермальные кремнеземы древних гейзеров.'
+      },
+    },
+    viking1: {
+      name: { en: 'Chryse Planitia', ru: 'Chryse Planitia (Хриса)' },
+      station: { en: 'NASA Viking 1 • Meteorology Instrument Package', ru: 'NASA Viking 1 • Метеокомплекс' },
+      sol: { en: 'Mission Archive (1976–1982)', ru: 'Архив миссии (1976–1982)' },
+      coordsText: {
+        en: '22.2692° N, 47.9493° W • Elevation -11,900 ft (-3,627 m)',
+        ru: '22.2692° N, 47.9493° W • Высота -3 627 м'
+      },
+      temp: { en: '-81.4°F (-63°C)', ru: '-63°C (-81.4°F)' },
+      tempRange: { en: 'Day 6.8°F • Night -122.8°F', ru: 'День -14°C • Ночь -86°C' },
+      pressure: { en: '0.110 psi (7.6 hPa)', ru: '7.6 hPa (760 Па)' },
+      pressureSub: { en: '0.22 inHg • 0.0075 atm', ru: '0.0075 атм • 0.22 inHg' },
+      wind: { en: '9.4 mph (4.2 m/s)', ru: '4.2 м/с (15.1 км/ч)' },
+      windSub: { en: 'Storm gusts up to 58.2 mph (26 m/s)', ru: 'Штормовые порывы до 26 м/с' },
+      tau: 'τ = 0.50',
+      uvSub: { en: 'Subtropical • UV Index 8', ru: 'Субтропический • УФ-индекс 8' },
+      density: { en: '18.9 g/m³ (1.54% Earth)', ru: '18.9 г/м³ (1.54% Земли)' },
+      densitySub: { en: 'Lowland basin air concentration', ru: 'Концентрация воздуха в котловине Хриса' },
+      sound: { en: '511 mph (228.3 m/s)', ru: '228.3 м/с (822 км/ч)' },
+      soundSub: { en: 'Historic first in-situ acoustic medium', ru: 'Исторически первая измеренная среда' },
+      boil: { en: '37.4°F (+3.0°C)', ru: '+3.0°C (37.4°F)' },
+      boilSub: { en: 'Stable barometric liquid window', ru: 'Стабильное барометрическое окно' },
+      radiation: { en: '0.67 mSv/sol', ru: '0.67 мЗв/сол' },
+      radiationSub: { en: '316 W/m² solar • Historic touchdown site', ru: '316 Вт/м² инсоляция • Первая посадка' },
+      physicsLat: 22.2692,
+      physicsElev: -3627,
+      microclimate: {
+        en: 'Pioneer Martian weather station: recorded the first complete multi-year planetary barometric cycle, revealing that 25% of the entire Martian atmosphere freezes out seasonally onto the polar caps.',
+        ru: 'Первая метеостанция на Марсе: зафиксировала полный многолетний цикл давления и доказала, что четверть всей атмосферы Марса циклически замерзает в полярные шапки зимой.'
+      },
+    },
+    pathfinder: {
+      name: { en: 'Ares Vallis', ru: 'Ares Vallis (Долина Арес)' },
+      station: { en: 'NASA Pathfinder • ASI/MET Atmospheric Package', ru: 'NASA Pathfinder • Пакет ASI/MET' },
+      sol: { en: 'Mission Archive (1997)', ru: 'Архив миссии (1997)' },
+      coordsText: {
+        en: '19.3274° N, 33.5502° W • Elevation -11,991 ft (-3,655 m)',
+        ru: '19.3274° N, 33.5502° W • Высота -3 655 м'
+      },
+      temp: { en: '-85.0°F (-65°C)', ru: '-65°C (-85.0°F)' },
+      tempRange: { en: 'Day 14.0°F • Night -126.4°F', ru: 'День -10°C • Ночь -88°C' },
+      pressure: { en: '0.103 psi (7.1 hPa)', ru: '7.1 hPa (710 Па)' },
+      pressureSub: { en: '0.21 inHg • 0.0070 atm', ru: '0.0070 атм • 0.21 inHg' },
+      wind: { en: '8.9 mph (4.0 m/s)', ru: '4.0 м/с (14.4 км/ч)' },
+      windSub: { en: 'Morning turbulence up to 33.6 mph', ru: 'Утренняя турбулентность до 15 м/с' },
+      tau: 'τ = 0.45',
+      uvSub: { en: 'Moderate • UV Index 8', ru: 'Умеренный • УФ-индекс 8' },
+      density: { en: '17.8 g/m³ (1.45% Earth)', ru: '17.8 г/м³ (1.45% Земли)' },
+      densitySub: { en: 'Outflow channel micro-depression', ru: 'Микродепрессия паводкового русла' },
+      sound: { en: '507 mph (226.7 m/s)', ru: '226.7 м/с (816 км/ч)' },
+      soundSub: { en: 'ASI/MET mast temperature sound tracking', ru: 'Градиент мачты ASI/MET' },
+      boil: { en: '35.7°F (+2.1°C)', ru: '+2.1°C (35.7°F)' },
+      boilSub: { en: 'Armstrong Limit: Liquid phase permitted', ru: 'Предел Армстронга: жидкая фаза возможна' },
+      radiation: { en: '0.67 mSv/sol', ru: '0.67 мЗв/сол' },
+      radiationSub: { en: '343 W/m² solar • Carl Sagan Station', ru: '343 Вт/м² инсоляция • Станция Сагана' },
+      physicsLat: 19.3274,
+      physicsElev: -3655,
+      microclimate: {
+        en: 'Outflow flood deposits: ASI/MET recorded abrupt early-morning temperature surges of up to 27°F (15°C) within minutes as warm thermal plumes detached from sunlit boulders.',
+        ru: 'Катастрофические осадочные валуны: датчики зафиксировали резкие утренние скачки температуры на 15°C за считанные минуты при подъеме прогретых тепловых микроплюмов от камней.'
+      },
+    },
+    zhurong: {
+      name: { en: 'Utopia Planitia', ru: 'Utopia Planitia (Утопия)' },
+      station: { en: 'CNSA Tianwen-1 • MCS Meteorological Station', ru: 'CNSA Тяньвэнь-1 • Станция MCS' },
+      sol: { en: 'Mission Archive (2021–2022)', ru: 'Архив миссии (2021–2022)' },
+      coordsText: {
+        en: '25.0660° N, 109.9250° E • Elevation -13,448 ft (-4,099 m)',
+        ru: '25.0660° N, 109.9250° E • Высота -4 099 м'
+      },
+      temp: { en: '-76.0°F (-60°C)', ru: '-60°C (-76.0°F)' },
+      tempRange: { en: 'Day 10.4°F • Night -121.0°F', ru: 'День -12°C • Ночь -85°C' },
+      pressure: { en: '0.116 psi (8.0 hPa)', ru: '8.0 hPa (800 Па)' },
+      pressureSub: { en: '0.24 inHg • 0.0079 atm', ru: '0.0079 атм • 0.24 inHg' },
+      wind: { en: '8.7 mph (3.9 m/s)', ru: '3.9 м/с (14.0 км/ч)' },
+      windSub: { en: 'Gusts up to 38.0 mph • NE', ru: 'Порывы до 17 м/с • NE' },
+      tau: 'τ = 0.48',
+      uvSub: { en: 'Subtropical Lowlands • UV 8', ru: 'Северная низменность • УФ 8' },
+      density: { en: '19.6 g/m³ (1.60% Earth)', ru: '19.6 г/м³ (1.60% Земли)' },
+      densitySub: { en: 'Sedimentary basin air density', ru: 'Плотный воздух осадочного бассейна' },
+      sound: { en: '514 mph (229.8 m/s)', ru: '229.8 м/с (827 км/ч)' },
+      soundSub: { en: 'Low-frequency acoustic resonance', ru: 'Низкочастотный акустический резонанс' },
+      boil: { en: '38.7°F (+3.7°C)', ru: '+3.7°C (38.7°F)' },
+      boilSub: { en: 'Armstrong Limit: Liquid phase permitted', ru: 'Предел Армстронга: жидкая фаза возможна' },
+      radiation: { en: '0.67 mSv/sol', ru: '0.67 мЗв/сол' },
+      radiationSub: { en: '313 W/m² solar • Vast sedimentary plain', ru: '313 Вт/м² инсоляция • Равнина Утопия' },
+      physicsLat: 25.066,
+      physicsElev: -4099,
+      microclimate: {
+        en: 'Southern Utopia sedimentary plain: thick subsurface water-ice regolith. Zhurong rover observed severe seasonal winter cold dormancy with thin frost crusting on solar wings.',
+        ru: 'Южная осадочная равнина Утопии: мощные подповерхностные пласты водяного льда. Зимой марсоход зафиксировал экстремальные заморозки с выпадением тонкой ледяной корки на солнечные панели.'
       },
     },
     olympus: {
@@ -2529,14 +2981,24 @@
         en: '18.65° N, 133.80° W • Elevation +69,649 ft (+13.19 mi)',
         ru: '18.65° N, 133.80° W • Высота +21 229 м'
       },
-      temp: { en: '-139.0°F (-95°C)', ru: '-95°C' },
+      temp: { en: '-139.0°F (-95°C)', ru: '-95°C (-139.0°F)' },
       tempRange: { en: 'Day -54.4°F • Night -184.0°F', ru: 'День -48°C • Ночь -120°C' },
-      pressure: { en: '0.009 psi (0.6 hPa)', ru: '0.6 hPa' },
-      pressureSub: { en: '0.018 inHg • near vacuum (60 Pa)', ru: '0.0006 атм (60 Па — вакуум)' },
-      wind: { en: '32.4 mph (14.5 m/s)', ru: '14.5 м/с' },
+      pressure: { en: '0.009 psi (0.6 hPa)', ru: '0.6 hPa (60 Па — вакуум)' },
+      pressureSub: { en: '0.018 inHg • Near vacuum (60 Pa)', ru: '0.0006 атм • 0.018 inHg' },
+      wind: { en: '32.4 mph (14.5 m/s)', ru: '14.5 м/с (52.2 км/ч)' },
       windSub: { en: 'Jet streams up to 100.7 mph (45 m/s)', ru: 'Струйные течения до 45 м/с' },
       tau: 'τ = 0.12',
       uvSub: { en: 'Extreme • UV Index 12+', ru: 'Критический • УФ-индекс 12+' },
+      density: { en: '1.8 g/m³ (0.14% Earth)', ru: '1.8 г/м³ (0.14% Земли)' },
+      densitySub: { en: 'Near-vacuum: Wings & parachutes ineffective', ru: 'Вакуум: парашюты и крылья не создают тяги' },
+      sound: { en: '470 mph (210.0 m/s)', ru: '210.0 м/с (756 км/ч)' },
+      soundSub: { en: 'Severe acoustic attenuation in near-vacuum', ru: 'Резкое затухание звука в разрежении' },
+      boil: { en: 'N/A (Sublimation < 6.1 hPa)', ru: 'Возгонка (P < 6.1 гПа — тройная точка)' },
+      boilSub: { en: 'Water boils instantly at 33°F (+0.5°C)', ru: 'Вода закипает мгновенно при +0.5°C' },
+      radiation: { en: '0.78 mSv/sol', ru: '0.78 мЗв/сол (критический поток)' },
+      radiationSub: { en: '489 W/m² solar • Summit towers above 80% air', ru: '489 Вт/м² инсоляция • Вершина над 80% воздуха' },
+      physicsLat: 18.65,
+      physicsElev: 21229,
       microclimate: {
         en: 'Summit towers above 80% of Mars atmosphere. Ambient density is near-vacuum; boiling point of water drops to 33°F (+0.5°C), instantly vaporizing. Flank slopes spawn colossal orographic clouds.',
         ru: 'Вершина возвышается над 80% марсианской атмосферы. Плотность воздуха экстремально низкая, вода закипает при +0.5°C и сразу возгоняется. У подножия образуются грандиозные ледяные орографические облака.'
@@ -2550,14 +3012,24 @@
         en: '13.90° S, 59.20° W • Depth -23,620 ft (-4.47 mi)',
         ru: '13.90° S, 59.20° W • Глубина -7 200 м'
       },
-      temp: { en: '-54.4°F (-48°C)', ru: '-48°C' },
+      temp: { en: '-54.4°F (-48°C)', ru: '-48°C (-54.4°F)' },
       tempRange: { en: 'Day 24.8°F • Night -97.6°F', ru: 'День -4°C • Ночь -72°C' },
-      pressure: { en: '0.148 psi (10.2 hPa)', ru: '10.2 hPa' },
-      pressureSub: { en: '0.30 inHg • 0.0101 atm', ru: '0.0101 атм (1 020 Па)' },
-      wind: { en: '18.8 mph (8.4 m/s)', ru: '8.4 м/с' },
+      pressure: { en: '0.148 psi (10.2 hPa)', ru: '10.2 hPa (1 020 Па)' },
+      pressureSub: { en: '0.30 inHg • 0.0101 atm', ru: '0.0101 атм • 0.30 inHg' },
+      wind: { en: '18.8 mph (8.4 m/s)', ru: '8.4 м/с (30.2 км/ч)' },
       windSub: { en: 'Katabatic channel drainage winds', ru: 'Катабатические ветры вдоль русла' },
       tau: 'τ = 0.65',
       uvSub: { en: 'Canyon wall shielding • UV 8', ru: 'Экранирован стенами • УФ 8' },
+      density: { en: '23.6 g/m³ (1.93% Earth)', ru: '23.6 г/м³ (1.93% Земли)' },
+      densitySub: { en: 'Dense air floor cushion effect', ru: 'Плотная газовая подушка дна каньона' },
+      sound: { en: '528 mph (236.0 m/s)', ru: '236.0 м/с (850 км/ч)' },
+      soundSub: { en: 'Deep chasm warm acoustic waveguide', ru: 'Теплый акустический волновод каньона' },
+      boil: { en: '45.0°F (+7.2°C)', ru: '+7.2°C (45.0°F)' },
+      boilSub: { en: 'Enhanced liquid stability corridor', ru: 'Расширенная зона стабильности жидкости' },
+      radiation: { en: '0.58 mSv/sol', ru: '0.58 мЗв/сол' },
+      radiationSub: { en: '291 W/m² solar • Significant cliff shadow', ru: '291 Вт/м² инсоляция • Экранирование скалами' },
+      physicsLat: -13.9,
+      physicsElev: -7200,
       microclimate: {
         en: 'Deepest canyon chasm: morning floors fill with dense water-ice fog. Due to elevated pressure, daytime temperatures can approach 32°F (0°C) on sun-facing screes.',
         ru: 'Глубочайший рифтовый каньон: утреннее дно заполняется плотными туманами из водяного льда. Из-за повышенного давления температура днем способна приближаться к нулевой отметке.'
@@ -2571,14 +3043,24 @@
         en: '7.00° S, 102.20° W • Elevation +10,500 ft (+3,200 m)',
         ru: '7.00° S, 102.20° W • Высота +3 200 м'
       },
-      temp: { en: '-90.4°F (-68°C)', ru: '-68°C' },
+      temp: { en: '-90.4°F (-68°C)', ru: '-68°C (-90.4°F)' },
       tempRange: { en: 'Day -7.6°F • Night -137.2°F', ru: 'День -22°C • Ночь -94°C' },
-      pressure: { en: '0.075 psi (5.2 hPa)', ru: '5.2 hPa' },
-      pressureSub: { en: '0.15 inHg • 0.0051 atm', ru: '0.0051 атм (520 Па)' },
-      wind: { en: '15.2 mph (6.8 m/s)', ru: '6.8 м/с' },
+      pressure: { en: '0.075 psi (5.2 hPa)', ru: '5.2 hPa (520 Па)' },
+      pressureSub: { en: '0.15 inHg • 0.0051 atm', ru: '0.0051 атм • 0.15 inHg' },
+      wind: { en: '15.2 mph (6.8 m/s)', ru: '6.8 м/с (24.5 км/ч)' },
       windSub: { en: 'Turbulent canyon eddies', ru: 'Сложные лабиринтные завихрения' },
       tau: 'τ = 0.38',
       uvSub: { en: 'Highland • UV Index 10', ru: 'Высокогорный • УФ-индекс 10' },
+      density: { en: '13.2 g/m³ (1.08% Earth)', ru: '13.2 г/м³ (1.08% Земли)' },
+      densitySub: { en: 'Highland plateau rarefaction', ru: 'Разрежение высокогорного плато' },
+      sound: { en: '503 mph (224.8 m/s)', ru: '224.8 м/с (809 км/ч)' },
+      soundSub: { en: 'Complex graben echo reflections', ru: 'Сложные эхо-отражения стен грабенов' },
+      boil: { en: 'N/A (Sublimation < 6.1 hPa)', ru: 'Возгонка (P < 6.1 гПа — тройная точка)' },
+      boilSub: { en: 'Rapid ice sublimation in dry troughs', ru: 'Быстрая возгонка льда в сухих провалах' },
+      radiation: { en: '0.70 mSv/sol', ru: '0.70 мЗв/сол' },
+      radiationSub: { en: '397 W/m² solar • High-altitude exposure', ru: '397 Вт/м² инсоляция • Высокогорная экспозиция' },
+      physicsLat: -7.0,
+      physicsElev: 1000,
       microclimate: {
         en: 'Intersecting grabens create closed wind recirculation cells. Early mornings see brief moisture condensation forming delicate cirrus-like plumes above narrow troughs.',
         ru: 'Сетка каньонов создает замкнутые ветровые вихри. Ранним утром в узких тектонических провалах наблюдается кратковременная конденсация паров в тонкие перистые микрооблака.'
@@ -2592,14 +3074,24 @@
         en: '42.40° S, 70.50° E • Floor -23,465 ft (-4.44 mi)',
         ru: '42.40° S, 70.50° E • Дно -7 152 м'
       },
-      temp: { en: '-49.0°F (-45°C)', ru: '-45°C' },
+      temp: { en: '-49.0°F (-45°C)', ru: '-45°C (-49.0°F)' },
       tempRange: { en: 'Day 28.4°F • Night -101.2°F', ru: 'День -2°C • Ночь -74°C' },
-      pressure: { en: '0.171 psi (11.8 hPa)', ru: '11.8 hPa' },
-      pressureSub: { en: '0.35 inHg • Martian maximum (1,180 Pa)', ru: '0.0116 атм (1 180 Па — максимум)' },
-      wind: { en: '25.1 mph (11.2 m/s)', ru: '11.2 м/с' },
+      pressure: { en: '0.171 psi (11.8 hPa)', ru: '11.8 hPa (1 180 Па — максимум)' },
+      pressureSub: { en: '0.35 inHg • Martian maximum (1,180 Pa)', ru: '0.0116 атм • 0.35 inHg' },
+      wind: { en: '25.1 mph (11.2 m/s)', ru: '11.2 м/с (40.3 км/ч)' },
       windSub: { en: 'Storm gusts up to 78.3 mph (35 m/s)', ru: 'Порывы до 35 м/с • Штормовой' },
       tau: 'τ = 0.85',
       uvSub: { en: 'Dust-attenuated • UV 7', ru: 'Пылевое рассеяние • УФ 7' },
+      density: { en: '27.0 g/m³ (2.20% Earth)', ru: '27.0 г/м³ (2.20% Земли)' },
+      densitySub: { en: 'Planetary density apex (2.2% Earth)', ru: 'Максимум плотности атмосферы Марса' },
+      sound: { en: '531 mph (237.6 m/s)', ru: '237.6 м/с (855 км/ч)' },
+      soundSub: { en: 'Highest speed of sound on Mars', ru: 'Наивысшая скорость звука на планете' },
+      boil: { en: '48.9°F (+9.4°C)', ru: '+9.4°C (48.9°F)' },
+      boilSub: { en: 'Broadest liquid water stability zone', ru: 'Наиширочайшая зона жидкой фазы' },
+      radiation: { en: '0.52 mSv/sol', ru: '0.52 мЗв/сол' },
+      radiationSub: { en: '137 W/m² solar • Thick column air shield', ru: '137 Вт/м² инсоляция • Защитный слой атмосферы' },
+      physicsLat: -42.4,
+      physicsElev: -7152,
       microclimate: {
         en: 'Barometric apex of Mars: at pressures reaching 0.18 psi (12.4 hPa), liquid water can transiently exist above 32°F (0°C) in metastable state. Principal breeding zone for planet-encircling dust storms.',
         ru: 'Барометрический рекорд Марса: при давлении до 12.4 гПа вода может теоретически существовать в метастабильной жидкой фазе при температуре выше 0°C. Главный очаг зарождения глобальных пылевых бурь.'
@@ -2613,14 +3105,24 @@
         en: '40.75° N, 9.46° W • Elevation -6,890 ft (-2,100 m)',
         ru: '40.75° N, 9.46° W • Высота -2 100 м'
       },
-      temp: { en: '-86.8°F (-66°C)', ru: '-66°C' },
+      temp: { en: '-86.8°F (-66°C)', ru: '-66°C (-86.8°F)' },
       tempRange: { en: 'Day -11.2°F • Night -130.0°F', ru: 'День -24°C • Ночь -90°C' },
-      pressure: { en: '0.104 psi (7.2 hPa)', ru: '7.2 hPa' },
-      pressureSub: { en: '0.21 inHg • 0.0071 atm', ru: '0.0071 атм (720 Па)' },
-      wind: { en: '12.3 mph (5.5 m/s)', ru: '5.5 м/с' },
+      pressure: { en: '0.104 psi (7.2 hPa)', ru: '7.2 hPa (720 Па)' },
+      pressureSub: { en: '0.21 inHg • 0.0071 atm', ru: '0.0071 атм • 0.21 inHg' },
+      wind: { en: '12.3 mph (5.5 m/s)', ru: '5.5 м/с (19.8 км/ч)' },
       windSub: { en: 'Gusts up to 40.3 mph • W', ru: 'Порывы до 18 м/с • W' },
       tau: 'τ = 0.44',
       uvSub: { en: 'Moderate • UV Index 6', ru: 'Умеренный • УФ-индекс 6' },
+      density: { en: '18.1 g/m³ (1.48% Earth)', ru: '18.1 г/м³ (1.48% Земли)' },
+      densitySub: { en: 'Dichotomy transition aerodynamic zone', ru: 'Аэродинамика перехода дихотомии' },
+      sound: { en: '506 mph (225.9 m/s)', ru: '225.9 м/с (813 км/ч)' },
+      soundSub: { en: 'Acoustic reflection off mesa walls', ru: 'Акустическое эхо от столовых возвышенностей' },
+      boil: { en: '36.1°F (+2.3°C)', ru: '+2.3°C (36.1°F)' },
+      boilSub: { en: 'Armstrong Limit: Liquid phase permitted', ru: 'Предел Армстронга: жидкая фаза возможна' },
+      radiation: { en: '0.67 mSv/sol', ru: '0.67 мЗв/сол' },
+      radiationSub: { en: '248 W/m² solar • Northern plains border', ru: '248 Вт/м² инсоляция • Граница равнины Ацидалия' },
+      physicsLat: 40.75,
+      physicsElev: -2100,
       microclimate: {
         en: 'Boundary between southern cratered uplands and Acidalia Planitia. Regular frontal winds sweep past isolated mesas, carving prominent streaks and yardang fields.',
         ru: 'Граница между южными плато и низменностью Ацидалия. Регулярные фронтальные пылевые ветры огибают столовые возвышенности, формируя длинные ветровые полосы и дюны.'
@@ -2634,14 +3136,24 @@
         en: '73.00° N, 164.50° E • Elevation -12,467 ft (-3,800 m)',
         ru: '73.00° N, 164.50° E • Высота -3 800 м'
       },
-      temp: { en: '-122.8°F (-86°C)', ru: '-86°C' },
+      temp: { en: '-122.8°F (-86°C)', ru: '-86°C (-122.8°F)' },
       tempRange: { en: 'Day -43.6°F • Night -169.6°F', ru: 'День -42°C • Ночь -112°C' },
-      pressure: { en: '0.113 psi (7.8 hPa)', ru: '7.8 hPa' },
-      pressureSub: { en: '0.23 inHg • 0.0077 atm', ru: '0.0077 атм (780 Па)' },
-      wind: { en: '7.2 mph (3.2 m/s)', ru: '3.2 м/с' },
+      pressure: { en: '0.113 psi (7.8 hPa)', ru: '7.8 hPa (780 Па)' },
+      pressureSub: { en: '0.23 inHg • 0.0077 atm', ru: '0.0077 атм • 0.23 inHg' },
+      wind: { en: '7.2 mph (3.2 m/s)', ru: '3.2 м/с (11.5 км/ч)' },
       windSub: { en: 'Cold descending katabatic flow', ru: 'Холодный нисходящий сток' },
       tau: 'τ = 0.22',
       uvSub: { en: 'Polar • UV Index 2', ru: 'Полярный • УФ-индекс 2' },
+      density: { en: '21.7 g/m³ (1.77% Earth)', ru: '21.7 г/м³ (1.77% Земли)' },
+      densitySub: { en: 'Dense chilled cold-trap air dome', ru: 'Тяжелый купол морозной ловушки' },
+      sound: { en: '480 mph (214.7 m/s)', ru: '214.7 м/с (773 км/ч)' },
+      soundSub: { en: 'Deep cryogenic acoustic deceleration', ru: 'Глубокое криогенное замедление' },
+      boil: { en: '38.1°F (+3.4°C)', ru: '+3.4°C (38.1°F)' },
+      boilSub: { en: 'Protected water ice sublimation barrier', ru: 'Экранирование ледника от сублимации' },
+      radiation: { en: '0.72 mSv/sol', ru: '0.72 мЗв/сол' },
+      radiationSub: { en: '81 W/m² solar • High polar latitude', ru: '81 Вт/м² инсоляция • Полярная ночь/лето' },
+      physicsLat: 73.0,
+      physicsElev: -3800,
       microclimate: {
         en: 'Natural "cold trap": an evergreen dome of dense chilled air stays pinned inside the crater, shielding 528 cubic miles (2,200 km³) of water ice from sublimation year-round.',
         ru: 'Природная «холодная ловушка»: купол тяжелого охлажденного воздуха лежит на дне кратера, экранируя 2 200 км³ водяного льда от сублимации и разрушения круглый год.'
@@ -2652,17 +3164,27 @@
       station: { en: 'MCD Orbital Model • Northern Flank', ru: 'Орбитальная модель MCD • Северный склон' },
       sol: { en: 'Ls 180° (Equinox)', ru: 'Ls 180° (Равноденствие)' },
       coordsText: {
-        en: '40.50° N, 109.90° W • Elevation +22,310 ft (+4.23 mi)',
+        en: '40.50° N, 109.90° W • Elevation +22,310 ft (+6,800 m)',
         ru: '40.50° N, 109.90° W • Высота +6 800 м'
       },
-      temp: { en: '-103.0°F (-75°C)', ru: '-75°C' },
+      temp: { en: '-103.0°F (-75°C)', ru: '-75°C (-103.0°F)' },
       tempRange: { en: 'Day -18.4°F • Night -151.6°F', ru: 'День -28°C • Ночь -102°C' },
-      pressure: { en: '0.057 psi (3.9 hPa)', ru: '3.9 hPa' },
-      pressureSub: { en: '0.12 inHg • 0.0038 atm', ru: '0.0038 атм (390 Па)' },
-      wind: { en: '20.4 mph (9.1 m/s)', ru: '9.1 м/с' },
+      pressure: { en: '0.057 psi (3.9 hPa)', ru: '3.9 hPa (390 Па)' },
+      pressureSub: { en: '0.12 inHg • 0.0038 atm', ru: '0.0038 атм • 0.12 inHg' },
+      wind: { en: '20.4 mph (9.1 m/s)', ru: '9.1 м/с (32.8 км/ч)' },
       windSub: { en: 'Orographic waves up to 62.6 mph (28 m/s)', ru: 'Орографические волны до 28 м/с' },
       tau: 'τ = 0.32',
       uvSub: { en: 'High Altitude • UV Index 8', ru: 'Высокогорный • УФ-индекс 8' },
+      density: { en: '10.3 g/m³ (0.84% Earth)', ru: '10.3 г/м³ (0.84% Земли)' },
+      densitySub: { en: 'Summit caldera rarefied atmosphere', ru: 'Разреженная атмосфера кальдеры' },
+      sound: { en: '495 mph (221.4 m/s)', ru: '221.4 м/с (797 км/ч)' },
+      soundSub: { en: 'High-altitude volcanic acoustic profile', ru: 'Высокогорный вулканический профиль' },
+      boil: { en: 'N/A (Sublimation < 6.1 hPa)', ru: 'Возгонка (P < 6.1 гПа — тройная точка)' },
+      boilSub: { en: 'Armstrong Limit: Water sublimates to vapor', ru: 'Предел Армстронга: вода сублимирует в пар' },
+      radiation: { en: '0.74 mSv/sol', ru: '0.74 мЗв/сол' },
+      radiationSub: { en: '293 W/m² solar • Broad 1,000 km volcanic construct', ru: '293 Вт/м² инсоляция • Щитовой вулкан 1 000 км' },
+      physicsLat: 40.5,
+      physicsElev: 6800,
       microclimate: {
         en: 'Broad volcanic edifice spanning 620 miles (1,000 km) generates gravity-wave perturbations in the mesosphere, creating persistent high-altitude ice-cloud streamers.',
         ru: 'Низкопрофильный гигантский вулкан диаметром 1 000 км формирует волновые орографические потоки в марсианской мезосфере с образованием протяженных ледяных шлейфов.'
@@ -2690,6 +3212,14 @@
     const windSubEl = document.querySelector('#weather-wind-sub');
     const tauEl = document.querySelector('#weather-tau');
     const uvSubEl = document.querySelector('#weather-uv-sub');
+    const densityEl = document.querySelector('#weather-density');
+    const densitySubEl = document.querySelector('#weather-density-sub');
+    const soundEl = document.querySelector('#weather-sound');
+    const soundSubEl = document.querySelector('#weather-sound-sub');
+    const boilEl = document.querySelector('#weather-boil');
+    const boilSubEl = document.querySelector('#weather-boil-sub');
+    const radEl = document.querySelector('#weather-radiation');
+    const radSubEl = document.querySelector('#weather-radiation-sub');
     const microclimateEl = document.querySelector('#weather-microclimate');
 
     if (badgeEl) badgeEl.textContent = t(data.station);
@@ -2704,34 +3234,90 @@
     if (windSubEl) windSubEl.textContent = t(data.windSub);
     if (tauEl) tauEl.textContent = t(data.tau);
     if (uvSubEl) uvSubEl.textContent = t(data.uvSub);
+    if (densityEl) densityEl.textContent = t(data.density);
+    if (densitySubEl) densitySubEl.textContent = t(data.densitySub);
+    if (soundEl) soundEl.textContent = t(data.sound);
+    if (soundSubEl) soundSubEl.textContent = t(data.soundSub);
+    if (boilEl) boilEl.textContent = t(data.boil);
+    if (boilSubEl) boilSubEl.textContent = t(data.boilSub);
+    if (radEl) radEl.textContent = t(data.radiation);
+    if (radSubEl) radSubEl.textContent = t(data.radiationSub);
     if (microclimateEl) microclimateEl.textContent = t(data.microclimate);
 
     calculateGravity();
   }
 
+  let includeSpacesuit = false;
+
   function calculateGravity() {
     const input = document.querySelector('#earth-weight-input');
     const unitBadge = document.querySelector('#earth-weight-unit');
     const marsWeightEl = document.querySelector('#mars-weight-val');
+    const marsGravityEl = document.querySelector('#mars-gravity-val');
     const marsJumpEl = document.querySelector('#mars-jump-val');
+    const marsHangEl = document.querySelector('#mars-hang-val');
+    const suitCheckbox = document.querySelector('#toggle-spacesuit');
     if (!input) return;
+
+    if (suitCheckbox) {
+      includeSpacesuit = suitCheckbox.checked;
+    }
 
     const val = parseFloat(input.value) || 0;
     const isRu = currentLang === 'ru';
+    const isLbs = !isRu;
 
     if (unitBadge) {
-      unitBadge.textContent = isRu ? 'кг' : 'lbs';
+      unitBadge.textContent = isLbs ? 'lbs' : 'кг';
     }
 
-    const marsVal = (val * 0.3794).toFixed(1);
-    if (marsWeightEl) {
-      marsWeightEl.textContent = `${marsVal} ${isRu ? 'кг' : 'lbs'}`;
+    // Determine current location latitude & elevation
+    let lat = 18.4447, elev = -2575; // Default Jezero
+    const activeData = weatherData[activeWeatherKey];
+    if (activeData && activeData.physicsLat !== undefined) {
+      lat = activeData.physicsLat;
+      elev = activeData.physicsElev;
+    } else if (lastFocusedObject && lastFocusedObject.coords) {
+      lat = lastFocusedObject.coords[0];
+      elev = estimateElevation(lastFocusedObject.coords[0], lastFocusedObject.coords[1]);
     }
+
+    const gLocal = calcLocalGravity(lat, elev);
+    const gRatio = gLocal / MARS_CONSTANTS.G_EARTH;
+
+    // Body mass in kg
+    const bodyKg = isLbs ? val * 0.453592 : val;
+    const suitKg = includeSpacesuit ? MARS_CONSTANTS.SPACESUIT_MASS_KG : 0;
+    const totalEarthKg = bodyKg + suitKg;
+    const totalMarsKg = totalEarthKg * gRatio;
+    const displayMarsVal = isLbs ? (totalMarsKg * 2.20462).toFixed(1) : totalMarsKg.toFixed(1);
+
+    if (marsWeightEl) {
+      const suitNote = includeSpacesuit ? (isRu ? ' (со скафандром)' : ' (suited)') : '';
+      marsWeightEl.textContent = `${displayMarsVal} ${isLbs ? 'lbs' : 'кг'}${suitNote}`;
+    }
+
+    if (marsGravityEl) {
+      marsGravityEl.textContent = `${gLocal.toFixed(3)} ${isRu ? 'м/с²' : 'm/s²'} (${gRatio.toFixed(3)} g)`;
+    }
+
+    // Jump height & hang time
+    const jumpMult = (MARS_CONSTANTS.G_EARTH / gLocal);
+    const baseJumpM = 0.50; // Standard 50 cm vertical jump
+    const marsJumpM = baseJumpM * jumpMult;
+    const marsJumpFt = marsJumpM * 3.28084;
+    const hangMult = Math.sqrt(jumpMult);
 
     if (marsJumpEl) {
       marsJumpEl.textContent = isRu
-        ? 'в 2.64× выше (~1.3 м)'
-        : '2.64× higher (~4.3 ft)';
+        ? `в ${jumpMult.toFixed(2)}× выше (~${marsJumpM.toFixed(1)} м)`
+        : `${jumpMult.toFixed(2)}× higher (~${marsJumpFt.toFixed(1)} ft)`;
+    }
+
+    if (marsHangEl) {
+      marsHangEl.textContent = isRu
+        ? `в ${hangMult.toFixed(2)}× дольше зависание`
+        : `${hangMult.toFixed(2)}× longer hang time`;
     }
   }
 
@@ -2739,6 +3325,10 @@
   const earthWeightInput = document.querySelector('#earth-weight-input');
   if (earthWeightInput) {
     earthWeightInput.addEventListener('input', calculateGravity);
+  }
+  const toggleSpacesuit = document.querySelector('#toggle-spacesuit');
+  if (toggleSpacesuit) {
+    toggleSpacesuit.addEventListener('change', calculateGravity);
   }
 
   // Info Rail Tabs Logic

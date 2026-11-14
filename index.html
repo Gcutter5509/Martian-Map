@@ -94,101 +94,124 @@
           <div class="section-heading">
             <h2 data-i18n="missions_heading">Landing Sites</h2>
           </div>
-          <label class="mission-option">
-            <input type="checkbox" class="mission-filter" value="perseverance" checked>
+          <button type="button" class="mission-option" data-mission="perseverance">
             <span class="mission-dot dot-perseverance"></span>
             <span class="mission-option__name">
               <b>Jezero Crater</b>
               <small>Perseverance (Mars 2020)</small>
             </span>
-          </label>
-          <label class="mission-option">
-            <input type="checkbox" class="mission-filter" value="curiosity" checked>
+          </button>
+          <button type="button" class="mission-option" data-mission="curiosity">
             <span class="mission-dot dot-curiosity"></span>
             <span class="mission-option__name">
               <b>Gale Crater</b>
               <small>Curiosity (MSL)</small>
             </span>
-          </label>
-          <label class="mission-option">
-            <input type="checkbox" class="mission-filter" value="insight" checked>
+          </button>
+          <button type="button" class="mission-option" data-mission="insight">
             <span class="mission-dot dot-insight"></span>
             <span class="mission-option__name">
-              <b>InSight</b>
-              <small>Elysium Planitia (2018)</small>
+              <b>Elysium Planitia</b>
+              <small>InSight (2018)</small>
             </span>
-          </label>
-          <label class="mission-option">
-            <input type="checkbox" class="mission-filter" value="phoenix" checked>
+          </button>
+          <button type="button" class="mission-option" data-mission="phoenix">
             <span class="mission-dot dot-phoenix"></span>
             <span class="mission-option__name">
-              <b>Phoenix</b>
-              <small>Vastitas Borealis (2008)</small>
+              <b>Vastitas Borealis</b>
+              <small>Phoenix (2008)</small>
             </span>
-          </label>
+          </button>
+          <button type="button" class="mission-option" data-mission="opportunity">
+            <span class="mission-dot dot-opportunity"></span>
+            <span class="mission-option__name">
+              <b>Meridiani Planum</b>
+              <small>Opportunity (MER-B)</small>
+            </span>
+          </button>
+          <button type="button" class="mission-option" data-mission="spirit">
+            <span class="mission-dot dot-spirit"></span>
+            <span class="mission-option__name">
+              <b>Gusev Crater</b>
+              <small>Spirit (MER-A)</small>
+            </span>
+          </button>
+          <button type="button" class="mission-option" data-mission="viking1">
+            <span class="mission-dot dot-viking1"></span>
+            <span class="mission-option__name">
+              <b>Chryse Planitia</b>
+              <small>Viking 1 (1976)</small>
+            </span>
+          </button>
+          <button type="button" class="mission-option" data-mission="pathfinder">
+            <span class="mission-dot dot-pathfinder"></span>
+            <span class="mission-option__name">
+              <b>Ares Vallis</b>
+              <small>Pathfinder / Sojourner (1997)</small>
+            </span>
+          </button>
+          <button type="button" class="mission-option" data-mission="zhurong">
+            <span class="mission-dot dot-zhurong"></span>
+            <span class="mission-option__name">
+              <b>Utopia Planitia</b>
+              <small>Zhurong (Tianwen-1)</small>
+            </span>
+          </button>
         </section>
 
         <section class="panel-section landmarks-section">
           <div class="section-heading landmarks-heading">
             <h2 data-i18n="landmarks_heading">Geological Landmarks</h2>
-            <button type="button" class="landmarks-toggle-all" id="landmarks-toggle-all" data-i18n="landmarks_toggle_all">Hide all</button>
           </div>
-          <label class="landmark-option">
-            <input type="checkbox" class="landmark-filter" value="olympus" checked>
+          <button type="button" class="landmark-option" data-landmark="olympus">
             <span class="landmark-dot dot-volcano">▲</span>
             <span class="landmark-option__name">
               <b data-i18n="landmark_olympus_name">Olympus Mons</b>
               <small data-i18n="landmark_olympus_sub">Tallest volcano in Solar System (69,650 ft / 13.2 mi)</small>
             </span>
-          </label>
-          <label class="landmark-option">
-            <input type="checkbox" class="landmark-filter" value="valles" checked>
+          </button>
+          <button type="button" class="landmark-option" data-landmark="valles">
             <span class="landmark-dot dot-canyon">▼</span>
             <span class="landmark-option__name">
               <b data-i18n="landmark_valles_name">Valles Marineris</b>
               <small data-i18n="landmark_valles_sub">Grand canyon network (depth up to 32,800 ft / 6.2 mi)</small>
             </span>
-          </label>
-          <label class="landmark-option">
-            <input type="checkbox" class="landmark-filter" value="noctis" checked>
+          </button>
+          <button type="button" class="landmark-option" data-landmark="noctis">
             <span class="landmark-dot dot-canyon">❖</span>
             <span class="landmark-option__name">
               <b data-i18n="landmark_noctis_name">Noctis Labyrinthus</b>
               <small data-i18n="landmark_noctis_sub">Fractured graben and valley network</small>
             </span>
-          </label>
-          <label class="landmark-option">
-            <input type="checkbox" class="landmark-filter" value="hellas" checked>
+          </button>
+          <button type="button" class="landmark-option" data-landmark="hellas">
             <span class="landmark-dot dot-basin">◌</span>
             <span class="landmark-option__name">
               <b data-i18n="landmark_hellas_name">Hellas Planitia</b>
               <small data-i18n="landmark_hellas_sub">Deepest impact basin (-23,465 ft / -4.4 mi)</small>
             </span>
-          </label>
-          <label class="landmark-option">
-            <input type="checkbox" class="landmark-filter" value="cydonia" checked>
+          </button>
+          <button type="button" class="landmark-option" data-landmark="cydonia">
             <span class="landmark-dot dot-crater">◈</span>
             <span class="landmark-option__name">
               <b data-i18n="landmark_cydonia_name">Cydonia Mensae</b>
               <small data-i18n="landmark_cydonia_sub">Mesa formations ("Face on Mars")</small>
             </span>
-          </label>
-          <label class="landmark-option">
-            <input type="checkbox" class="landmark-filter" value="korolev" checked>
+          </button>
+          <button type="button" class="landmark-option" data-landmark="korolev">
             <span class="landmark-dot dot-ice">❄</span>
             <span class="landmark-option__name">
               <b data-i18n="landmark_korolev_name">Korolev Crater</b>
               <small data-i18n="landmark_korolev_sub">5,900 ft (1.1 mi) thick water ice dome</small>
             </span>
-          </label>
-          <label class="landmark-option">
-            <input type="checkbox" class="landmark-filter" value="alba" checked>
+          </button>
+          <button type="button" class="landmark-option" data-landmark="alba">
             <span class="landmark-dot dot-volcano">▲</span>
             <span class="landmark-option__name">
               <b data-i18n="landmark_alba_name">Alba Mons</b>
               <small data-i18n="landmark_alba_sub">Volcano spanning over 620 miles diameter</small>
             </span>
-          </label>
+          </button>
         </section>
 
         <section class="panel-section route-section">
@@ -232,6 +255,7 @@
               <button type="button" class="preset-chip" data-start="perseverance" data-end="curiosity">Jezero → Gale</button>
               <button type="button" class="preset-chip" data-start="insight" data-end="perseverance">InSight → Jezero</button>
               <button type="button" class="preset-chip" data-start="curiosity" data-end="valles">Gale → Valles M.</button>
+              <button type="button" class="preset-chip" data-start="olympus" data-end="hellas" data-i18n="preset_olympus_hellas">Olympus → Hellas</button>
             </div>
           </div>
 
@@ -419,6 +443,26 @@
               <b class="weather-stat__val" id="weather-tau">τ = 0.42</b>
               <small class="weather-stat__sub" id="weather-uv-sub">Moderate • UV Index 9</small>
             </div>
+            <div class="weather-stat">
+              <span class="weather-stat__label" data-i18n="weather_stat_density">Air Density</span>
+              <b class="weather-stat__val" id="weather-density">18.2 g/m³</b>
+              <small class="weather-stat__sub" id="weather-density-sub">1.48% of Earth sea-level</small>
+            </div>
+            <div class="weather-stat">
+              <span class="weather-stat__label" data-i18n="weather_stat_sound">Speed of Sound</span>
+              <b class="weather-stat__val" id="weather-sound">230.7 m/s (516 mph)</b>
+              <small class="weather-stat__sub" id="weather-sound-sub">SuperCam benchmark (Nature 2022)</small>
+            </div>
+            <div class="weather-stat">
+              <span class="weather-stat__label" data-i18n="weather_stat_boil">Water Boiling Point</span>
+              <b class="weather-stat__val" id="weather-boil">+2.8°C (37.1°F)</b>
+              <small class="weather-stat__sub" id="weather-boil-sub">Armstrong Limit: Liquid Phase Permitted</small>
+            </div>
+            <div class="weather-stat">
+              <span class="weather-stat__label" data-i18n="weather_stat_radiation">Radiation & Solar Flux</span>
+              <b class="weather-stat__val" id="weather-radiation">0.67 mSv/sol</b>
+              <small class="weather-stat__sub" id="weather-radiation-sub">586 W/m² solar • MSL RAD</small>
+            </div>
           </div>
 
           <div class="card-divider"></div>
@@ -427,23 +471,33 @@
           <div class="atmos-bars">
             <div class="atmos-bar-row">
               <span class="atmos-gas" data-i18n="gas_co2">Carbon Dioxide (CO₂)</span>
-              <div class="atmos-progress"><div class="atmos-fill atmos-co2" style="width: 95.3%"></div></div>
-              <span class="atmos-pct">95.3%</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-co2" style="width: 95.32%"></div></div>
+              <span class="atmos-pct">95.32%</span>
             </div>
             <div class="atmos-bar-row">
               <span class="atmos-gas" data-i18n="gas_n2">Nitrogen (N₂)</span>
-              <div class="atmos-progress"><div class="atmos-fill atmos-n2" style="width: 14%"></div></div>
-              <span class="atmos-pct">2.6%</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-n2" style="width: 25.9%"></div></div>
+              <span class="atmos-pct">2.59%</span>
             </div>
             <div class="atmos-bar-row">
-              <span class="atmos-gas" data-i18n="gas_ar">Argon (Ar)</span>
-              <div class="atmos-progress"><div class="atmos-fill atmos-ar" style="width: 10%"></div></div>
-              <span class="atmos-pct">1.9%</span>
+              <span class="atmos-gas" data-i18n="gas_ar">Argon (⁴⁰Ar)</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-ar" style="width: 19.3%"></div></div>
+              <span class="atmos-pct">1.93%</span>
             </div>
             <div class="atmos-bar-row">
               <span class="atmos-gas" data-i18n="gas_o2">Oxygen (O₂)</span>
-              <div class="atmos-progress"><div class="atmos-fill atmos-o2" style="width: 4%"></div></div>
-              <span class="atmos-pct">0.16%</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-o2" style="width: 8.0%"></div></div>
+              <span class="atmos-pct">0.161%</span>
+            </div>
+            <div class="atmos-bar-row">
+              <span class="atmos-gas" data-i18n="gas_co">Carbon Monoxide (CO)</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-co" style="width: 5.0%"></div></div>
+              <span class="atmos-pct">0.074%</span>
+            </div>
+            <div class="atmos-bar-row">
+              <span class="atmos-gas" data-i18n="gas_h2o">Water Vapor (H₂O)</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-h2o" style="width: 3.0%"></div></div>
+              <span class="atmos-pct">~0.03%</span>
             </div>
           </div>
 
@@ -465,14 +519,30 @@
                 <span id="earth-weight-unit" data-i18n="weather_weight_unit">lbs</span>
               </div>
             </div>
+            <div class="gravity-options-row">
+              <label class="gravity-checkbox-label">
+                <input type="checkbox" id="toggle-spacesuit">
+                <span data-i18n="weather_spacesuit_label">Include NASA xEMU Spacesuit (+287 lbs / 130 kg)</span>
+              </label>
+            </div>
             <div class="gravity-result-row">
               <div class="gravity-stat">
                 <span data-i18n="weather_mars_weight">Weight at location:</span>
                 <b id="mars-weight-val">58.4 lbs</b>
               </div>
               <div class="gravity-stat">
+                <span data-i18n="weather_local_gravity">Local Surface Gravity:</span>
+                <b id="mars-gravity-val">3.721 m/s² (0.379 g)</b>
+              </div>
+            </div>
+            <div class="gravity-result-row">
+              <div class="gravity-stat">
                 <span data-i18n="weather_jump_height">Jump height:</span>
                 <b id="mars-jump-val" data-i18n="weather_jump_mult">2.64× higher (~4.3 ft)</b>
+              </div>
+              <div class="gravity-stat">
+                <span data-i18n="weather_hang_time">Hang time in air:</span>
+                <b id="mars-hang-val">1.62× longer float</b>
               </div>
             </div>
           </div>
@@ -492,7 +562,7 @@
               <b id="telemetry-distance">—</b>
             </div>
             <div class="telemetry-stat">
-              <span data-i18n="telemetry_stat_time">Travel Time</span>
+              <span data-i18n="telemetry_stat_time">Travel Time (Robotic)</span>
               <b id="telemetry-duration">—</b>
             </div>
             <div class="telemetry-stat">
@@ -502,6 +572,22 @@
             <div class="telemetry-stat">
               <span data-i18n="telemetry_stat_safety">Safety Index</span>
               <b id="telemetry-risk">—</b>
+            </div>
+            <div class="telemetry-stat">
+              <span data-i18n="telemetry_stat_bearing">Initial Azimuth</span>
+              <b id="telemetry-bearing">—</b>
+            </div>
+            <div class="telemetry-stat">
+              <span data-i18n="telemetry_stat_energy">Traction Energy</span>
+              <b id="telemetry-energy">—</b>
+            </div>
+            <div class="telemetry-stat">
+              <span data-i18n="telemetry_stat_latency">DSN Radio Latency</span>
+              <b id="telemetry-latency">—</b>
+            </div>
+            <div class="telemetry-stat">
+              <span data-i18n="telemetry_stat_manned_time">Crew Rover Time</span>
+              <b id="telemetry-crew-time">—</b>
             </div>
           </div>
 

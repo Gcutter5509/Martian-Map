@@ -4,7 +4,7 @@
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Planetary Data: NASA / USGS / ASU](https://img.shields.io/badge/Planetary%20Data-NASA%20%2F%20USGS%20%2F%20ASU-red.svg)](https://trek.nasa.gov/mars/)
 
-> **Challenge:** Interplanetary Survival Guide: Martian Map  
+> **Challenge:** Interplanetary Survival Guide: Martian Map
 > **Project:** AresNav / Martian Map — Interactive Planetary Atlas, Autonomous SafeNav Routing & Climate Survival Terminal
 
 An advanced multi-layered interactive Mars atlas designed for future astronauts and mission planners. Built upon official NASA Solar System Treks WMTS (Web Map Tile Service) endpoints and validated planetary science archives, the application synthesizes visible optical mosaics, laser altimetry topography (MOLA), day/night thermal infrared data (THEMIS), in-situ meteorological station telemetry (MEDA, REMS, TWINS, MET), and autonomous geodesic pathfinding avoiding impassable Martian chasms.
@@ -46,49 +46,64 @@ All planetary map layers, physical constants, coordinates, and meteorological te
 
 ### 1. Global Basemap Tile Layers (NASA Solar System Treks WMTS)
 
-> [!NOTE]  
+> [!NOTE]
 > The `{z}/{y}/{x}` placeholders in the WMTS URLs represent dynamic OGC tile matrix coordinates (Zoom level, Tile row, Tile column) calculated automatically by Leaflet. Direct browser navigation to raw template URLs without numerical indices returns an HTTP 404 from the NASA server because `{z}`, `{y}`, and `{x}` must be resolved to specific tile indices. Use the **Live Sample Tile** links below to inspect individual 200 OK image tiles directly in your browser, or explore them interactively in our app and on the [NASA Mars Trek Portal](https://trek.nasa.gov/mars/).
 
-- **Visible Optical Imagery:**  
-  *Viking MDIM 2.1 Color Mosaic* (`Mars_Viking_MDIM21_ClrMosaic_global_232m`): 232 m/pixel global visible color mosaic.  
+- **Visible Optical Imagery:**
+  *Viking MDIM 2.1 Color Mosaic* (`Mars_Viking_MDIM21_ClrMosaic_global_232m`): 232 m/pixel global visible color mosaic.
   - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`
   - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/1/0/0.jpg)
 
-- **Topographic Laser Altimetry:**  
-  *MOLA Color Hillshade* (`Mars_MGS_MOLA_ClrShade_merge_global_463m`): 463 m/pixel elevation and relief map from Mars Global Surveyor Mars Orbiter Laser Altimeter.  
+- **Topographic Laser Altimetry:**
+  *MOLA Color Hillshade* (`Mars_MGS_MOLA_ClrShade_merge_global_463m`): 463 m/pixel elevation and relief map from Mars Global Surveyor Mars Orbiter Laser Altimeter.
   - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`
   - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/1/0/0.jpg)
 
-- **Thermal Infrared (Daytime Emission):**  
-  *THEMIS Day IR Controlled Mosaic* (`Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly`): 100 m/pixel day thermal emission imagery from 2001 Mars Odyssey, spanning global latitudes ($90^\circ\text{S} - 90^\circ\text{N}$).  
+- **Thermal Infrared (Daytime Emission):**
+  *THEMIS Day IR Controlled Mosaic* (`Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly`): 100 m/pixel day thermal emission imagery from 2001 Mars Odyssey, spanning global latitudes ($90^\circ\text{S} - 90^\circ\text{N}$).
   - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/default/default028mm/{z}/{y}/{x}.png`
   - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/default/default028mm/1/0/0.png)
 
-- **Thermal Infrared (Nighttime Inertia):**  
-  *THEMIS Night IR Controlled Mosaic* (`THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018`): 100 m/pixel nighttime thermal inertia imagery from 2001 Mars Odyssey. Scientific latitude limit: $65.0^\circ\text{S} - 65.0^\circ\text{N}$.  
+- **Thermal Infrared (Nighttime Inertia):**
+  *THEMIS Night IR Controlled Mosaic* (`THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018`): 100 m/pixel nighttime thermal inertia imagery from 2001 Mars Odyssey. Scientific latitude limit: $65.0^\circ\text{S} - 65.0^\circ\text{N}$.
   - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/{z}/{y}/{x}.png`
   - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/1/0/0.png)
 
 ### 2. In-Situ Weather Stations & Planetary Climate Archives
-- **NASA Mars 2020 Perseverance (Jezero Crater):**  
-  *MEDA (Mars Environmental Dynamics Analyzer)* instrument suite telemetry: ambient and ground temperatures, atmospheric pressure cycles, wind speeds, and dust optical depth ($\tau$).  
+- **NASA Mars 2020 Perseverance (Jezero Crater):**
+  *MEDA (Mars Environmental Dynamics Analyzer)* telemetry: ground and air temperatures, diurnal barometric oscillations, wind vector cycles, and dust optical depth ($\tau$).
   Reference: [NASA PDS Atmospheres Node — MEDA](https://pds-atmospheres.nmsu.edu/)
-- **NASA Mars Science Laboratory Curiosity (Gale Crater):**  
-  *REMS (Rover Environmental Monitoring Station)* meteorological data: Mount Sharp thermal circulations, diurnal pressure swings, and UV flux.  
+- **NASA Mars Science Laboratory Curiosity (Gale Crater):**
+  *REMS (Rover Environmental Monitoring Station)* and *SAM (Sample Analysis at Mars)* telemetry: intra-crater slope winds, atmospheric composition ($CO_2$ 95.32%, $N_2$ 2.59%, $^{40}Ar$ 1.93%, $O_2$ 0.161%, $CO$ 0.074%), and radiation dosimetry (RAD instrument).
   Reference: [NASA PDS Atmospheres Node — REMS](https://pds-atmospheres.nmsu.edu/)
-- **NASA InSight Lander (Elysium Planitia):**  
-  *TWINS (Temperature and Winds for InSight)* and *SEIS* atmospheric infrasound archive: smooth volcanic plains vortex dynamics and seasonal barometric drops.  
+- **NASA InSight Lander (Elysium Planitia):**
+  *TWINS (Temperature and Winds for InSight)* and *SEIS* atmospheric infrasound archive: vortex microbaric transients and unobstructed basalt plain drag dynamics.
   Reference: [NASA PDS Geosciences Node — InSight](https://pds-geosciences.wustl.edu/)
-- **NASA Phoenix Lander (Vastitas Borealis):**  
-  *MET (Meteorology Station)* and atmospheric Lidar data: arctic polar conditions, water-ice crystal virga at 4 km, and subsurface ice frost.  
+- **NASA Phoenix Lander (Vastitas Borealis):**
+  *MET (Meteorology Station)* and atmospheric Lidar data: arctic polar boundary conditions, cryogenic virga ice precipitation at 4 km, and permafrost ice table equilibrium.
   Reference: [NASA PDS Atmospheres Node — Phoenix](https://pds-atmospheres.nmsu.edu/)
-- **Orbital Climate Model for Geological Landmarks:**  
+- **Historic & Active Planetary Landers (Opportunity, Spirit, Viking 1, Pathfinder, Zhurong):**
+  Comprehensive landed mission catalog spanning Meridiani Planum, Gusev Crater, Chryse Planitia, Ares Vallis, and Utopia Planitia with MOLA-calibrated touchdown elevations.
+- **Orbital Climate Model for Geological Landmarks:**
   Atmospheric scale height ($H \approx 11.1\text{ km}$) and barometric pressure gradients calibrated via the *Mars Climate Database (MCD v5.3 / LMD/CNRS & NASA Ames)*: from $0.6\text{ hPa}$ ($60\text{ Pa}$) near-vacuum atop Olympus Mons to $11.8\text{ hPa}$ ($1,180\text{ Pa}$) at the floor of Hellas Planitia.
 
 ### 3. Physical Constants & Geodesic Parameters
-- **Mean Volumetric Radius:** $R_{\text{Mars}} = 3,389.5\text{ km}$ (IAU/IAG Working Group on Cartographic Coordinates and Rotational Elements).
-- **Surface Gravity:** $g_{\text{Mars}} \approx 3.72076\text{ m/s}^2$ ($0.3794g_{\text{Earth}}$).
-- **Diurnal Sol Duration:** $24\text{ hours, } 39\text{ minutes, } 35.244\text{ seconds}$ ($1.02749$ Earth days).
+- **Planetary Dimensions (IAU/IAG Working Group):**
+  - Mean Volumetric Radius: $R_{\text{Mars}} = 3,389.50\text{ km}$
+  - Equatorial Radius ($a$): $3,396.19\text{ km}$
+  - Polar Radius ($b$): $3,376.20\text{ km}$
+  - Flattening ($f$): $0.005886$ ($1/169.81$)
+- **Standard Surface Gravity:** $g_{\text{Mars}} = 3.72076\text{ m/s}^2$ ($0.37943g_{\text{Earth}}$).
+- **Somigliana Latitude & Free-Air Gravity Model:**
+  Local gravity varies dynamically from $3.669\text{ m/s}^2$ atop Olympus Mons ($+21.2\text{ km}$) to $3.762\text{ m/s}^2$ at Korolev Crater ($73^\circ\text{N}$) via ellipsoidal formulation and free-air lapse rate ($\Delta g = -0.002195\text{ m/s}^2\text{/km}$).
+- **Atmospheric Physics & Aerodynamics:**
+  - Specific gas constant: $R_{\text{spec}} = 191.843\text{ J/(kg K)}$
+  - Adiabatic index: $\gamma = 1.29$ ($CO_2$ at $215\text{ K}$)
+  - Air density: $\rho = \frac{P}{R_{\text{spec}} T} \approx 18.2\text{ g/m}^3$ at datum ($1.48\%$ Earth sea-level, aerodynamic drag $\approx 68\times$ weaker)
+  - Speed of sound: $c_s = \sqrt{\gamma R_{\text{spec}} T} \approx 230.7\text{ m/s}$ ($516\text{ mph}$, incorporating SuperCam high-frequency acoustic dispersion)
+  - Water boiling point: calibrated via inverted Magnus-Tetens curve to the $6.12\text{ hPa}$ Armstrong limit, differentiating liquid-tolerant basins from sublimation summits.
+- **Diurnal Sol Duration:** $24\text{ hours, } 39\text{ minutes, } 35.244\text{ seconds}$ ($1.02749125$ Earth days; $668.599$ Sols/Martian year).
+- **NASA Deep Space Network (DSN) Latency:** Mean Earth-Mars radio latency is $12.5\text{ min}$ one-way ($25.0\text{ min}$ RTT), demonstrating why autonomous SafeNav pathfinding is vital for planetary exploration.
 
 ---
 
@@ -97,28 +112,29 @@ All planetary map layers, physical constants, coordinates, and meteorological te
 ### 1. Multispectral Dual-Dropdown Swipe Comparison Tool
 A hardware-accelerated split-screen swipe tool enabling comparative exploration of any two planetary datasets simultaneously (*Viking MDIM 2.1 Optical*, *MOLA Altimetry Relief*, *THEMIS Day IR*, and *THEMIS Night IR*). Dual dropdown selectors in the top corners let astronauts configure both left and right layers on the fly to detect subsurface rock densities, thermal inertia anomalies, and terrain hazards.
 
-### 2. Autonomous Rover SafeNav (Planetary Pathfinding)
+### 2. Autonomous Rover SafeNav (Planetary Pathfinding & Telemetry)
 An autonomous rover trajectory planner designed for realistic planetary traversing:
-- **Great-Circle Geodesics:** True spherical distance calculations ($R = 3,389.5\text{ km}$).
-- **Geological Barrier Avoidance:** Prevents rovers from entering fatal Martian chasms and vertical scarps (Valles Marineris rift walls, Olympus Mons basal scarps, Tharsis Montes calderas, and polar ice sheets).
-- **Interactive Drag & Presets:** Click anywhere on the map or launch preset traverses (Jezero → Gale, InSight → Jezero, Gale → Valles Marineris) with real-time waypoint dragging and full route telemetry.
+- **Great-Circle Geodesics:** True spherical distance calculations ($R = 3,389.50\text{ km}$) and initial azimuth heading bearing ($0^\circ - 360^\circ$ and 16-point cardinal compass).
+- **Dual Mission Classes:** Traversal durations calculated for both Autonomous Robotic Exploration Rovers (Perseverance AutoNav class nominal $0.35\text{ km/sol}$) and Pressurized Crew Rovers (NASA Space Exploration Vehicle nominal $25\text{ km/sol}$).
+- **Energy & Communications Telemetry:** Calculates total traction energy consumption in $\text{kWh}$ and $\text{MJ}$ ($E = m \cdot g_{\text{local}} \cdot C_{rr} \cdot d / \eta$) and one-way / round-trip Deep Space Network (DSN) radio latencies.
+- **Topographic Elevation Profile & Waypoints:** Evaluates elevation changes along the route via calibrated MOLA datum control points and renders tactical waypoints with leg distances, elevations, and headings.
+- **Geological Barrier Avoidance:** Prevents rovers from entering fatal Martian chasms and vertical scarps (Valles Marineris rift walls, Olympus Mons basal scarps, Tharsis Montes calderas, and polar ice sheets) with dynamic clearance-based safety scores.
+- **Interactive Drag & Presets:** Click anywhere on the map or launch preset traverses (Jezero → Gale, InSight → Jezero, Gale → Valles Marineris, Olympus → Hellas) with real-time waypoint dragging and full route telemetry.
 
 ### 3. Astronaut Meteorological & Climate Terminal (`Weather` Tab)
-A dedicated survival console providing point-specific atmospheric telemetry for landing sites and landmarks:
+A dedicated survival console providing 8 in-depth atmospheric and physical indicators for landing sites and landmarks:
 - **Diurnal Extremes:** Day/night temperatures, barometric pressures, local wind speeds, and UV radiation indices.
-- **Atmospheric Gas Composition:** Interactive proportional visualization ($CO_2$ 95.32%, $N_2$ 2.6%, $Ar$ 1.9%, $O_2$ 0.16%).
+- **Atmospheric Density ($\rho$):** Local gas density ($\text{g/m}^3$) and comparison to Earth sea-level ($1.225\text{ kg/m}^3$), showing that aerodynamic drag force on Mars is $\sim 68\times$ weaker than on Earth for identical wind speeds.
+- **Speed of Sound ($c_s$):** Acoustic velocity calculated via $c_s = \sqrt{\gamma R_{\text{spec}} T}$ with Perseverance SuperCam dispersion benchmarks ($+10\text{ m/s}$ above $400\text{ Hz}$).
+- **Water Boiling Point ($T_{\text{boil}}$):** Thermodynamic saturation vapor pressure curve identifying whether liquid water can transiently exist or if the site lies below the $6.12\text{ hPa}$ Armstrong limit (sublimation regime).
+- **Cosmic Radiation & Solar Insolation:** Surface radiation dose rates from the MSL RAD experiment ($\sim 0.67\text{ mSv/sol}$) and dust-attenuated solar flux ($\text{W/m}^2$).
+- **Atmospheric Gas Composition:** Exact Curiosity SAM volume mixing ratios ($CO_2$ 95.32%, $N_2$ 2.59%, $^{40}Ar$ 1.93%, $O_2$ 0.161%, $CO$ 0.074%, $H_2O$ ~0.03%).
 - **Microclimate Insights:** Local physical phenomena including dust devil activity, cold-air drainage traps, and polar ice sublimation.
-- **Interactive 0.38g Gravity Calculator:** Real-time weight conversion and jump height multipliers for EVA equipment load planning.
+- **Location-Aware Gravity Calculator:** Calculates local surface gravity $g_{\text{local}}(\phi, z)$ with Somigliana ellipsoidal latitude dependence and free-air elevation lapse rate, dynamic jump height multipliers, hang time in air, and a toggleable NASA xEMU EVA spacesuit loadout (+130 kg / 287 lbs).
 
-### 4. Martian Geological Landmarks Catalog
-Comprehensive scientific profiles with official MOLA elevations and dimensions:
-- **Olympus Mons:** Solar System's tallest shield volcano ($+21,229\text{ m}$).
-- **Valles Marineris:** Grand rift canyon network up to $10\text{ km}$ deep and $4,000\text{ km}$ long.
-- **Noctis Labyrinthus:** Intricate maze of volcano-tectonic grabens and fractured valleys.
-- **Hellas Planitia:** Deepest Martian impact crater ($-7,152\text{ m}$).
-- **Cydonia Mensae:** Eroded mesa formations of the historical 1976 Viking 1 optical illusion.
-- **Korolev Crater:** Permanent $1.8\text{ km}$ thick reservoir of $2,200\text{ km}^3$ pristine water ice.
-- **Alba Mons:** Volcano with the largest surface area footprint in the Solar System.
+### 4. Comprehensive Landing Sites & Geological Landmarks Catalog
+- **9 Landed Missions:** Perseverance (Jezero Crater), Curiosity (Gale Crater), InSight (Elysium Planitia), Phoenix (Vastitas Borealis), Opportunity (Meridiani Planum), Spirit (Gusev Crater), Viking 1 (Chryse Planitia), Pathfinder / Sojourner (Ares Vallis), and Zhurong (Utopia Planitia).
+- **7 Geological Landmarks:** Olympus Mons ($+21,229\text{ m}$), Valles Marineris ($-7,200\text{ m}$), Noctis Labyrinthus, Hellas Planitia ($-7,152\text{ m}$), Cydonia Mensae, Korolev Crater ($2,200\text{ km}^3$ water ice), and Alba Mons ($>1,000\text{ km}$ footprint).
 
 ### 5. International Bilingual UI (EN / RU) & Fullscreen Mode
 - **Instant Language Switcher:** Seamlessly switch between English and Russian with 1 click (`[ EN | RU ]`). Defaulting to English ensures seamless evaluation by international NASA Space Apps judges.
@@ -137,7 +153,7 @@ In strict compliance with the **NASA Space Apps Challenge Generative AI Policy**
   3. **Leaflet Engine & Math Clamping:** Implemented boundary clamping (`maxBoundsViscosity`), fixed Leaflet pointer event propagation on swipe slider handles, and assisted with great-circle spherical trigonometric formulas.
   4. **CSS Layout & Theming:** Aided in responsive CSS glassmorphism styling and Inter typography.
   5. **Documentation & Bilingual Proofreading:** Proofread English documentation, Project Page summaries, and 30-second pitch script.
-- **Authenticity Statement:**  
+- **Authenticity Statement:**
   **Zero AI hallucinations were used for scientific data.** All coordinates, elevations, atmospheric parameters, and layer endpoints were pulled directly from official NASA, USGS, ASU, and IAU planetary science archives. The project concept, survival architecture, and routing mechanics were directed and implemented by the team.
 
 ---
@@ -156,5 +172,5 @@ MartianMap/
 
 ## License & Credits
 
-Created for the **NASA International Space Apps Challenge**.  
+Created for the **NASA International Space Apps Challenge**.
 Planetary data, altimetry, and imagery courtesy of **NASA / JPL-Caltech / USGS / ASU / ESA**.
