@@ -61,6 +61,19 @@ All planetary map layers and coordinates are retrieved directly from NASA's offi
 
 ---
 
+## Artificial Intelligence Attribution
+
+In accordance with the NASA Space Apps Challenge AI guidelines, we disclose the use of AI assistance during project development:
+- **Tool Used:** Antigravity (AI Coding Assistant by Google DeepMind).
+- **Specific Contributions:**
+  1. **NASA WMTS Integration Debugging:** Diagnosed and corrected tile URL endpoints for THEMIS thermal layers from `.jpg` to `.png`, resolving 404 tile loading issues.
+  2. **NASA Trek API Metadata Verification:** Queried NASA Trek's `searchItems` service to confirm official layer bounding boxes, identifying the scientific $65^\circ\text{S} - 65^\circ\text{N}$ latitude extent of the THEMIS nighttime infrared dataset and verifying landing site coordinates.
+  3. **Leaflet Engine & UI Refactoring:** Implemented dynamic map bounds clamping (`maxBounds`), coverage boundary indicators, and updated the visual design and typography to the classic Inter font stack.
+  4. **Documentation & Translation:** Assisted in drafting and proofreading the English project documentation, Project Page summaries, and pitch structure.
+- **Authenticity Statement:** The project concept, feature requirements, and integration logic were determined by the team. All scientific coordinates, planetary bounding boxes, and map tiles were fetched directly from official NASA endpoints without AI fabrication.
+
+---
+
 ## License
 
 Created for the NASA International Space Apps Challenge. Planetary data and imagery courtesy of NASA / JPL-Caltech / USGS / ASU.
