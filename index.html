@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#111315">
+    <meta name="description" content="Интерактивный атлас для изучения рельефа, тепловых слоёв и посадочных площадок Марса по данным NASA.">
+    <title>Martian Map — атлас поверхности Марса</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://trek.nasa.gov">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Martian Map — главная">
+        <span class="brand__mark" aria-hidden="true">M</span>
+        <span class="brand__text">
+          <span class="brand__title">Martian<span class="brand__light">Map</span></span>
+          <small class="brand__subtitle">Атлас поверхности Марса</small>
+        </span>
+      </a>
+      <div class="topbar__center">Данные космических миссий NASA</div>
+      <a class="source-link" href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer">NASA Mars Trek <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main class="workspace">
+      <aside class="sidebar" aria-label="Управление картой">
+        <div class="sidebar__intro">
+          <h1>Карта Марса</h1>
+          <p class="sidebar__copy">Исследуйте рельеф, оптические и инфракрасные снимки поверхности, а также районы посадки исследовательских аппаратов.</p>
+        </div>
+
+        <div class="searchbox">
+          <span class="searchbox__icon" aria-hidden="true">⌕</span>
+          <input id="coordinate-search" type="search" placeholder="Поиск кратера или координат" aria-label="Найти координаты или посадочную площадку">
+          <kbd>↵</kbd>
+        </div>
+
+        <section class="panel-section">
+          <div class="section-heading">
+            <h2>Слои карты</h2>
+          </div>
+          <label class="layer-option layer-option--active">
+            <input type="radio" name="basemap" value="color" checked>
+            <span class="layer-swatch swatch-color"></span>
+            <span class="layer-option__text">
+              <b>Оптическая мозаика</b>
+              <small>Viking, видимый спектр</small>
+            </span>
+          </label>
+          <label class="layer-option">
+            <input type="radio" name="basemap" value="relief">
+            <span class="layer-swatch swatch-relief"></span>
+            <span class="layer-option__text">
+              <b>Рельеф и высоты</b>
+              <small>MOLA, высотная карта</small>
+            </span>
+          </label>
+          <label class="layer-option">
+            <input type="radio" name="basemap" value="thermalDay">
+            <span class="layer-swatch swatch-thermal"></span>
+            <span class="layer-option__text">
+              <b>ИК-карта (день)</b>
+              <small>THEMIS, дневная съемка</small>
+            </span>
+          </label>
+          <label class="layer-option">
+            <input type="radio" name="basemap" value="thermalNight">
+            <span class="layer-swatch swatch-night"></span>
+            <span class="layer-option__text">
+              <b>ИК-карта (ночь)</b>
+              <small>THEMIS, ночная съемка</small>
+            </span>
+          </label>
+        </section>
+
+        <section class="panel-section missions-section">
+          <div class="section-heading">
+            <h2>Посадочные площадки</h2>
+          </div>
+          <label class="mission-option">
+            <input type="checkbox" class="mission-filter" value="perseverance" checked>
+            <span class="mission-dot dot-perseverance"></span>
+            <span class="mission-option__name">
+              <b>Jezero Crater</b>
+              <small>Perseverance (Mars 2020)</small>
+            </span>
+          </label>
+          <label class="mission-option">
+            <input type="checkbox" class="mission-filter" value="curiosity" checked>
+            <span class="mission-dot dot-curiosity"></span>
+            <span class="mission-option__name">
+              <b>Gale Crater</b>
+              <small>Curiosity (MSL)</small>
+            </span>
+          </label>
+          <label class="mission-option">
+            <input type="checkbox" class="mission-filter" value="insight" checked>
+            <span class="mission-dot dot-insight"></span>
+            <span class="mission-option__name">
+              <b>InSight</b>
+              <small>Elysium Planitia (2018)</small>
+            </span>
+          </label>
+          <label class="mission-option">
+            <input type="checkbox" class="mission-filter" value="phoenix" checked>
+            <span class="mission-dot dot-phoenix"></span>
+            <span class="mission-option__name">
+              <b>Phoenix</b>
+              <small>Vastitas Borealis (2008)</small>
+            </span>
+          </label>
+        </section>
+
+        <div class="sidebar__bottom">
+          <span id="data-status">Данные NASA Mars Trek</span>
+          <a href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer" aria-label="Открыть NASA Mars Trek">↗</a>
+        </div>
+      </aside>
+
+      <section class="map-stage" aria-label="Интерактивная карта Марса">
+        <div id="map" role="application" aria-label="Карта Марса. Используйте колесо мыши для изменения масштаба и перетаскивайте карту."></div>
+        <div class="map-label map-label--upper">
+          <span>Система координат</span>
+          <b>Ареоцентрическая (0° E)</b>
+        </div>
+        <div class="map-controls" aria-label="Управление масштабом">
+          <button id="zoom-in" aria-label="Увеличить масштаб">+</button>
+          <button id="zoom-out" aria-label="Уменьшить масштаб">−</button>
+          <button id="reset-view" aria-label="Показать весь Марс" title="Сбросить вид">◎</button>
+        </div>
+        <div class="map-coordinates" id="map-coordinates">
+          <span>Центр карты</span>
+          <b>18.44° N, 77.45° E</b>
+        </div>
+        <div class="map-attribution" id="map-attribution">Слой: NASA Viking (видимый диапазон)</div>
+        <div class="loading-indicator hidden" id="loading-indicator">Загрузка слоя...</div>
+      </section>
+
+      <aside class="info-rail" aria-label="Информация об объекте">
+        <div class="rail-top">
+          <span>Информация об объекте</span>
+        </div>
+        <div class="selected-card">
+          <div class="selected-card__image">
+            <span class="image-caption">Jezero Crater (Mars 2020)</span>
+          </div>
+          <p class="kicker">Район посадки</p>
+          <h2>Jezero<br>Crater</h2>
+          <p class="selected-card__desc">Древняя речная дельта на границе равнины Исиды. Место посадки марсохода Perseverance.</p>
+          <div class="coordinate-grid">
+            <div>
+              <span>Широта</span>
+              <b>18.4447° N</b>
+            </div>
+            <div>
+              <span>Долгота</span>
+              <b>77.4508° E</b>
+            </div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="detail-row">
+            <span>Высота</span>
+            <b>-2 575 м (ниже нулевого уровня)</b>
+          </div>
+          <div class="detail-row">
+            <span>Рельеф</span>
+            <b>MOLA, 463 м/пикс</b>
+          </div>
+          <div class="detail-row">
+            <span>ИК-съемка</span>
+            <b>THEMIS, 100 м/пикс</b>
+          </div>
+          <a class="external-card-link" href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer">
+            Открыть в NASA Mars Trek <span>↗</span>
+          </a>
+        </div>
+        <div class="rail-note">
+          <p><b>Навигация по карте</b><br>Переключайте слои и выбирайте посадочные площадки для детального просмотра параметров рельефа.</p>
+        </div>
+        <div class="scale-readout">
+          <span>Масштаб</span>
+          <b id="zoom-readout">Общий вид</b>
+        </div>
+      </aside>
+    </main>
+  </body>
+</html>
