@@ -38,8 +38,8 @@
       landmark_alba_name: 'Alba Mons',
       landmark_alba_sub: 'Volcano spanning over 620 miles diameter',
       route_heading: 'SafeNav Pathfinding',
-      route_badge: 'Rover SafeNav',
-      route_hint: 'Autonomous rover pathfinding bypassing chasms, steep cliffs, and volcanic scarps.',
+      route_badge: 'Marswalk & Rover',
+      route_hint: 'Autonomous Marswalk and rover pathfinding: geodesic routing bypassing hazardous chasms while mapping tactical science stations along the traverse.',
       route_mode_btn: 'Select points on map',
       route_mode_active: 'Click map to place points',
       point_a_label: 'Start (A)',
@@ -117,7 +117,7 @@
       telemetry_stat_bearing: 'Initial Azimuth',
       telemetry_stat_energy: 'Traction Energy',
       telemetry_stat_latency: 'DSN Radio Latency',
-      telemetry_stat_manned_time: 'Crew Rover Time',
+      telemetry_stat_manned_time: 'Crew & Marswalk Time',
       telemetry_hazards_title: 'Geological Trajectory Analysis:',
       telemetry_waypoints_title: 'Navigation Waypoints:',
       telemetry_no_route: 'No route calculated yet',
@@ -167,8 +167,8 @@
       landmark_alba_name: 'Гора Белая (Alba Mons)',
       landmark_alba_sub: 'Вулкан диаметром свыше 1 000 км',
       route_heading: 'Безопасный маршрут',
-      route_badge: 'Rover SafeNav',
-      route_hint: 'Автономная прокладка траектории марсохода в обход каньонов, обрывов и вулканических уступов.',
+      route_badge: 'Marswalk & Rover',
+      route_hint: 'Автономная навигация для марсоходов и пеших выходов (Marswalk EVA): обход опасных каньонов с картированием научных станций.',
       route_mode_btn: 'Выбрать точки на карте',
       route_mode_active: 'Кликните на карту для выбора точек',
       point_a_label: 'Старт',
@@ -246,7 +246,7 @@
       telemetry_stat_bearing: 'Начальный азимут',
       telemetry_stat_energy: 'Энергия тяги',
       telemetry_stat_latency: 'Задержка радиосвязи (DSN)',
-      telemetry_stat_manned_time: 'Пилотируемый марсоход',
+      telemetry_stat_manned_time: 'Экипаж / Marswalk EVA',
       telemetry_hazards_title: 'Геологический анализ траектории:',
       telemetry_waypoints_title: 'Контрольные точки (Waypoints):',
       telemetry_no_route: 'Маршрут еще не построен',
@@ -2216,6 +2216,8 @@
     // 2. Manned Crew Rover (NASA Space Exploration Vehicle nominal 25 km/sol)
     const crewSols = Math.max(1, Math.round(result.safeDistanceKm / MARS_CONSTANTS.ROVER_CREW_SPEED_KMSOL));
     const crewEarthDays = Math.round(crewSols * 1.02749);
+    // 3. Marswalk EVA sorties (NASA EVA standard: nominal 12 km per 6-hr EVA sortie on foot / suited traversal)
+    const marswalkSorties = Math.max(1, Math.ceil(result.safeDistanceKm / 12));
 
     // Initial Azimuth / Bearing
     const bearingDeg = calcInitialBearing(routeState.pointA, routeState.pointB);
@@ -2323,8 +2325,8 @@
 
     if (crewTimeEl) {
       crewTimeEl.textContent = isRu
-        ? `~${crewSols} солов (~${crewEarthDays} сут.)`
-        : `~${crewSols} sols (~${crewEarthDays} days)`;
+        ? `~${crewSols} солов (~${crewEarthDays} сут. / ${marswalkSorties} выходов EVA)`
+        : `~${crewSols} sols (~${crewEarthDays} days / ${marswalkSorties} EVA sorties)`;
     }
 
     if (statusEl) {
@@ -2373,11 +2375,11 @@
       sampleIndices.push(count - 1);
 
       const labels = [
-        { en: 'Expedition Departure (Point A)', ru: 'Старт экспедиции (Точка А)' },
-        { en: 'Tactical Maneuver Corridor', ru: 'Коридор тактического маневра' },
-        { en: 'Midpoint Navigation Checkpoint', ru: 'Контрольный ориентир середины пути' },
-        { en: 'Safe Ridge Approach', ru: 'Подходной перевал' },
-        { en: 'Destination Base (Point B)', ru: 'Пункт назначения (Точка Б)' },
+        { en: 'Expedition Departure (Base Camp / Point A)', ru: 'Старт экспедиции (Базовый лагерь / Точка А)' },
+        { en: 'Science Station Alpha: Regolith & Mineralogy Sampling', ru: 'Научная станция Альфа: отбор проб реголита и минералогии' },
+        { en: 'Science Station Beta: Geological Outcrop & Spectroscopic Survey', ru: 'Научная станция Бета: спектроскопия коренных пород' },
+        { en: 'Science Station Gamma: Subsurface Ice & Volatiles Reconnaissance', ru: 'Научная станция Гамма: зондирование подповерхностного льда' },
+        { en: 'Destination Outpost (Mission Target / Point B)', ru: 'Конечный аванпост (Цель миссии / Точка Б)' },
       ];
 
       sampleIndices.forEach((pathIdx, stepNum) => {

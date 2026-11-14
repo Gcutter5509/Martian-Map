@@ -4,8 +4,10 @@
 [![License: CC-BY-4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Planetary Data: NASA / USGS / ASU](https://img.shields.io/badge/Planetary%20Data-NASA%20%2F%20USGS%20%2F%20ASU-red.svg)](https://trek.nasa.gov/mars/)
 
-> **Challenge:** Interplanetary Survival Guide: Martian Map
-> **Project:** AresNav / Martian Map — Interactive Planetary Atlas, Autonomous SafeNav Routing & Climate Survival Terminal
+> **NASA Space Apps Challenge Case:**
+> *"NASA has explored Mars robotically for decades, studying its extreme environment, mapping its surface, and collecting many types of data. Far from home, the first astronauts to set foot on Mars will want the best map possible, with information on the details of their routes and destinations, updates on current conditions, and the data needed to complete their mission quickly and safely. Your challenge is to create a layered, integrated view of a location or route on the Martian surface that pulls together data from multiple NASA science missions and could help a human explorer plan and carry out a successful Marswalk while conducting new and exciting science along the way."*
+>
+> **Project:** AresNav / Martian Map — Interactive Planetary Atlas, Autonomous Marswalk SafeNav Routing & Climate Survival Terminal
 
 An advanced multi-layered interactive Mars atlas designed for future astronauts and mission planners. Built upon official NASA Solar System Treks WMTS (Web Map Tile Service) endpoints and validated planetary science archives, the application synthesizes visible optical mosaics, laser altimetry topography (MOLA), day/night thermal infrared data (THEMIS), in-situ meteorological station telemetry (MEDA, REMS, TWINS, MET), and autonomous geodesic pathfinding avoiding impassable Martian chasms.
 
@@ -116,13 +118,14 @@ All planetary map layers, physical constants, coordinates, and meteorological te
 ### 1. Multispectral Dual-Dropdown Swipe Comparison Tool
 A hardware-accelerated split-screen swipe tool enabling comparative exploration of any two planetary datasets simultaneously (*Viking MDIM 2.1 Optical*, *MOLA Altimetry Relief*, *THEMIS Day IR*, and *THEMIS Night IR*). Dual dropdown selectors in the top corners let astronauts configure both left and right layers on the fly to detect subsurface rock densities, thermal inertia anomalies, and terrain hazards.
 
-### 2. Autonomous Rover SafeNav (Planetary Pathfinding & Telemetry)
-An autonomous rover trajectory planner designed for realistic planetary traversing:
+### 2. Autonomous Marswalk & Rover SafeNav (Planetary Pathfinding & Telemetry)
+An autonomous planetary trajectory planner enabling human explorers to plan safe Marswalks and rover traverses:
 - **Great-Circle Geodesics:** True spherical distance calculations ($R = 3,389.50\text{ km}$) and initial azimuth heading bearing ($0^\circ - 360^\circ$ and 16-point cardinal compass).
-- **Dual Mission Classes:** Traversal durations calculated for both Autonomous Robotic Exploration Rovers (Perseverance AutoNav class nominal $0.35\text{ km/sol}$) and Pressurized Crew Rovers (NASA Space Exploration Vehicle nominal $25\text{ km/sol}$).
+- **Multi-Class Traversal & Marswalk EVA Planning:** Traversal durations calculated for Autonomous Robotic Exploration Rovers (Perseverance AutoNav class nominal $0.35\text{ km/sol}$), Pressurized Crew Rovers (NASA Space Exploration Vehicle nominal $25\text{ km/sol}$), and Suited Astronaut Marswalks (nominal $12\text{ km}$ per 6-hour EVA sortie).
+- **In-Traverse Science Conduct:** Generates tactical science stations directly on the route (Regolith & mineralogy sampling, geological outcrop spectroscopy, and subsurface volatile/ice coring) to fulfill the mission mandate of conducting new science along the way.
 - **Energy & Communications Telemetry:** Calculates total traction energy consumption in $\text{kWh}$ and $\text{MJ}$ ($E = m \cdot g_{\text{local}} \cdot C_{rr} \cdot d / \eta$) and one-way / round-trip Deep Space Network (DSN) radio latencies.
 - **Topographic Elevation Profile & Waypoints:** Evaluates elevation changes along the route via calibrated MOLA datum control points and renders tactical waypoints with leg distances, elevations, and headings.
-- **Geological Barrier Avoidance:** Prevents rovers from entering fatal Martian chasms and vertical scarps (Valles Marineris rift walls, Olympus Mons basal scarps, Tharsis Montes calderas, and polar ice sheets) with dynamic clearance-based safety scores.
+- **Geological Barrier Avoidance:** Prevents explorers and rovers from entering fatal Martian chasms and vertical scarps (Valles Marineris rift walls, Olympus Mons basal scarps, Tharsis Montes calderas, and polar ice sheets) with dynamic clearance-based safety scores.
 - **Interactive Drag & Presets:** Click anywhere on the map or launch preset traverses (Jezero → Gale, InSight → Jezero, Gale → Valles Marineris, Olympus → Hellas) with real-time waypoint dragging and full route telemetry.
 
 ### 3. Astronaut Meteorological & Climate Terminal (`Weather` Tab)
