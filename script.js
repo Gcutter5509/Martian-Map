@@ -50,6 +50,7 @@
       direct_toggle_label: 'Compare with direct line',
       btn_calc_route: 'Calculate Safe Route',
       btn_clear_route: 'Reset',
+      btn_clear_route_top: 'Delete Route',
       summary_tag: 'Trajectory calculated',
       summary_score: '99.2% safety rating',
       summary_avoided_label: 'Hazard zones bypassed:',
@@ -179,6 +180,7 @@
       direct_toggle_label: 'Сравнить с прямой линией',
       btn_calc_route: 'Рассчитать безопасный путь',
       btn_clear_route: 'Сбросить',
+      btn_clear_route_top: 'Удалить маршрут',
       summary_tag: 'Траектория рассчитана',
       summary_score: '99.2% безопасность',
       summary_avoided_label: 'Обойдено зон риска:',
@@ -407,6 +409,10 @@
       if (key !== activeKey) return;
     });
   });
+
+  // Forward declarations for route state & magnetic snapping
+  let routeState = null;
+  let lastSnapTime = 0;
 
   // Official landing sites and coordinates from NASA Trek API bookmarks
   const markerStyles = {
@@ -716,9 +722,31 @@
     info.id = id;
     const marker = L.marker(info.coords, { icon: pointIcon(info.color) })
       .bindPopup(popup(info))
-      .on('click', () => {
+      .on('click', (e) => {
+        if (routeState && routeState.modeActive) {
+          if (e && e.originalEvent) {
+            L.DomEvent.stopPropagation(e);
+          }
+          lastSnapTime = Date.now();
+          setTimeout(() => {
+            marker.closePopup();
+            map.closePopup();
+          }, 0);
+          const nameObj = {
+            en: info.crater ? `${info.name} (${info.crater.en || info.crater})` : info.name,
+            ru: info.crater ? `${info.name} (${info.crater.ru || info.crater})` : info.name,
+          };
+          handleRoutePointSelection(info.coords, nameObj);
+          showSnapFeedback(nameObj, info.coords);
+          return;
+        }
         focusMission(id);
       });
+    marker.on('popupopen', () => {
+      if (routeState && routeState.modeActive) {
+        marker.closePopup();
+      }
+    });
     missionMarkers[id] = marker;
     missionLayers[id] = L.layerGroup([marker]).addTo(map);
   });
@@ -899,9 +927,27 @@
   Object.entries(landmarkData).forEach(([id, info]) => {
     const marker = L.marker(info.coords, { icon: landmarkIcon(info) })
       .bindPopup(landmarkPopup(info))
-      .on('click', () => {
+      .on('click', (e) => {
+        if (routeState && routeState.modeActive) {
+          if (e && e.originalEvent) {
+            L.DomEvent.stopPropagation(e);
+          }
+          lastSnapTime = Date.now();
+          setTimeout(() => {
+            marker.closePopup();
+            map.closePopup();
+          }, 0);
+          handleRoutePointSelection(info.coords, info.name);
+          showSnapFeedback(info.name, info.coords);
+          return;
+        }
         focusLandmark(id);
       });
+    marker.on('popupopen', () => {
+      if (routeState && routeState.modeActive) {
+        marker.closePopup();
+      }
+    });
     landmarkMarkers[id] = marker;
     landmarkLayers[id] = L.layerGroup([marker]).addTo(map);
   });
@@ -2046,7 +2092,7 @@
   }
 
   // Route State
-  let routeState = {
+  routeState = {
     modeActive: false,
     pointA: null, // [lat, lon]
     pointB: null, // [lat, lon]
@@ -2153,7 +2199,13 @@
 
       routeState.markerA.on('dragend', (e) => {
         const newPos = e.target.getLatLng();
-        setPointA([newPos.lat, newPos.lng], { en: 'Custom Waypoint', ru: 'Выбранная точка' });
+        const snapped = findNearestMarkedPoint(newPos, 35);
+        if (snapped) {
+          setPointA(snapped.coords, snapped.name);
+          showSnapFeedback(snapped.name, snapped.coords);
+        } else {
+          setPointA([newPos.lat, newPos.lng], { en: 'Custom Waypoint', ru: 'Выбранная точка' });
+        }
         if (routeState.pointB) calculateAndDrawRoute();
       });
     } else {
@@ -2179,7 +2231,13 @@
 
       routeState.markerB.on('dragend', (e) => {
         const newPos = e.target.getLatLng();
-        setPointB([newPos.lat, newPos.lng], { en: 'Custom Waypoint', ru: 'Выбранная точка' });
+        const snapped = findNearestMarkedPoint(newPos, 35);
+        if (snapped) {
+          setPointB(snapped.coords, snapped.name);
+          showSnapFeedback(snapped.name, snapped.coords);
+        } else {
+          setPointB([newPos.lat, newPos.lng], { en: 'Custom Waypoint', ru: 'Выбранная точка' });
+        }
         if (routeState.pointA) calculateAndDrawRoute();
       });
     } else {
@@ -2470,6 +2528,7 @@
     map.fitBounds(L.latLngBounds(allPoints), { padding: [50, 50], maxZoom: 6 });
 
     renderRouteMetrics(result);
+    updateTopClearRouteButton(true);
   }
 
   // Route Mode UI Controller
@@ -2568,22 +2627,144 @@
     }
   });
 
-  map.on('click', (e) => {
-    if (!routeState.modeActive) return;
+  // Magnetic waypoint selection & snapping handlers
+  function handleRoutePointSelection(coords, name = null) {
+    if (!routeState) return;
 
-    const coords = [e.latlng.lat, e.latlng.lng];
     if (!routeState.pointA) {
-      setPointA(coords, { en: 'Custom Waypoint', ru: 'Выбранная точка' });
+      setPointA(coords, name || { en: 'Custom Waypoint', ru: 'Выбранная точка' });
       updatePromptBanner();
     } else if (!routeState.pointB) {
-      setPointB(coords, { en: 'Custom Waypoint', ru: 'Выбранная точка' });
+      // Disallow clicking the exact same point for B
+      if (Math.abs(coords[0] - routeState.pointA[0]) < 0.0001 && Math.abs(coords[1] - routeState.pointA[1]) < 0.0001) {
+        if (routePromptText) {
+          routePromptText.textContent = currentLang === 'ru'
+            ? 'Точка финиша должна отличаться от старта. Выберите другую точку'
+            : 'Target must differ from start. Choose a different point';
+        }
+        return;
+      }
+      setPointB(coords, name || { en: 'Custom Waypoint', ru: 'Выбранная точка' });
       setRouteMode(false);
       calculateAndDrawRoute();
     } else {
       // Re-place Point B
-      setPointB(coords, { en: 'Custom Waypoint', ru: 'Выбранная точка' });
+      if (Math.abs(coords[0] - routeState.pointA[0]) < 0.0001 && Math.abs(coords[1] - routeState.pointA[1]) < 0.0001) {
+        return;
+      }
+      setPointB(coords, name || { en: 'Custom Waypoint', ru: 'Выбранная точка' });
       setRouteMode(false);
       calculateAndDrawRoute();
+    }
+  }
+
+  function showSnapFeedback(name, coords) {
+    if (!map || !coords) return;
+    const snapPulse = L.circleMarker(coords, {
+      radius: 18,
+      fillColor: '#38d9a9',
+      fillOpacity: 0.5,
+      color: '#38d9a9',
+      weight: 2,
+      className: 'snap-pulse-marker',
+    }).addTo(map);
+
+    setTimeout(() => {
+      if (map && map.hasLayer(snapPulse)) {
+        map.removeLayer(snapPulse);
+      }
+    }, 750);
+
+    const displayName = t(name);
+    if (routePromptText) {
+      const isRu = currentLang === 'ru';
+      if (!routeState.pointB) {
+        routePromptText.textContent = isRu
+          ? `✓ Примагничено: ${displayName}. Выберите Точку Б`
+          : `✓ Snapped to: ${displayName}. Click to set Point B`;
+      } else {
+        routePromptText.textContent = isRu
+          ? `✓ Примагничено: ${displayName}`
+          : `✓ Snapped to: ${displayName}`;
+      }
+    }
+  }
+
+  function findNearestMarkedPoint(latlng, maxPixelDist = 35) {
+    if (!map || !latlng) return null;
+    let clickPt;
+    try {
+      clickPt = map.latLngToContainerPoint(latlng);
+    } catch {
+      return null;
+    }
+    let bestPoint = null;
+    let minDistance = Infinity;
+
+    // Check all landing sites
+    if (typeof markerStyles !== 'undefined') {
+      Object.entries(markerStyles).forEach(([id, info]) => {
+        if (!info.coords) return;
+        const targetPt = map.latLngToContainerPoint(info.coords);
+        const dist = clickPt.distanceTo(targetPt);
+        if (dist < minDistance && dist <= maxPixelDist) {
+          minDistance = dist;
+          bestPoint = {
+            id,
+            type: 'mission',
+            coords: info.coords,
+            name: {
+              en: info.crater ? `${info.name} (${info.crater.en || info.crater})` : info.name,
+              ru: info.crater ? `${info.name} (${info.crater.ru || info.crater})` : info.name,
+            },
+            dist,
+          };
+        }
+      });
+    }
+
+    // Check all landmarks
+    if (typeof landmarkData !== 'undefined') {
+      Object.entries(landmarkData).forEach(([id, info]) => {
+        if (!info.coords) return;
+        const targetPt = map.latLngToContainerPoint(info.coords);
+        const dist = clickPt.distanceTo(targetPt);
+        if (dist < minDistance && dist <= maxPixelDist) {
+          minDistance = dist;
+          bestPoint = {
+            id,
+            type: 'landmark',
+            coords: info.coords,
+            name: info.name,
+            dist,
+          };
+        }
+      });
+    }
+
+    return bestPoint;
+  }
+
+  map.on('click', (e) => {
+    if (!routeState || !routeState.modeActive) return;
+
+    // Avoid duplicate event if marker click was just handled
+    if (Date.now() - lastSnapTime < 150) return;
+
+    const snapped = findNearestMarkedPoint(e.latlng, 35);
+    if (snapped) {
+      lastSnapTime = Date.now();
+      handleRoutePointSelection(snapped.coords, snapped.name);
+      showSnapFeedback(snapped.name, snapped.coords);
+    } else {
+      handleRoutePointSelection([e.latlng.lat, e.latlng.lng], { en: 'Custom Waypoint', ru: 'Выбранная точка' });
+    }
+  });
+
+  map.on('mousemove', (e) => {
+    if (routeState && routeState.modeActive) {
+      const snapped = findNearestMarkedPoint(e.latlng, 35);
+      map.getContainer().style.cursor = snapped ? 'pointer' : 'crosshair';
     }
   });
 
@@ -2593,47 +2774,67 @@
     calcRouteBtn.addEventListener('click', calculateAndDrawRoute);
   }
 
+  function updateTopClearRouteButton(visible) {
+    const btn = document.querySelector('#btn-top-clear-route');
+    if (btn) {
+      btn.classList.toggle('hidden', !visible);
+    }
+  }
+
+  function clearRoute() {
+    if (!routeState) return;
+
+    routeState.pointA = null;
+    routeState.pointB = null;
+    routeState.pointAName = null;
+    routeState.pointBName = null;
+    routeState.currentResult = null;
+
+    if (routeState.markerA) {
+      map.removeLayer(routeState.markerA);
+      routeState.markerA = null;
+    }
+    if (routeState.markerB) {
+      map.removeLayer(routeState.markerB);
+      routeState.markerB = null;
+    }
+
+    routeState.routeLayer.clearLayers();
+    routeState.directLayer.clearLayers();
+
+    lastRouteResult = null;
+    const labelA = document.querySelector('#point-a-coords');
+    const labelB = document.querySelector('#point-b-coords');
+    if (labelA) labelA.textContent = i18n[currentLang]?.point_unset || 'Not set (click map)';
+    if (labelB) labelB.textContent = i18n[currentLang]?.point_unset || 'Not set (click map)';
+
+    const summaryCard = document.querySelector('#route-summary-card');
+    if (summaryCard) summaryCard.classList.add('hidden');
+
+    setRouteMode(false);
+    checkCalcButtonState();
+    updateTopClearRouteButton(false);
+
+    // Reset Telemetry card
+    const hazardsListEl = document.querySelector('#hazards-avoided-list');
+    if (hazardsListEl) hazardsListEl.innerHTML = `<div class="telemetry-empty">${i18n[currentLang]?.telemetry_no_route || 'Plot a route to inspect hazards'}</div>`;
+    const waypointsEl = document.querySelector('#waypoints-timeline');
+    if (waypointsEl) waypointsEl.innerHTML = '';
+    const statusEl = document.querySelector('#telemetry-status');
+    if (statusEl) statusEl.textContent = i18n[currentLang]?.telemetry_waiting || 'Awaiting route calculation...';
+  }
+
+  const topClearRouteBtn = document.querySelector('#btn-top-clear-route');
+  if (topClearRouteBtn) {
+    topClearRouteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      clearRoute();
+    });
+  }
+
   const clearRouteBtn = document.querySelector('#btn-clear-route');
   if (clearRouteBtn) {
-    clearRouteBtn.addEventListener('click', () => {
-      routeState.pointA = null;
-      routeState.pointB = null;
-      routeState.pointAName = null;
-      routeState.pointBName = null;
-      routeState.currentResult = null;
-
-      if (routeState.markerA) {
-        map.removeLayer(routeState.markerA);
-        routeState.markerA = null;
-      }
-      if (routeState.markerB) {
-        map.removeLayer(routeState.markerB);
-        routeState.markerB = null;
-      }
-
-      routeState.routeLayer.clearLayers();
-      routeState.directLayer.clearLayers();
-
-      lastRouteResult = null;
-      const labelA = document.querySelector('#point-a-coords');
-      const labelB = document.querySelector('#point-b-coords');
-      if (labelA) labelA.textContent = i18n[currentLang].point_unset;
-      if (labelB) labelB.textContent = i18n[currentLang].point_unset;
-
-      const summaryCard = document.querySelector('#route-summary-card');
-      if (summaryCard) summaryCard.classList.add('hidden');
-
-      setRouteMode(false);
-      checkCalcButtonState();
-
-      // Reset Telemetry card
-      const hazardsListEl = document.querySelector('#hazards-avoided-list');
-      if (hazardsListEl) hazardsListEl.innerHTML = `<div class="telemetry-empty">${i18n[currentLang].telemetry_no_route}</div>`;
-      const waypointsEl = document.querySelector('#waypoints-timeline');
-      if (waypointsEl) waypointsEl.innerHTML = '';
-      const statusEl = document.querySelector('#telemetry-status');
-      if (statusEl) statusEl.textContent = i18n[currentLang].telemetry_waiting;
-    });
+    clearRouteBtn.addEventListener('click', clearRoute);
   }
 
   // Swap Points
@@ -3416,6 +3617,12 @@
         el.setAttribute('placeholder', i18n[lang][key]);
       }
     });
+
+    const topClearBtn = document.querySelector('#btn-top-clear-route');
+    if (topClearBtn) {
+      topClearBtn.title = lang === 'ru' ? 'Удалить текущий маршрут' : 'Delete current route';
+      topClearBtn.setAttribute('aria-label', lang === 'ru' ? 'Удалить текущий маршрут' : 'Delete current route');
+    }
 
     // Update gravity weight input value when switching between kg and lbs
     const weightInput = document.querySelector('#earth-weight-input');

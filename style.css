@@ -1320,6 +1320,84 @@ button, input {
   color: #fff;
 }
 
+/* Top Map Clear Route Button */
+.map-clear-route-btn {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(22, 24, 27, 0.94);
+  border: 1px solid rgba(255, 107, 107, 0.6);
+  color: #ff8787;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 107, 107, 0.25);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.map-clear-route-btn:hover {
+  background: rgba(255, 107, 107, 0.18);
+  border-color: #ff6b6b;
+  color: #fff;
+  transform: translateX(-50%) scale(1.04);
+  box-shadow: 0 6px 24px rgba(255, 107, 107, 0.45);
+}
+
+.map-clear-route-btn:active {
+  transform: translateX(-50%) scale(0.97);
+}
+
+.map-clear-route-btn .clear-route-icon {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ff6b6b;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 107, 107, 0.2);
+  transition: all 0.2s ease;
+}
+
+.map-clear-route-btn:hover .clear-route-icon {
+  background: #ff6b6b;
+  color: #111315;
+}
+
+.map-clear-route-btn.hidden {
+  display: none !important;
+}
+
+/* Snap Pulse Animation for Magnetic Waypoints */
+.snap-pulse-marker {
+  pointer-events: none;
+  animation: snap-pulse-anim 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes snap-pulse-anim {
+  0% {
+    stroke-width: 3px;
+    opacity: 1;
+  }
+  100% {
+    stroke-width: 1px;
+    opacity: 0;
+  }
+}
+
 /* Info Rail Tabs */
 .rail-top {
   display: flex;
@@ -2441,5 +2519,10 @@ button, input {
     padding: 6px 12px;
     max-width: 90%;
     text-align: center;
+  }
+  .map-clear-route-btn {
+    top: 12px;
+    font-size: 11px;
+    padding: 6px 14px;
   }
 }
