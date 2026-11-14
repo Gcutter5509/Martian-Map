@@ -45,18 +45,29 @@ Right-click `index.html` inside VS Code and choose **"Open with Live Server"**.
 All planetary map layers, physical constants, coordinates, and meteorological telemetry are retrieved from or calibrated against official NASA and international planetary science repositories:
 
 ### 1. Global Basemap Tile Layers (NASA Solar System Treks WMTS)
+
+> [!NOTE]  
+> The `{z}/{y}/{x}` placeholders in the WMTS URLs represent dynamic OGC tile matrix coordinates (Zoom level, Tile row, Tile column) calculated automatically by Leaflet. Direct browser navigation to raw template URLs without numerical indices returns an HTTP 404 from the NASA server because `{z}`, `{y}`, and `{x}` must be resolved to specific tile indices. Use the **Live Sample Tile** links below to inspect individual 200 OK image tiles directly in your browser, or explore them interactively in our app and on the [NASA Mars Trek Portal](https://trek.nasa.gov/mars/).
+
 - **Visible Optical Imagery:**  
   *Viking MDIM 2.1 Color Mosaic* (`Mars_Viking_MDIM21_ClrMosaic_global_232m`): 232 m/pixel global visible color mosaic.  
-  [NASA Solar System Treks WMTS Endpoint](https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg)
+  - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`
+  - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/1/0/0.jpg)
+
 - **Topographic Laser Altimetry:**  
   *MOLA Color Hillshade* (`Mars_MGS_MOLA_ClrShade_merge_global_463m`): 463 m/pixel elevation and relief map from Mars Global Surveyor Mars Orbiter Laser Altimeter.  
-  [NASA Solar System Treks WMTS Endpoint](https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg)
+  - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`
+  - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/1/0/0.jpg)
+
 - **Thermal Infrared (Daytime Emission):**  
   *THEMIS Day IR Controlled Mosaic* (`Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly`): 100 m/pixel day thermal emission imagery from 2001 Mars Odyssey, spanning global latitudes ($90^\circ\text{S} - 90^\circ\text{N}$).  
-  [NASA Solar System Treks WMTS Endpoint](https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/default/default028mm/{z}/{y}/{x}.png)
+  - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/default/default028mm/{z}/{y}/{x}.png`
+  - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/default/default028mm/1/0/0.png)
+
 - **Thermal Infrared (Nighttime Inertia):**  
   *THEMIS Night IR Controlled Mosaic* (`THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018`): 100 m/pixel nighttime thermal inertia imagery from 2001 Mars Odyssey. Scientific latitude limit: $65.0^\circ\text{S} - 65.0^\circ\text{N}$.  
-  [NASA Solar System Treks WMTS Endpoint](https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/{z}/{y}/{x}.png)
+  - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/{z}/{y}/{x}.png`
+  - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/1/0/0.png)
 
 ### 2. In-Situ Weather Stations & Planetary Climate Archives
 - **NASA Mars 2020 Perseverance (Jezero Crater):**  
