@@ -542,69 +542,6 @@ button, input {
   margin-top: 4px;
 }
 
-.popup-metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5px;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.popup-metric-chip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 2.5px solid #d98a61;
-  border-radius: 4px;
-}
-
-.popup-metric-chip .chip-icon {
-  font-size: 11px;
-  flex-shrink: 0;
-}
-
-.popup-metric-chip .chip-body {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-  overflow: hidden;
-}
-
-.popup-metric-chip small {
-  font-size: 8.5px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.popup-metric-chip b {
-  font-size: 10px;
-  font-family: var(--font-mono);
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.chip-elev { border-left-color: #fbbf24; }
-.chip-elev b { color: #fde047; }
-
-.chip-temp { border-left-color: #38bdf8; }
-.chip-temp b { color: #7dd3fc; }
-
-.chip-press { border-left-color: #c084fc; }
-.chip-press b { color: #d8b4fe; }
-
-.chip-grav { border-left-color: #34d399; }
-.chip-grav b { color: #6ee7b7; }
-
-.chip-dim { border-left-color: #fb923c; }
-.chip-dim b { color: #fdba74; }
-
 .map-label,
 .map-coordinates,
 .map-attribution,
