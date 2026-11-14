@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#111315">
-    <meta name="description" content="Интерактивный атлас для изучения рельефа, тепловых слоёв и посадочных площадок Марса по данным NASA.">
-    <title>Martian Map — атлас поверхности Марса</title>
+    <meta name="description" content="Advanced multi-layered interactive Mars atlas for future astronauts, fusing NASA planetary data, laser altimetry, thermal mosaics, weather telemetry, and autonomous routing.">
+    <title>Martian Map — Interplanetary Atlas & Survival Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -18,75 +18,81 @@
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="./" aria-label="Martian Map — главная">
+      <a class="brand" href="./" aria-label="Martian Map — Home">
         <span class="brand__mark" aria-hidden="true">M</span>
         <span class="brand__text">
           <span class="brand__title">Martian<span class="brand__light">Map</span></span>
-          <small class="brand__subtitle">Атлас поверхности Марса</small>
+          <small class="brand__subtitle" data-i18n="brand_subtitle">Interplanetary Atlas & Survival Guide</small>
         </span>
       </a>
-      <div class="topbar__center">Данные космических миссий NASA</div>
-      <a class="source-link" href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer">NASA Mars Trek <span aria-hidden="true">↗</span></a>
+      <div class="topbar__center" data-i18n="topbar_center">NASA Planetary Missions Dataset</div>
+      <div class="topbar__actions">
+        <div class="lang-switch" role="group" aria-label="Language selection">
+          <button type="button" class="lang-btn active" id="lang-en" data-lang="en">EN</button>
+          <button type="button" class="lang-btn" id="lang-ru" data-lang="ru">RU</button>
+        </div>
+        <a class="source-link" href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer">NASA Mars Trek <span aria-hidden="true">↗</span></a>
+      </div>
     </header>
 
     <main class="workspace">
-      <aside class="sidebar" aria-label="Управление картой">
+      <aside class="sidebar" aria-label="Map Controls">
         <div class="sidebar__intro">
-          <h1>Карта Марса</h1>
-          <p class="sidebar__copy">Исследуйте рельеф, оптические и инфракрасные снимки поверхности, а также районы посадки исследовательских аппаратов.</p>
+          <h1 data-i18n="sidebar_h1">Mars Atlas</h1>
+          <p class="sidebar__copy" data-i18n="sidebar_copy">Explore Martian topography, visible optical mosaics, thermal infrared layers, landing sites, and in-situ weather telemetry.</p>
         </div>
 
         <div class="searchbox">
           <span class="searchbox__icon" aria-hidden="true">⌕</span>
-          <input id="coordinate-search" type="search" placeholder="Поиск кратера или координат" aria-label="Найти координаты или посадочную площадку">
+          <input id="coordinate-search" type="search" placeholder="Search crater, landmark or coordinates" aria-label="Search coordinates or landing site" data-i18n-placeholder="search_placeholder">
           <kbd>↵</kbd>
         </div>
 
         <section class="panel-section">
           <div class="section-heading">
-            <h2>Слои карты</h2>
+            <h2 data-i18n="layers_heading">Map Layers</h2>
           </div>
           <label class="layer-option layer-option--active">
             <input type="radio" name="basemap" value="color" checked>
             <span class="layer-swatch swatch-color"></span>
             <span class="layer-option__text">
-              <b>Оптическая мозаика</b>
-              <small>Viking, видимый спектр</small>
+              <b data-i18n="layer_color_title">Optical Mosaic</b>
+              <small data-i18n="layer_color_sub">Viking, visible spectrum</small>
             </span>
           </label>
           <label class="layer-option">
             <input type="radio" name="basemap" value="relief">
             <span class="layer-swatch swatch-relief"></span>
             <span class="layer-option__text">
-              <b>Рельеф и высоты</b>
-              <small>MOLA, высотная карта</small>
+              <b data-i18n="layer_relief_title">Relief & Altimetry</b>
+              <small data-i18n="layer_relief_sub">MOLA, laser altimetry</small>
             </span>
           </label>
           <label class="layer-option">
             <input type="radio" name="basemap" value="thermalDay">
             <span class="layer-swatch swatch-thermal"></span>
             <span class="layer-option__text">
-              <b>ИК-карта (день)</b>
-              <small>THEMIS, дневная съемка</small>
+              <b data-i18n="layer_themis_day_title">Thermal IR (Day)</b>
+              <small data-i18n="layer_themis_day_sub">THEMIS, daytime thermal</small>
             </span>
           </label>
           <label class="layer-option">
             <input type="radio" name="basemap" value="thermalNight">
             <span class="layer-swatch swatch-night"></span>
             <span class="layer-option__text">
-              <b>ИК-карта (ночь)</b>
-              <small>THEMIS, ночная съемка</small>
+              <b data-i18n="layer_themis_night_title">Thermal IR (Night)</b>
+              <small data-i18n="layer_themis_night_sub">THEMIS, nighttime thermal</small>
             </span>
           </label>
           <button type="button" class="swipe-mode-trigger" id="sidebar-swipe-btn">
             <span class="trigger-icon">◧</span>
-            <span class="trigger-label">Шторка: Оптика / Рельеф MOLA</span>
+            <span class="trigger-label" data-i18n="btn_swipe_sidebar">Swipe: Optical / MOLA Relief</span>
           </button>
         </section>
 
         <section class="panel-section missions-section">
           <div class="section-heading">
-            <h2>Посадочные площадки</h2>
+            <h2 data-i18n="missions_heading">Landing Sites</h2>
           </div>
           <label class="mission-option">
             <input type="checkbox" class="mission-filter" value="perseverance" checked>
@@ -124,79 +130,79 @@
 
         <section class="panel-section landmarks-section">
           <div class="section-heading landmarks-heading">
-            <h2>Достопримечательности</h2>
-            <button type="button" class="landmarks-toggle-all" id="landmarks-toggle-all">Скрыть все</button>
+            <h2 data-i18n="landmarks_heading">Geological Landmarks</h2>
+            <button type="button" class="landmarks-toggle-all" id="landmarks-toggle-all" data-i18n="landmarks_toggle_all">Hide all</button>
           </div>
           <label class="landmark-option">
             <input type="checkbox" class="landmark-filter" value="olympus" checked>
             <span class="landmark-dot dot-volcano">▲</span>
             <span class="landmark-option__name">
-              <b>Гора Олимп (Olympus Mons)</b>
-              <small>Высочайший вулкан (21,2 км)</small>
+              <b data-i18n="landmark_olympus_name">Olympus Mons</b>
+              <small data-i18n="landmark_olympus_sub">Tallest volcano in Solar System (21.2 km)</small>
             </span>
           </label>
           <label class="landmark-option">
             <input type="checkbox" class="landmark-filter" value="valles" checked>
             <span class="landmark-dot dot-canyon">▼</span>
             <span class="landmark-option__name">
-              <b>Долины Маринер (Valles Marineris)</b>
-              <small>Большой каньон (глубина до 10 км)</small>
+              <b data-i18n="landmark_valles_name">Valles Marineris</b>
+              <small data-i18n="landmark_valles_sub">Grand canyon network (depth up to 10 km)</small>
             </span>
           </label>
           <label class="landmark-option">
             <input type="checkbox" class="landmark-filter" value="noctis" checked>
             <span class="landmark-dot dot-canyon">❖</span>
             <span class="landmark-option__name">
-              <b>Лабиринт Ночи (Noctis Labyrinthus)</b>
-              <small>Сетка каньонов и грабенов</small>
+              <b data-i18n="landmark_noctis_name">Noctis Labyrinthus</b>
+              <small data-i18n="landmark_noctis_sub">Fractured graben and valley network</small>
             </span>
           </label>
           <label class="landmark-option">
             <input type="checkbox" class="landmark-filter" value="hellas" checked>
             <span class="landmark-dot dot-basin">◌</span>
             <span class="landmark-option__name">
-              <b>Равнина Эллада (Hellas Planitia)</b>
-              <small>Глубочайшая впадина (-7,1 км)</small>
+              <b data-i18n="landmark_hellas_name">Hellas Planitia</b>
+              <small data-i18n="landmark_hellas_sub">Deepest impact basin (-7.1 km)</small>
             </span>
           </label>
           <label class="landmark-option">
             <input type="checkbox" class="landmark-filter" value="cydonia" checked>
             <span class="landmark-dot dot-crater">◈</span>
             <span class="landmark-option__name">
-              <b>Кидония (Cydonia Mensae)</b>
-              <small>Столовые горы («Лицо на Марсе»)</small>
+              <b data-i18n="landmark_cydonia_name">Cydonia Mensae</b>
+              <small data-i18n="landmark_cydonia_sub">Mesa formations ("Face on Mars")</small>
             </span>
           </label>
           <label class="landmark-option">
             <input type="checkbox" class="landmark-filter" value="korolev" checked>
             <span class="landmark-dot dot-ice">❄</span>
             <span class="landmark-option__name">
-              <b>Кратер Королёв (Korolev Crater)</b>
-              <small>Купол водяного льда толщиной 1,8 км</small>
+              <b data-i18n="landmark_korolev_name">Korolev Crater</b>
+              <small data-i18n="landmark_korolev_sub">1.8 km thick permanent water ice dome</small>
             </span>
           </label>
           <label class="landmark-option">
             <input type="checkbox" class="landmark-filter" value="alba" checked>
             <span class="landmark-dot dot-volcano">▲</span>
             <span class="landmark-option__name">
-              <b>Гора Белая (Alba Mons)</b>
-              <small>Вулкан диаметром свыше 1 000 км</small>
+              <b data-i18n="landmark_alba_name">Alba Mons</b>
+              <small data-i18n="landmark_alba_sub">Volcano spanning over 1,000 km diameter</small>
             </span>
           </label>
         </section>
 
         <section class="panel-section route-section">
           <div class="section-heading route-heading">
-            <h2>Безопасный маршрут</h2>
-            <span class="route-badge">Rover SafeNav</span>
+            <h2 data-i18n="route_heading">SafeNav Pathfinding</h2>
+            <span class="route-badge" data-i18n="route_badge">Rover SafeNav</span>
           </div>
 
-          <p class="route-section__hint">Автономная прокладка траектории марсохода в обход каньонов, обрывов и вулканических уступов.</p>
+          <p class="route-section__hint" data-i18n="route_hint">Autonomous rover pathfinding bypassing chasms, steep cliffs, and volcanic scarps.</p>
 
           <div class="route-mode-bar">
             <button type="button" class="route-btn route-btn--primary" id="btn-toggle-route-mode">
               <span class="btn-icon">📍</span>
-              <span id="route-mode-text">Выбрать точки на карте</span>
+              <span id="route-mode-text" data-i18n="route_mode_btn">Select points on map</span>
             </button>
           </div>
 
@@ -204,24 +210,24 @@
             <div class="route-point" id="point-a-container">
               <span class="point-badge point-badge--a">A</span>
               <div class="point-details">
-                <span class="point-label">Старт</span>
-                <span class="point-coords" id="point-a-coords">Не задано (кликните на карту)</span>
+                <span class="point-label" data-i18n="point_a_label">Start (A)</span>
+                <span class="point-coords" id="point-a-coords" data-i18n="point_unset">Not set (click map)</span>
               </div>
             </div>
             <div class="route-swap-row">
-              <button type="button" class="btn-swap-points" id="btn-swap-points" title="Поменять местами точки А и Б" aria-label="Поменять местами точки А и Б">⇅</button>
+              <button type="button" class="btn-swap-points" id="btn-swap-points" title="Swap points A and B" aria-label="Swap points A and B">⇅</button>
             </div>
             <div class="route-point" id="point-b-container">
               <span class="point-badge point-badge--b">B</span>
               <div class="point-details">
-                <span class="point-label">Финиш</span>
-                <span class="point-coords" id="point-b-coords">Не задано (кликните на карту)</span>
+                <span class="point-label" data-i18n="point_b_label">Target (B)</span>
+                <span class="point-coords" id="point-b-coords" data-i18n="point_unset">Not set (click map)</span>
               </div>
             </div>
           </div>
 
           <div class="route-presets">
-            <span class="presets-label">Быстрые сценарии:</span>
+            <span class="presets-label" data-i18n="presets_label">Quick scenarios:</span>
             <div class="presets-list">
               <button type="button" class="preset-chip" data-start="perseverance" data-end="curiosity">Jezero → Gale</button>
               <button type="button" class="preset-chip" data-start="insight" data-end="perseverance">InSight → Jezero</button>
@@ -232,198 +238,293 @@
           <div class="route-options">
             <label class="route-checkbox-label">
               <input type="checkbox" id="toggle-hazards" checked>
-              <span>Показывать опасные зоны (обрывы)</span>
+              <span data-i18n="hazards_toggle_label">Show hazard zones (scarps/rifts)</span>
             </label>
             <label class="route-checkbox-label">
               <input type="checkbox" id="toggle-direct-path" checked>
-              <span>Сравнить с прямой линией</span>
+              <span data-i18n="direct_toggle_label">Compare with direct line</span>
             </label>
           </div>
 
           <div class="route-actions">
-            <button type="button" class="route-btn route-btn--accent" id="btn-calc-route" disabled>
-              Рассчитать безопасный путь
+            <button type="button" class="route-btn route-btn--accent" id="btn-calc-route" disabled data-i18n="btn_calc_route">
+              Calculate Safe Route
             </button>
-            <button type="button" class="route-btn route-btn--ghost" id="btn-clear-route">
-              Сбросить
+            <button type="button" class="route-btn route-btn--ghost" id="btn-clear-route" data-i18n="btn_clear_route">
+              Reset
             </button>
           </div>
 
           <div class="route-summary-card hidden" id="route-summary-card">
             <div class="route-summary-header">
-              <span class="summary-tag">Траектория рассчитана</span>
-              <b class="summary-score" id="summary-score">99.2% безопасность</b>
+              <span class="summary-tag" data-i18n="summary_tag">Trajectory calculated</span>
+              <b class="summary-score" id="summary-score" data-i18n="summary_score">99.2% safety rating</b>
             </div>
             <div class="summary-metrics">
               <div class="summary-metric">
-                <span>Дистанция</span>
+                <span data-i18n="telemetry_stat_dist">Distance</span>
                 <b id="summary-distance">—</b>
               </div>
               <div class="summary-metric">
-                <span>Время хода</span>
+                <span data-i18n="telemetry_stat_time">Travel Time</span>
                 <b id="summary-time">—</b>
               </div>
             </div>
             <div class="summary-avoided" id="summary-avoided">
-              <span>Обойдено зон риска:</span>
+              <span data-i18n="summary_avoided_label">Hazard zones bypassed:</span>
               <b id="summary-avoided-list">—</b>
             </div>
-            <button type="button" class="route-btn route-btn--telemetry" id="btn-show-telemetry">
-              Открыть телеметрию маршрута →
+            <button type="button" class="route-btn route-btn--telemetry" id="btn-show-telemetry" data-i18n="btn_telemetry">
+              Open route telemetry →
             </button>
           </div>
         </section>
 
         <div class="sidebar__bottom">
-          <span id="data-status">Данные NASA Mars Trek</span>
-          <a href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer" aria-label="Открыть NASA Mars Trek">↗</a>
+          <span id="data-status" data-i18n="data_status_label">NASA Mars Trek WMTS</span>
+          <a href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer" aria-label="Open NASA Mars Trek">↗</a>
         </div>
       </aside>
 
-      <section class="map-stage" aria-label="Интерактивная карта Марса">
-        <div id="map" role="application" aria-label="Карта Марса. Используйте колесо мыши для изменения масштаба и перетаскивайте карту."></div>
+      <section class="map-stage" aria-label="Interactive Mars Map">
+        <div id="map" role="application" aria-label="Mars Map. Drag to navigate and use scroll wheel to zoom."></div>
         <div class="map-label map-label--upper">
-          <span>Система координат</span>
-          <b>Ареоцентрическая (0° E)</b>
+          <span data-i18n="map_upper_label">Coordinate System</span>
+          <b data-i18n="map_upper_val">Areocentric (0° E)</b>
         </div>
-        <div class="map-controls" aria-label="Управление масштабом и слоями">
-          <button id="btn-toggle-swipe" aria-label="Шторка сравнения слоев" title="Шторка сравнения: Оптика / Рельеф MOLA">◧</button>
-          <button id="zoom-in" aria-label="Увеличить масштаб">+</button>
-          <button id="zoom-out" aria-label="Уменьшить масштаб">−</button>
-          <button id="reset-view" aria-label="Показать весь Марс" title="Сбросить вид">◎</button>
+        <div class="map-controls" aria-label="Scale and layer controls">
+          <button id="btn-toggle-fullscreen" aria-label="Fullscreen mode" title="Fullscreen mode (F or F11)">⛶</button>
+          <button id="btn-toggle-swipe" aria-label="Swipe comparison slider" title="Swipe comparison slider: Optical / MOLA Relief">◧</button>
+          <button id="zoom-in" aria-label="Zoom in">+</button>
+          <button id="zoom-out" aria-label="Zoom out">−</button>
+          <button id="reset-view" aria-label="Reset view" title="Reset view">◎</button>
         </div>
         <div class="swipe-container hidden" id="swipe-container">
           <div class="swipe-divider" id="swipe-divider">
-            <div class="swipe-handle" id="swipe-handle" role="slider" aria-label="Шторка сравнения слоев" tabindex="0">
+            <div class="swipe-handle" id="swipe-handle" role="slider" aria-label="Layer comparison slider" tabindex="0">
               <span class="swipe-arrow">◀</span>
               <span class="swipe-arrow">▶</span>
             </div>
           </div>
           <div class="swipe-badge swipe-badge--left" id="swipe-badge-left">
             <span class="swipe-badge__dot dot-color" id="swipe-dot-left"></span>
-            <label for="swipe-select-left" class="swipe-badge__label">Слева:</label>
-            <select id="swipe-select-left" class="swipe-select" aria-label="Слой слева">
-              <option value="color" selected>Оптика (Viking)</option>
-              <option value="relief">Рельеф (MOLA)</option>
-              <option value="thermalDay">ИК день (THEMIS)</option>
-              <option value="thermalNight">ИК ночь (THEMIS)</option>
+            <label for="swipe-select-left" class="swipe-badge__label" data-i18n="swipe_label_left">Left:</label>
+            <select id="swipe-select-left" class="swipe-select" aria-label="Layer on the left">
+              <option value="color" selected>Optical (Viking)</option>
+              <option value="relief">Relief (MOLA)</option>
+              <option value="thermalDay">Thermal Day (THEMIS)</option>
+              <option value="thermalNight">Thermal Night (THEMIS)</option>
             </select>
           </div>
           <div class="swipe-badge swipe-badge--right" id="swipe-badge-right">
             <span class="swipe-badge__dot dot-relief" id="swipe-dot-right"></span>
-            <label for="swipe-select-right" class="swipe-badge__label">Справа:</label>
-            <select id="swipe-select-right" class="swipe-select" aria-label="Слой справа">
-              <option value="color">Оптика (Viking)</option>
-              <option value="relief" selected>Рельеф (MOLA)</option>
-              <option value="thermalDay">ИК день (THEMIS)</option>
-              <option value="thermalNight">ИК ночь (THEMIS)</option>
+            <label for="swipe-select-right" class="swipe-badge__label" data-i18n="swipe_label_right">Right:</label>
+            <select id="swipe-select-right" class="swipe-select" aria-label="Layer on the right">
+              <option value="color">Optical (Viking)</option>
+              <option value="relief" selected>Relief (MOLA)</option>
+              <option value="thermalDay">Thermal Day (THEMIS)</option>
+              <option value="thermalNight">Thermal Night (THEMIS)</option>
             </select>
-            <button type="button" class="swipe-close-btn" id="btn-close-swipe" title="Закрыть режим двойного просмотра (шторку)" aria-label="Закрыть режим двойного просмотра">✕</button>
+            <button type="button" class="swipe-close-btn" id="btn-close-swipe" title="Close swipe comparison view" aria-label="Close swipe comparison view">✕</button>
           </div>
         </div>
         <div class="map-coordinates" id="map-coordinates">
-          <span>Центр карты</span>
+          <span data-i18n="map_center_label">Map Center</span>
           <b>18.44° N, 77.45° E</b>
         </div>
         <div class="map-route-prompt hidden" id="map-route-prompt">
           <span class="route-prompt-dot"></span>
-          <span id="route-prompt-text">Кликните на карту, чтобы установить Точку А (Старт)</span>
-          <button type="button" id="btn-cancel-route-mode" aria-label="Отменить выбор точек">✕</button>
+          <span id="route-prompt-text" data-i18n="route_prompt_text_a">Click map to set Point A (Start)</span>
+          <button type="button" id="btn-cancel-route-mode" aria-label="Cancel point selection">✕</button>
         </div>
-        <div class="map-attribution" id="map-attribution">Слой: NASA Viking (видимый диапазон)</div>
-        <div class="loading-indicator hidden" id="loading-indicator">Загрузка слоя...</div>
+        <div class="map-attribution" id="map-attribution">Layer: NASA Viking (visible spectrum)</div>
+        <div class="loading-indicator hidden" id="loading-indicator" data-i18n="loading_indicator">Loading layer...</div>
       </section>
 
-      <aside class="info-rail" aria-label="Информация об объекте">
+      <aside class="info-rail" aria-label="Object Details">
         <div class="rail-top">
-          <span id="rail-heading">Информация об объекте</span>
+          <span id="rail-heading" data-i18n="rail_heading">Object Information</span>
           <div class="rail-tabs" id="rail-tabs">
-            <button type="button" class="rail-tab-btn active" id="tab-mission">Объект</button>
-            <button type="button" class="rail-tab-btn" id="tab-route">Маршрут</button>
+            <button type="button" class="rail-tab-btn active" id="tab-mission" data-i18n="tab_mission">Object</button>
+            <button type="button" class="rail-tab-btn" id="tab-weather" data-i18n="tab_weather">Weather</button>
+            <button type="button" class="rail-tab-btn" id="tab-route" data-i18n="tab_route">Route</button>
           </div>
         </div>
         <div class="selected-card" id="mission-card">
           <div class="selected-card__image">
             <span class="image-caption">Jezero Crater (Mars 2020)</span>
           </div>
-          <p class="kicker">Район посадки</p>
-          <h2>Jezero<br>Crater</h2>
-          <p class="selected-card__desc">Древняя речная дельта на границе равнины Исиды. Место посадки марсохода Perseverance.</p>
+          <p class="kicker" id="card-kicker" data-i18n="card_kicker_landing">Landing Site</p>
+          <h2 id="card-title">Jezero<br>Crater</h2>
+          <p class="selected-card__desc" id="card-desc">Ancient river delta on the border of Isidis Planitia. Touchdown site of NASA Perseverance rover.</p>
           <div class="coordinate-grid">
             <div>
-              <span>Широта</span>
-              <b>18.4447° N</b>
+              <span data-i18n="card_lat">Latitude</span>
+              <b id="card-lat">18.4447° N</b>
             </div>
             <div>
-              <span>Долгота</span>
-              <b>77.4508° E</b>
+              <span data-i18n="card_lon">Longitude</span>
+              <b id="card-lon">77.4508° E</b>
             </div>
           </div>
           <div class="card-divider"></div>
           <div class="detail-row">
-            <span>Высота</span>
-            <b>-2 575 м (ниже нулевого уровня)</b>
+            <span data-i18n="card_elev">Elevation</span>
+            <b id="card-elevation">-2,575 m (below datum)</b>
           </div>
           <div class="detail-row">
-            <span>Рельеф</span>
-            <b>MOLA, 463 м/пикс</b>
+            <span data-i18n="card_relief">Relief</span>
+            <b id="card-relief">MOLA, 463 m/px</b>
           </div>
           <div class="detail-row">
-            <span>ИК-съемка</span>
-            <b>THEMIS, 100 м/пикс</b>
+            <span data-i18n="card_thermal">Infrared</span>
+            <b id="card-thermal">THEMIS, 100 m/px</b>
           </div>
+          <button type="button" class="btn-goto-weather" id="btn-goto-weather">
+            <span data-i18n="btn_goto_weather_text">Local Weather Report</span>
+            <b data-i18n="btn_goto_weather_sub">Climate & Physics →</b>
+          </button>
           <a class="external-card-link" href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer">
-            Открыть в NASA Mars Trek <span>↗</span>
+            <span data-i18n="card_open_trek">Open in NASA Mars Trek</span> <span>↗</span>
           </a>
+        </div>
+
+        <!-- Weather & Climate View -->
+        <div class="weather-view hidden" id="weather-view">
+          <div class="weather-badge-row">
+            <span class="weather-badge" id="weather-station-badge">NASA MEDA • Mars 2020</span>
+            <span class="weather-sol" id="weather-sol-tag">Sol 1320</span>
+          </div>
+          <h2 class="weather-title" id="weather-location-name">Jezero Crater</h2>
+          <p class="weather-subtitle" id="weather-coords-sub">18.44° N, 77.45° E • Elevation -2,575 m</p>
+
+          <div class="weather-grid">
+            <div class="weather-stat">
+              <span class="weather-stat__label" data-i18n="weather_stat_temp">Air Temperature</span>
+              <b class="weather-stat__val weather-stat__val--temp" id="weather-temp">-58°C</b>
+              <small class="weather-stat__sub" id="weather-temp-range">Day -15°C • Night -82°C</small>
+            </div>
+            <div class="weather-stat">
+              <span class="weather-stat__label" data-i18n="weather_stat_press">Atmospheric Pressure</span>
+              <b class="weather-stat__val" id="weather-pressure">7.5 hPa</b>
+              <small class="weather-stat__sub" id="weather-pressure-sub">0.0074 atm (750 Pa)</small>
+            </div>
+            <div class="weather-stat">
+              <span class="weather-stat__label" data-i18n="weather_stat_wind">Wind Regime</span>
+              <b class="weather-stat__val" id="weather-wind">4.8 m/s</b>
+              <small class="weather-stat__sub" id="weather-wind-sub">Gusts up to 19 m/s • WNW</small>
+            </div>
+            <div class="weather-stat">
+              <span class="weather-stat__label" data-i18n="weather_stat_dust">Dust & UV Radiation</span>
+              <b class="weather-stat__val" id="weather-tau">τ = 0.42</b>
+              <small class="weather-stat__sub" id="weather-uv-sub">Moderate • UV Index 9</small>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="weather-section-title" data-i18n="weather_atmos_title">Martian Atmospheric Composition:</div>
+          <div class="atmos-bars">
+            <div class="atmos-bar-row">
+              <span class="atmos-gas" data-i18n="gas_co2">Carbon Dioxide (CO₂)</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-co2" style="width: 95.3%"></div></div>
+              <span class="atmos-pct">95.3%</span>
+            </div>
+            <div class="atmos-bar-row">
+              <span class="atmos-gas" data-i18n="gas_n2">Nitrogen (N₂)</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-n2" style="width: 14%"></div></div>
+              <span class="atmos-pct">2.6%</span>
+            </div>
+            <div class="atmos-bar-row">
+              <span class="atmos-gas" data-i18n="gas_ar">Argon (Ar)</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-ar" style="width: 10%"></div></div>
+              <span class="atmos-pct">1.9%</span>
+            </div>
+            <div class="atmos-bar-row">
+              <span class="atmos-gas" data-i18n="gas_o2">Oxygen (O₂)</span>
+              <div class="atmos-progress"><div class="atmos-fill atmos-o2" style="width: 4%"></div></div>
+              <span class="atmos-pct">0.16%</span>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="weather-section-title" data-i18n="weather_micro_title">Local Microclimate Features:</div>
+          <div class="microclimate-box" id="weather-microclimate">
+            Diurnal convective dust devils up to 1 km high. The MEDA instrument suite detects microbaric waves and seasonal pressure oscillations as CO₂ freezes out at polar caps.
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="weather-section-title" data-i18n="weather_gravity_title">Martian Gravity Calculator (0.38 g):</div>
+          <div class="gravity-calc-card">
+            <div class="gravity-input-row">
+              <label for="earth-weight-input" data-i18n="weather_earth_weight">Your weight on Earth:</label>
+              <div class="gravity-input-wrap">
+                <input type="number" id="earth-weight-input" value="70" min="5" max="300" step="1">
+                <span>kg</span>
+              </div>
+            </div>
+            <div class="gravity-result-row">
+              <div class="gravity-stat">
+                <span data-i18n="weather_mars_weight">Weight at location:</span>
+                <b id="mars-weight-val">26.6 kg</b>
+              </div>
+              <div class="gravity-stat">
+                <span data-i18n="weather_jump_height">Jump height:</span>
+                <b id="mars-jump-val">2.64× higher</b>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="route-telemetry-view hidden" id="route-telemetry-view">
           <div class="telemetry-badge-row">
             <span class="telemetry-badge">SafeNav Telemetry</span>
-            <span class="telemetry-status" id="telemetry-status">Ожидание точек</span>
+            <span class="telemetry-status" id="telemetry-status" data-i18n="telemetry_waiting">Awaiting points</span>
           </div>
-          <h2 class="telemetry-title" id="telemetry-title">Маршрут марсохода</h2>
-          <p class="telemetry-subtitle" id="telemetry-subtitle">Выберите точки на карте или активируйте готовый сценарий для расчета безопасной траектории.</p>
+          <h2 class="telemetry-title" id="telemetry-title" data-i18n="telemetry_title">Rover Trajectory</h2>
+          <p class="telemetry-subtitle" id="telemetry-subtitle" data-i18n="telemetry_subtitle">Select waypoints on map or activate a scenario to calculate safe geodesic path.</p>
 
           <div class="telemetry-grid">
             <div class="telemetry-stat">
-              <span>Дистанция (Марс)</span>
+              <span data-i18n="telemetry_stat_dist">Distance (Mars)</span>
               <b id="telemetry-distance">—</b>
             </div>
             <div class="telemetry-stat">
-              <span>Время перехода</span>
+              <span data-i18n="telemetry_stat_time">Travel Time</span>
               <b id="telemetry-duration">—</b>
             </div>
             <div class="telemetry-stat">
-              <span>Прямой путь</span>
+              <span data-i18n="telemetry_stat_direct">Direct Path</span>
               <b id="telemetry-direct">—</b>
             </div>
             <div class="telemetry-stat">
-              <span>Безопасность</span>
+              <span data-i18n="telemetry_stat_safety">Safety Index</span>
               <b id="telemetry-risk">—</b>
             </div>
           </div>
 
           <div class="card-divider"></div>
 
-          <div class="telemetry-section-title">Геологический анализ траектории:</div>
+          <div class="telemetry-section-title" data-i18n="telemetry_hazards_title">Geological Trajectory Analysis:</div>
           <div class="hazards-avoided-list" id="hazards-avoided-list">
-            <div class="telemetry-empty">Маршрут еще не построен</div>
+            <div class="telemetry-empty" data-i18n="telemetry_no_route">No route calculated yet</div>
           </div>
 
           <div class="card-divider"></div>
 
-          <div class="telemetry-section-title">Контрольные точки (Waypoints):</div>
+          <div class="telemetry-section-title" data-i18n="telemetry_waypoints_title">Navigation Waypoints:</div>
           <div class="waypoints-timeline" id="waypoints-timeline">
             <!-- Dynamically populated waypoints -->
           </div>
         </div>
         <div class="rail-note">
-          <p><b>Навигация по карте</b><br>Переключайте слои и выбирайте посадочные площадки для детального просмотра параметров рельефа.</p>
+          <p><b data-i18n="rail_note_title">Map Navigation</b><br><span data-i18n="rail_note_text">Switch layers, inspect landing sites, or drag swipe handle for multispectral comparative analysis.</span></p>
         </div>
         <div class="scale-readout">
-          <span>Масштаб</span>
-          <b id="zoom-readout">Общий вид</b>
+          <span data-i18n="zoom_label">Scale</span>
+          <b id="zoom-readout">Global View</b>
         </div>
       </aside>
     </main>

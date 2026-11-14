@@ -1,4 +1,245 @@
 (() => {
+  // =========================================================================
+  // Internationalization (i18n) Engine - NASA Space Apps Compliant (EN / RU)
+  // =========================================================================
+  const i18n = {
+    en: {
+      brand_subtitle: 'Interplanetary Atlas & Survival Guide',
+      topbar_center: 'NASA Planetary Missions Dataset',
+      sidebar_h1: 'Mars Atlas',
+      sidebar_copy: 'Explore Martian topography, visible optical mosaics, thermal infrared layers, landing sites, and in-situ weather telemetry.',
+      search_placeholder: 'Search crater, landmark or coordinates',
+      layers_heading: 'Map Layers',
+      layer_color_title: 'Optical Mosaic',
+      layer_color_sub: 'Viking, visible spectrum',
+      layer_relief_title: 'Relief & Altimetry',
+      layer_relief_sub: 'MOLA, laser altimetry',
+      layer_themis_day_title: 'Thermal IR (Day)',
+      layer_themis_day_sub: 'THEMIS, daytime thermal',
+      layer_themis_night_title: 'Thermal IR (Night)',
+      layer_themis_night_sub: 'THEMIS, nighttime thermal',
+      btn_swipe_sidebar: 'Swipe: Optical / MOLA Relief',
+      missions_heading: 'Landing Sites',
+      landmarks_heading: 'Geological Landmarks',
+      landmarks_toggle_all: 'Hide all',
+      landmarks_toggle_show: 'Show all',
+      landmark_olympus_name: 'Olympus Mons',
+      landmark_olympus_sub: 'Tallest volcano in Solar System (21.2 km)',
+      landmark_valles_name: 'Valles Marineris',
+      landmark_valles_sub: 'Grand canyon network (depth up to 10 km)',
+      landmark_noctis_name: 'Noctis Labyrinthus',
+      landmark_noctis_sub: 'Fractured graben and valley network',
+      landmark_hellas_name: 'Hellas Planitia',
+      landmark_hellas_sub: 'Deepest impact basin (-7.1 km)',
+      landmark_cydonia_name: 'Cydonia Mensae',
+      landmark_cydonia_sub: 'Mesa formations ("Face on Mars")',
+      landmark_korolev_name: 'Korolev Crater',
+      landmark_korolev_sub: '1.8 km thick permanent water ice dome',
+      landmark_alba_name: 'Alba Mons',
+      landmark_alba_sub: 'Volcano spanning over 1,000 km diameter',
+      route_heading: 'SafeNav Pathfinding',
+      route_badge: 'Rover SafeNav',
+      route_hint: 'Autonomous rover pathfinding bypassing chasms, steep cliffs, and volcanic scarps.',
+      route_mode_btn: 'Select points on map',
+      route_mode_active: 'Click map to place points',
+      point_a_label: 'Start (A)',
+      point_b_label: 'Target (B)',
+      point_unset: 'Not set (click map)',
+      presets_label: 'Quick scenarios:',
+      hazards_toggle_label: 'Show hazard zones (scarps/rifts)',
+      direct_toggle_label: 'Compare with direct line',
+      btn_calc_route: 'Calculate Safe Route',
+      btn_clear_route: 'Reset',
+      summary_tag: 'Trajectory calculated',
+      summary_score: '99.2% safety rating',
+      summary_avoided_label: 'Hazard zones bypassed:',
+      btn_telemetry: 'Open route telemetry →',
+      data_status_label: 'NASA Mars Trek WMTS',
+      map_upper_label: 'Coordinate System',
+      map_upper_val: 'Areocentric (0° E)',
+      map_center_label: 'Map Center',
+      swipe_label_left: 'Left:',
+      swipe_label_right: 'Right:',
+      route_prompt_text_a: 'Click map to set Point A (Start)',
+      route_prompt_text_b: 'Click map to set Point B (Target)',
+      loading_indicator: 'Loading layer...',
+      rail_heading_mission: 'Object Information',
+      rail_heading_weather: 'Weather & Climate',
+      rail_heading_route: 'SafeNav Telemetry',
+      tab_mission: 'Object',
+      tab_weather: 'Weather',
+      tab_route: 'Route',
+      card_kicker_landing: 'Landing Site',
+      card_kicker_landmark: 'Geological Landmark',
+      card_lat: 'Latitude',
+      card_lon: 'Longitude',
+      card_elev: 'Elevation',
+      card_relief: 'Relief',
+      card_thermal: 'Infrared',
+      btn_goto_weather_text: 'Local Weather Report',
+      btn_goto_weather_sub: 'Climate & Physics →',
+      card_open_trek: 'Open in NASA Mars Trek',
+      weather_stat_temp: 'Air Temperature',
+      weather_stat_press: 'Atmospheric Pressure',
+      weather_stat_wind: 'Wind Regime',
+      weather_stat_dust: 'Dust & UV Radiation',
+      weather_atmos_title: 'Martian Atmospheric Composition:',
+      weather_micro_title: 'Local Microclimate Features:',
+      weather_gravity_title: 'Martian Gravity Calculator (0.38 g):',
+      weather_earth_weight: 'Your weight on Earth:',
+      weather_mars_weight: 'Weight at location:',
+      weather_jump_height: 'Jump height:',
+      weather_weight_unit: 'kg',
+      weather_jump_mult: '2.64× higher',
+      gas_co2: 'Carbon Dioxide (CO₂)',
+      gas_n2: 'Nitrogen (N₂)',
+      gas_ar: 'Argon (Ar)',
+      gas_o2: 'Oxygen (O₂)',
+      telemetry_waiting: 'Awaiting points',
+      telemetry_calculated: 'Route Computed',
+      telemetry_title: 'Rover Trajectory',
+      telemetry_subtitle: 'Select waypoints on map or activate a scenario to calculate safe geodesic path.',
+      telemetry_stat_dist: 'Distance (Mars)',
+      telemetry_stat_time: 'Travel Time',
+      telemetry_stat_direct: 'Direct Path',
+      telemetry_stat_safety: 'Safety Index',
+      telemetry_hazards_title: 'Geological Trajectory Analysis:',
+      telemetry_waypoints_title: 'Navigation Waypoints:',
+      telemetry_no_route: 'No route calculated yet',
+      rail_note_title: 'Map Navigation',
+      rail_note_text: 'Switch layers, inspect landing sites, or drag swipe handle for multispectral comparative analysis.',
+      zoom_label: 'Scale',
+      zoom_global: 'Global View',
+      zoom_regional: 'Regional View',
+      zoom_local: 'Local View (Detail)',
+      layer_opt_viking: 'Optical (Viking)',
+      layer_opt_mola: 'Relief (MOLA)',
+      layer_opt_themis_day: 'Thermal Day (THEMIS)',
+      layer_opt_themis_night: 'Thermal Night (THEMIS)',
+    },
+    ru: {
+      brand_subtitle: 'Атлас поверхности Марса',
+      topbar_center: 'Данные космических миссий NASA',
+      sidebar_h1: 'Карта Марса',
+      sidebar_copy: 'Исследуйте рельеф, оптические и инфракрасные снимки поверхности, а также районы посадки исследовательских аппаратов.',
+      search_placeholder: 'Поиск кратера или координат',
+      layers_heading: 'Слои карты',
+      layer_color_title: 'Оптическая мозаика',
+      layer_color_sub: 'Viking, видимый спектр',
+      layer_relief_title: 'Рельеф и высоты',
+      layer_relief_sub: 'MOLA, высотная карта',
+      layer_themis_day_title: 'ИК-карта (день)',
+      layer_themis_day_sub: 'THEMIS, дневная съемка',
+      layer_themis_night_title: 'ИК-карта (ночь)',
+      layer_themis_night_sub: 'THEMIS, ночная съемка',
+      btn_swipe_sidebar: 'Шторка: Оптика / Рельеф MOLA',
+      missions_heading: 'Посадочные площадки',
+      landmarks_heading: 'Достопримечательности',
+      landmarks_toggle_all: 'Скрыть все',
+      landmarks_toggle_show: 'Показать все',
+      landmark_olympus_name: 'Гора Олимп (Olympus Mons)',
+      landmark_olympus_sub: 'Высочайший вулкан (21,2 км)',
+      landmark_valles_name: 'Долины Маринер (Valles Marineris)',
+      landmark_valles_sub: 'Большой каньон (глубина до 10 км)',
+      landmark_noctis_name: 'Лабиринт Ночи (Noctis Labyrinthus)',
+      landmark_noctis_sub: 'Сетка каньонов и грабенов',
+      landmark_hellas_name: 'Равнина Эллада (Hellas Planitia)',
+      landmark_hellas_sub: 'Глубочайшая впадина (-7,1 км)',
+      landmark_cydonia_name: 'Кидония (Cydonia Mensae)',
+      landmark_cydonia_sub: 'Столовые горы («Лицо на Марсе»)',
+      landmark_korolev_name: 'Кратер Королёв (Korolev Crater)',
+      landmark_korolev_sub: 'Купол водяного льда толщиной 1,8 км',
+      landmark_alba_name: 'Гора Белая (Alba Mons)',
+      landmark_alba_sub: 'Вулкан диаметром свыше 1 000 км',
+      route_heading: 'Безопасный маршрут',
+      route_badge: 'Rover SafeNav',
+      route_hint: 'Автономная прокладка траектории марсохода в обход каньонов, обрывов и вулканических уступов.',
+      route_mode_btn: 'Выбрать точки на карте',
+      route_mode_active: 'Кликните на карту для выбора точек',
+      point_a_label: 'Старт',
+      point_b_label: 'Финиш',
+      point_unset: 'Не задано (кликните на карту)',
+      presets_label: 'Быстрые сценарии:',
+      hazards_toggle_label: 'Показывать опасные зоны (обрывы)',
+      direct_toggle_label: 'Сравнить с прямой линией',
+      btn_calc_route: 'Рассчитать безопасный путь',
+      btn_clear_route: 'Сбросить',
+      summary_tag: 'Траектория рассчитана',
+      summary_score: '99.2% безопасность',
+      summary_avoided_label: 'Обойдено зон риска:',
+      btn_telemetry: 'Открыть телеметрию маршрута →',
+      data_status_label: 'Данные NASA Mars Trek',
+      map_upper_label: 'Система координат',
+      map_upper_val: 'Ареоцентрическая (0° E)',
+      map_center_label: 'Центр карты',
+      swipe_label_left: 'Слева:',
+      swipe_label_right: 'Справа:',
+      route_prompt_text_a: 'Кликните на карту, чтобы установить Точку А (Старт)',
+      route_prompt_text_b: 'Кликните на карту, чтобы установить Точку Б (Финиш)',
+      loading_indicator: 'Загрузка слоя...',
+      rail_heading_mission: 'Информация об объекте',
+      rail_heading_weather: 'Метеосводка и климат',
+      rail_heading_route: 'Телеметрия SafeNav',
+      tab_mission: 'Объект',
+      tab_weather: 'Метео',
+      tab_route: 'Маршрут',
+      card_kicker_landing: 'Район посадки',
+      card_kicker_landmark: 'Геологический объект',
+      card_lat: 'Широта',
+      card_lon: 'Долгота',
+      card_elev: 'Высота',
+      card_relief: 'Рельеф',
+      card_thermal: 'ИК-съемка',
+      btn_goto_weather_text: 'Метеосводка района',
+      btn_goto_weather_sub: 'Климат и физика →',
+      card_open_trek: 'Открыть в NASA Mars Trek',
+      weather_stat_temp: 'Температура воздуха',
+      weather_stat_press: 'Атмосферное давление',
+      weather_stat_wind: 'Ветровой режим',
+      weather_stat_dust: 'Запыленность & UV',
+      weather_atmos_title: 'Состав марсианской атмосферы:',
+      weather_micro_title: 'Микроклиматические особенности точки:',
+      weather_gravity_title: 'Гравитационный калькулятор (0.38 g):',
+      weather_earth_weight: 'Ваш вес на Земле:',
+      weather_mars_weight: 'Вес на точке:',
+      weather_jump_height: 'Высота прыжка:',
+      weather_weight_unit: 'кг',
+      weather_jump_mult: 'в 2.64× выше',
+      gas_co2: 'Углекислый газ (CO₂)',
+      gas_n2: 'Азот (N₂)',
+      gas_ar: 'Аргон (Ar)',
+      gas_o2: 'Кислород (O₂)',
+      telemetry_waiting: 'Ожидание точек',
+      telemetry_calculated: 'Маршрут построен',
+      telemetry_title: 'Маршрут марсохода',
+      telemetry_subtitle: 'Выберите точки на карте или активируйте готовый сценарий для расчета безопасной траектории.',
+      telemetry_stat_dist: 'Дистанция (Марс)',
+      telemetry_stat_time: 'Время перехода',
+      telemetry_stat_direct: 'Прямой путь',
+      telemetry_stat_safety: 'Безопасность',
+      telemetry_hazards_title: 'Геологический анализ траектории:',
+      telemetry_waypoints_title: 'Контрольные точки (Waypoints):',
+      telemetry_no_route: 'Маршрут еще не построен',
+      rail_note_title: 'Навигация по карте',
+      rail_note_text: 'Переключайте слои и выбирайте посадочные площадки для детального просмотра параметров рельефа.',
+      zoom_label: 'Масштаб',
+      zoom_global: 'Общий вид',
+      zoom_regional: 'Региональный вид',
+      zoom_local: 'Детальный масштаб',
+      layer_opt_viking: 'Оптика (Viking)',
+      layer_opt_mola: 'Рельеф (MOLA)',
+      layer_opt_themis_day: 'ИК день (THEMIS)',
+      layer_opt_themis_night: 'ИК ночь (THEMIS)',
+    }
+  };
+
+  let currentLang = localStorage.getItem('martian_lang') || 'en';
+
+  function t(val) {
+    if (!val) return '';
+    if (typeof val === 'object') return val[currentLang] || val.en || '';
+    return val;
+  }
   const status = document.querySelector('#data-status');
   const loader = document.querySelector('#loading-indicator');
 
@@ -47,41 +288,41 @@
   const layerConfigs = {
     color: {
       layer: nasaTiles('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', { bounds: globalBounds }),
-      name: 'Viking (видимый диапазон)',
+      name: { en: 'Viking (Visible Spectrum)', ru: 'Viking (видимый диапазон)' },
       bounds: globalBounds,
       minLat: -90,
       maxLat: 90,
-      irContext: 'Viking MDIM 2.1 (232 м/пикс)',
+      irContext: { en: 'Viking MDIM 2.1 (232 m/px)', ru: 'Viking MDIM 2.1 (232 м/пикс)' },
     },
     relief: {
       layer: nasaTiles('Mars_MGS_MOLA_ClrShade_merge_global_463m', 'jpg', { bounds: globalBounds }),
-      name: 'MOLA (рельеф и высоты)',
+      name: { en: 'MOLA (Relief & Altimetry)', ru: 'MOLA (рельеф и высоты)' },
       bounds: globalBounds,
       minLat: -90,
       maxLat: 90,
-      irContext: 'MOLA лазерная альтиметрия (463 м/пикс)',
+      irContext: { en: 'MOLA laser altimetry (463 m/px)', ru: 'MOLA лазерная альтиметрия (463 м/пикс)' },
     },
     thermalDay: {
       layer: nasaTiles('Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly', 'png', {
         className: 'themis-layer',
         bounds: globalBounds,
       }),
-      name: 'THEMIS (дневная ИК-съемка)',
+      name: { en: 'THEMIS (Thermal IR Day)', ru: 'THEMIS (дневная ИК-съемка)' },
       bounds: globalBounds,
       minLat: -90,
       maxLat: 90,
-      irContext: 'THEMIS Day IR (100 м/пикс, 90° S — 90° N)',
+      irContext: { en: 'THEMIS Day IR (100 m/px, 90° S — 90° N)', ru: 'THEMIS Day IR (100 м/пикс, 90° S — 90° N)' },
     },
     thermalNight: {
       layer: nasaTiles('THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018', 'png', {
         className: 'themis-layer',
         bounds: nightBounds,
       }),
-      name: 'THEMIS (ночная ИК-съемка)',
+      name: { en: 'THEMIS (Thermal IR Night)', ru: 'THEMIS (ночная ИК-съемка)' },
       bounds: nightBounds,
       minLat: -65.0006576,
       maxLat: 65.0007535,
-      irContext: 'THEMIS Night IR (100 м/пикс, покрытие NASA: 65° S — 65° N)',
+      irContext: { en: 'THEMIS Night IR (100 m/px, NASA coverage: 65° S — 65° N)', ru: 'THEMIS Night IR (100 м/пикс, покрытие NASA: 65° S — 65° N)' },
     },
   };
 
@@ -115,16 +356,20 @@
   Object.entries(basemaps).forEach(([key, layer]) => {
     layer.on('loading', () => {
       if (key === activeKey) {
-        loader.textContent = `Загрузка: ${layerConfigs[key].name}...`;
+        loader.textContent = `${currentLang === 'ru' ? 'Загрузка:' : 'Loading:'} ${t(layerConfigs[key].name)}...`;
         loader.classList.remove('hidden');
-        status.textContent = `Загрузка: ${layerConfigs[key].name}`;
+        status.textContent = `${currentLang === 'ru' ? 'Загрузка:' : 'Loading:'} ${t(layerConfigs[key].name)}`;
       }
     });
 
     layer.on('load', () => {
       if (key !== activeKey) return;
       loader.classList.add('hidden');
-      status.textContent = `Слой: ${layerConfigs[key].name}`;
+      status.textContent = `${currentLang === 'ru' ? 'Слой:' : 'Layer:'} ${t(layerConfigs[key].name)}`;
+      const mapAttribution = document.querySelector('#map-attribution');
+      if (mapAttribution) {
+        mapAttribution.textContent = `${currentLang === 'ru' ? 'Слой:' : 'Layer:'} NASA ${t(layerConfigs[key].name)}`;
+      }
     });
 
     layer.on('tileerror', () => {
@@ -137,38 +382,50 @@
     perseverance: {
       color: '#dd9168',
       name: 'Perseverance',
-      crater: 'Jezero Crater',
+      crater: { en: 'Jezero Crater', ru: 'Jezero Crater' },
       coords: jezero,
       sol: 'Mars 2020',
-      elevation: '-2 575 м (ниже нулевого уровня)',
-      desc: 'Древняя речная дельта на границе равнины Исиды. Место посадки марсохода Perseverance.',
+      elevation: { en: '-2,575 m (below datum)', ru: '-2 575 м (ниже нулевого уровня)' },
+      desc: {
+        en: 'Ancient river delta on the border of Isidis Planitia. Touchdown site of NASA Perseverance rover exploring paleolake astrobiology.',
+        ru: 'Древняя речная дельта на границе равнины Исиды. Место посадки марсохода Perseverance.'
+      },
     },
     curiosity: {
       color: '#d6c083',
       name: 'Curiosity',
-      crater: 'Gale Crater',
+      crater: { en: 'Gale Crater', ru: 'Gale Crater' },
       coords: [-4.5895, 137.4417],
       sol: 'MSL',
-      elevation: '-4 450 м (дно кратера)',
-      desc: 'Импактный кратер диаметром 154 км с центральной горой Эолида (горой Шарпа). Место посадки марсохода Curiosity.',
+      elevation: { en: '-4,450 m (crater floor)', ru: '-4 450 м (дно кратера)' },
+      desc: {
+        en: '154 km diameter impact crater hosting central mound Aeolis Mons (Mount Sharp). Landing site of Curiosity rover.',
+        ru: 'Импактный кратер диаметром 154 км с центральной горой Эолида (горой Шарпа). Место посадки марсохода Curiosity.'
+      },
     },
     insight: {
       color: '#87a9b2',
       name: 'InSight',
-      crater: 'Elysium Planitia',
+      crater: { en: 'Elysium Planitia', ru: 'Elysium Planitia' },
       coords: [4.5024, 135.6234],
       sol: 'InSight',
-      elevation: '-2 600 м (ниже нулевого уровня)',
-      desc: 'Гладкая вулканическая равнина вблизи марсианского экватора. Место работы геофизического зонда InSight.',
+      elevation: { en: '-2,600 m (below datum)', ru: '-2 600 м (ниже нулевого уровня)' },
+      desc: {
+        en: 'Smooth volcanic plains near the Martian equator. Operational site of the InSight geophysical lander and SEIS seismometer.',
+        ru: 'Гладкая вулканическая равнина вблизи марсианского экватора. Место работы геофизического зонда InSight.'
+      },
     },
     phoenix: {
       color: '#bd8da1',
       name: 'Phoenix',
-      crater: 'Vastitas Borealis',
+      crater: { en: 'Vastitas Borealis', ru: 'Vastitas Borealis' },
       coords: [68.2188, -125.7518],
       sol: 'Phoenix',
-      elevation: '-4 100 м (северная равнина)',
-      desc: 'Приполярная равнина Северного полушария. Место посадки спускаемого аппарата Phoenix для изучения подповерхностного льда.',
+      elevation: { en: '-4,100 m (northern lowlands)', ru: '-4 100 м (северная равнина)' },
+      desc: {
+        en: 'Circumpolar plains of Mars northern lowlands. Touchdown site of NASA Phoenix lander verifying subsurface water ice.',
+        ru: 'Приполярная равнина Северного полушария. Место посадки спускаемого аппарата Phoenix для изучения подповерхностного льда.'
+      },
     },
   };
 
@@ -180,8 +437,8 @@
     return L.divIcon({
       className: 'mission-marker',
       html: `<span style="--marker:${color};" class="mission-marker__dot${extraClass}" title="${isOutOfCoverage ? 'Вне зоны покрытия текущей карты' : ''}"></span>`,
-      iconSize: [20, 20],
-      iconAnchor: [10, 10],
+      iconSize: [38, 38],
+      iconAnchor: [19, 19],
     });
   }
 
@@ -200,14 +457,14 @@
     const [lat, lon] = info.coords;
     const inCoverage = isMissionInCoverage(info, activeKey);
     const coverageWarning = !inCoverage
-      ? `<div class="popup-warning">Внимание: район 68.2° N находится севернее границы ночной съемки NASA THEMIS (граница: 65° N).</div>`
+      ? `<div class="popup-warning">${currentLang === 'ru' ? 'Внимание: район 68.2° N находится севернее границы ночной съемки NASA THEMIS (граница: 65° N).' : 'Warning: 68.2° N is north of NASA THEMIS Night coverage boundary (limit: 65° N).'}</div>`
       : '';
 
     return `
       <div class="popup-box">
-        <span class="popup-label" style="color:${info.color}">Посадочная площадка</span>
-        <b class="popup-title">${info.crater}</b>
-        <span class="popup-mission">${info.name} (${info.sol})</span>
+        <span class="popup-label" style="color:${info.color}">${currentLang === 'ru' ? 'Посадочная площадка' : 'Landing Site'}</span>
+        <b class="popup-title">${t(info.crater)}</b>
+        <span class="popup-mission">${t(info.name)} (${info.sol})</span>
         <span class="popup-coords">${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}, ${formatLongitude(lon)}</span>
         ${coverageWarning}
       </div>
@@ -221,7 +478,11 @@
     }
   }
 
+  let lastFocusedObject = null;
+
   function updateInfoCard(info) {
+    if (!info) return;
+    lastFocusedObject = info;
     const titleEl = document.querySelector('.selected-card h2');
     const kickerEl = document.querySelector('.selected-card .kicker');
     const descEl = document.querySelector('.selected-card__desc');
@@ -232,17 +493,23 @@
     const irEl = document.querySelector('.detail-row:nth-of-type(3) b');
 
     if (kickerEl) {
-      kickerEl.textContent = info.category ? `Геологический объект • ${info.category}` : 'Район посадки';
+      kickerEl.textContent = info.category
+        ? (currentLang === 'ru' ? `Геологический объект • ${t(info.category)}` : `Geological Landmark • ${t(info.category)}`)
+        : (currentLang === 'ru' ? 'Район посадки' : 'Landing Site');
     }
 
-    const titleText = info.shortName || info.crater || info.name;
+    const titleText = info.shortName || t(info.crater) || t(info.name);
     if (titleEl) titleEl.innerHTML = titleText.replace(' ', '<br>');
 
     const inCoverage = isMissionInCoverage(info, activeKey);
 
     if (descEl) {
       if (!inCoverage && activeKey === 'thermalNight') {
-        descEl.innerHTML = `${info.desc}<br><br><span class="coverage-alert">По официальным данным NASA Mars Trek, ночная ИК-съемка THEMIS ограничена широтами от 65° S до 65° N. Район находится за границей ночной мозаики.</span><br><button class="switch-layer-btn" id="switch-to-day-btn">Переключить на дневную съемку</button>`;
+        const warnText = currentLang === 'ru'
+          ? 'По официальным данным NASA Mars Trek, ночная ИК-съемка THEMIS ограничена широтами от 65° S до 65° N. Район находится за границей ночной мозаики.'
+          : 'According to official NASA Mars Trek records, THEMIS Night IR is constrained to 65° S – 65° N. This site lies beyond nighttime coverage.';
+        const btnText = currentLang === 'ru' ? 'Переключить на дневную съемку' : 'Switch to Daytime Thermal';
+        descEl.innerHTML = `${t(info.desc)}<br><br><span class="coverage-alert">${warnText}</span><br><button class="switch-layer-btn" id="switch-to-day-btn">${btnText}</button>`;
         const switchBtn = document.querySelector('#switch-to-day-btn');
         if (switchBtn) {
           switchBtn.addEventListener('click', () => {
@@ -254,19 +521,27 @@
           });
         }
       } else {
-        descEl.textContent = info.desc;
+        descEl.textContent = t(info.desc);
       }
     }
     if (values[0]) values[0].textContent = `${Math.abs(info.coords[0]).toFixed(4)}° ${info.coords[0] >= 0 ? 'N' : 'S'}`;
     if (values[1]) values[1].textContent = formatLongitude(info.coords[1]);
-    if (captionEl) captionEl.textContent = info.sol ? `${info.crater} (${info.sol})` : info.name;
-    if (elevationEl && info.elevation) elevationEl.textContent = info.elevation;
-    if (reliefEl) reliefEl.textContent = info.dimensions || 'MOLA, 463 м/пикс';
+
+    if (captionEl) {
+      captionEl.textContent = info.sol ? `${t(info.crater || info.name)} (${info.sol})` : t(info.name);
+    }
+
+    if (elevationEl) {
+      elevationEl.textContent = t(info.elevation) || '—';
+    }
+    if (reliefEl) {
+      reliefEl.textContent = t(info.dimensions) || 'MOLA, 463 m/px';
+    }
     if (irEl) {
       if (!inCoverage && activeKey === 'thermalNight') {
-        irEl.textContent = 'Вне зоны съемки (NASA: до 65° N)';
+        irEl.textContent = currentLang === 'ru' ? 'Вне зоны съемки (NASA: до 65° N)' : 'Out of coverage (NASA limit: 65° N)';
       } else {
-        irEl.textContent = layerConfigs[activeKey].irContext;
+        irEl.textContent = t(layerConfigs[activeKey].irContext);
       }
     }
   }
@@ -297,19 +572,59 @@
     });
   }
 
+  function highlightSidebarItem(type, id) {
+    document.querySelectorAll('.mission-option, .landmark-option').forEach((el) => {
+      el.classList.remove('active');
+    });
+    const selector = type === 'mission'
+      ? `.mission-option:has(input[value="${id}"])`
+      : `.landmark-option:has(input[value="${id}"])`;
+    let target = document.querySelector(selector);
+    if (!target) {
+      target = document.querySelector(`.${type}-filter[value="${id}"]`)?.closest(`.${type}-option`);
+    }
+    if (target) {
+      target.classList.add('active');
+    }
+  }
+
+  function focusMission(id) {
+    const info = markerStyles[id];
+    if (!info) return;
+
+    // Ensure layer is visible
+    const input = document.querySelector(`.mission-filter[value="${id}"]`);
+    if (input && !input.checked) {
+      input.checked = true;
+      if (missionLayers[id] && !map.hasLayer(missionLayers[id])) {
+        missionLayers[id].addTo(map);
+      }
+    }
+
+    const inCoverage = isMissionInCoverage(info, activeKey);
+    if (!inCoverage && activeKey === 'thermalNight') {
+      map.flyTo([65.0, info.coords[1]], 5, { duration: 1.1 });
+    } else {
+      map.flyTo(info.coords, 5, { duration: 1.1 });
+    }
+
+    mapCoordinates(info.coords);
+    updateInfoCard(info);
+    if (typeof updateWeatherView === 'function') {
+      updateWeatherView(id);
+    }
+    if (missionMarkers[id]) {
+      missionMarkers[id].openPopup();
+    }
+    showMissionTab();
+    highlightSidebarItem('mission', id);
+  }
+
   Object.entries(markerStyles).forEach(([id, info]) => {
     const marker = L.marker(info.coords, { icon: pointIcon(info.color) })
       .bindPopup(popup(info))
       .on('click', () => {
-        const inCoverage = isMissionInCoverage(info, activeKey);
-        if (!inCoverage && activeKey === 'thermalNight') {
-          // Pan to northern border with view of Phoenix area
-          map.flyTo([65.0, info.coords[1]], 4, { duration: 1.1 });
-        } else {
-          map.flyTo(info.coords, 5, { duration: 1.1 });
-        }
-        mapCoordinates(info.coords);
-        updateInfoCard(info);
+        focusMission(id);
       });
     missionMarkers[id] = marker;
     missionLayers[id] = L.layerGroup([marker]).addTo(map);
@@ -319,94 +634,115 @@
   const landmarkData = {
     olympus: {
       id: 'olympus',
-      name: 'Гора Олимп (Olympus Mons)',
+      name: { en: 'Olympus Mons', ru: 'Гора Олимп (Olympus Mons)' },
       shortName: 'Olympus Mons',
-      type: 'Щитовой вулкан (крупнейший в Солнечной системе)',
-      category: 'Вулкан',
+      type: { en: 'Shield volcano (largest in Solar System)', ru: 'Щитовой вулкан (крупнейший в Солнечной системе)' },
+      category: { en: 'Volcano', ru: 'Вулкан' },
       coords: [18.65, -133.8],
-      elevation: '+21 229 м (над нулевым уровнем)',
-      dimensions: 'Диаметр 600 км, кальдера 80 км',
+      elevation: { en: '+21,229 m (above datum)', ru: '+21 229 м (над нулевым уровнем)' },
+      dimensions: { en: 'Diameter 600 km, caldera 80 km', ru: 'Диаметр 600 км, кальдера 80 км' },
       color: '#c084fc',
       iconText: '▲',
-      desc: 'Высочайшая вулканическая гора в Солнечной системе. Ее колоссальное основание окружено отвесными базальными обрывами высотой до 8 км.',
+      desc: {
+        en: 'Highest volcanic peak in the Solar System. Its colossal base is surrounded by sheer basal scarps up to 8 km high.',
+        ru: 'Высочайшая вулканическая гора в Солнечной системе. Ее колоссальное основание окружено отвесными базальными обрывами высотой до 8 км.'
+      },
     },
     valles: {
       id: 'valles',
-      name: 'Долины Маринер (Valles Marineris)',
+      name: { en: 'Valles Marineris', ru: 'Долины Маринер (Valles Marineris)' },
       shortName: 'Valles Marineris',
-      type: 'Тектонический рифтовый каньон',
-      category: 'Каньон',
+      type: { en: 'Tectonic rift canyon system', ru: 'Тектонический рифтовый каньон' },
+      category: { en: 'Canyon', ru: 'Каньон' },
       coords: [-13.9, -59.2],
-      elevation: '-7 200 м (дно каньона Мелас)',
-      dimensions: 'Длина 4 000 км, глубина до 10 км',
+      elevation: { en: '-7,200 m (Melas Chasma floor)', ru: '-7 200 м (дно каньона Мелас)' },
+      dimensions: { en: 'Length 4,000 km, depth up to 10 km', ru: 'Длина 4 000 км, глубина до 10 км' },
       color: '#f43f5e',
       iconText: '▼',
-      desc: 'Гигантская система каньонов, протянувшаяся на четверть окружности Марса. В 10 раз длиннее и в 5 раз глубже земного Гранд-Каньона.',
+      desc: {
+        en: 'Gigantic canyon network spanning one-quarter of Mars circumference. Ten times longer and five times deeper than Earth Grand Canyon.',
+        ru: 'Гигантская система каньонов, протянувшаяся на четверть окружности Марса. В 10 раз длиннее и в 5 раз глубже земного Гранд-Каньона.'
+      },
     },
     noctis: {
       id: 'noctis',
-      name: 'Лабиринт Ночи (Noctis Labyrinthus)',
+      name: { en: 'Noctis Labyrinthus', ru: 'Лабиринт Ночи (Noctis Labyrinthus)' },
       shortName: 'Noctis Labyrinthus',
-      type: 'Сеть каньонов и грабенов',
-      category: 'Каньон',
+      type: { en: 'Intersecting grabens and canyon valley network', ru: 'Сеть каньонов и грабенов' },
+      category: { en: 'Canyon', ru: 'Каньон' },
       coords: [-7.0, -102.2],
-      elevation: '+3 200 м / -3 500 м',
-      dimensions: 'Протяженность около 1 200 км',
+      elevation: { en: '+3,200 m / -3,500 m', ru: '+3 200 м / -3 500 м' },
+      dimensions: { en: 'Span approx 1,200 km', ru: 'Протяженность около 1 200 км' },
       color: '#fb923c',
       iconText: '❖',
-      desc: 'Впечатляющий лабиринт из глубоких ветвящихся каньонов и долин на стыке вулканической провинции Фарсида и Долин Маринер.',
+      desc: {
+        en: 'Vast maze-like system of deep, steep-walled valleys formed by volcano-tectonic rifting between Tharsis and Valles Marineris.',
+        ru: 'Впечатляющий лабиринт из глубоких ветвящихся каньонов и долин на стыке вулканической провинции Фарсида и Долин Маринер.'
+      },
     },
     hellas: {
       id: 'hellas',
-      name: 'Равнина Эллада (Hellas Planitia)',
+      name: { en: 'Hellas Planitia', ru: 'Равнина Эллада (Hellas Planitia)' },
       shortName: 'Hellas Planitia',
-      type: 'Гигантский импактный бассейн',
-      category: 'Впадина',
+      type: { en: 'Giant impact basin', ru: 'Гигантский импактный бассейн' },
+      category: { en: 'Basin', ru: 'Впадина' },
       coords: [-42.4, 70.5],
-      elevation: '-7 152 м (самая глубокая точка Марса)',
-      dimensions: 'Диаметр чаши 2 300 км',
+      elevation: { en: '-7,152 m (lowest point on Mars)', ru: '-7 152 м (самая глубокая точка Марса)' },
+      dimensions: { en: 'Basin diameter 2,300 km', ru: 'Диаметр чаши 2 300 км' },
       color: '#38bdf8',
       iconText: '◌',
-      desc: 'Древнейший и глубочайший ударный кратер Марса. Плотность атмосферы здесь выше, из-за чего на дне часто наблюдаются сезонные туманы.',
+      desc: {
+        en: 'Oldest and deepest surviving impact basin on Mars. Elevated atmospheric pressure here frequently fosters morning frost and seasonal fogs.',
+        ru: 'Древнейший и глубочайший ударный кратер Марса. Плотность атмосферы здесь выше, из-за чего на дне часто наблюдаются сезонные туманы.'
+      },
     },
     cydonia: {
       id: 'cydonia',
-      name: 'Кидония (Cydonia Mensae)',
+      name: { en: 'Cydonia Mensae', ru: 'Кидония (Cydonia Mensae)' },
       shortName: 'Cydonia Mensae',
-      type: 'Столовые горы (мезы)',
-      category: 'Меза',
+      type: { en: 'Eroded mesa formations', ru: 'Столовые горы (мезы)' },
+      category: { en: 'Mesa', ru: 'Меза' },
       coords: [40.75, -9.46],
-      elevation: '-2 100 м (у подножия холмов)',
-      dimensions: 'Область столовых гор ~800 км',
+      elevation: { en: '-2,100 m (mesa base)', ru: '-2 100 м (у подножия холмов)' },
+      dimensions: { en: 'Mesa region approx 800 km', ru: 'Область столовых гор ~800 км' },
       color: '#eab308',
       iconText: '◈',
-      desc: 'Район останцовых возвышенностей на равнине Ацидалия. Снимок аппарата «Викинг-1» в 1976 году создал известную оптическую иллюзию «Лица на Марсе».',
+      desc: {
+        en: 'Prominent transition zone between southern highlands and northern plains, celebrated for the historical 1976 Viking 1 optical illusion.',
+        ru: 'Район останцовых возвышенностей на равнине Ацидалия. Снимок аппарата «Викинг-1» в 1976 году создал известную оптическую иллюзию «Лица на Марсе».'
+      },
     },
     korolev: {
       id: 'korolev',
-      name: 'Кратер Королёв (Korolev Crater)',
+      name: { en: 'Korolev Crater', ru: 'Кратер Королёв (Korolev Crater)' },
       shortName: 'Korolev Crater',
-      type: 'Ледниковый ударный кратер',
-      category: 'Кратер',
+      type: { en: 'Glaciated impact crater', ru: 'Ледниковый ударный кратер' },
+      category: { en: 'Crater', ru: 'Кратер' },
       coords: [73.0, 164.5],
-      elevation: '-3 800 м (купол водяного льда)',
-      dimensions: 'Диаметр 81 км, толща льда 1.8 км',
+      elevation: { en: '-3,800 m (ice dome summit)', ru: '-3 800 м (вершина ледяного купола)' },
+      dimensions: { en: 'Diameter 81.4 km, ice thickness 1.8 km', ru: 'Диаметр 81,4 км, толщина льда 1,8 км' },
       color: '#67e8f9',
       iconText: '❄',
-      desc: 'Кратер в приполярной зоне, круглый год покрытый нетающим ледником из 2 200 км³ водяного льда благодаря явлению холодной ловушки.',
+      desc: {
+        en: 'High-latitude polar impact crater filled by an eternal 1.8 km thick reservoir of 2,200 cubic kilometers of pristine water ice.',
+        ru: 'Приполярный ударный кратер, заполненный постоянным куполом чистого водяного льда объемом 2 200 км³.'
+      },
     },
     alba: {
       id: 'alba',
-      name: 'Гора Белая (Alba Mons)',
+      name: { en: 'Alba Mons', ru: 'Гора Белая (Alba Mons)' },
       shortName: 'Alba Mons',
-      type: 'Низкопрофильный щитовой вулкан',
-      category: 'Вулкан',
+      type: { en: 'Low-profile volcanic construct', ru: 'Низкопрофильный вулкан-гигант' },
+      category: { en: 'Volcano', ru: 'Вулкан' },
       coords: [40.5, -109.9],
-      elevation: '+6 800 м (над нулевым уровнем)',
-      dimensions: 'Диаметр основания свыше 1 000 км',
-      color: '#fb7185',
+      elevation: { en: '+6,800 m (caldera)', ru: '+6 800 м (кальдера)' },
+      dimensions: { en: 'Diameter over 1,000 km', ru: 'Диаметр свыше 1 000 км' },
+      color: '#e879f9',
       iconText: '▲',
-      desc: 'Вулкан с самой обширной площадью основания в Солнечной системе, окруженный колоссальным кольцом концентрических грабенов и разломов.',
+      desc: {
+        en: 'Unique low-relief shield volcano with the largest surface area footprint of any volcanic edifice in the Solar System.',
+        ru: 'Уникальный пологий щитовой вулкан с колоссальной площадью основания, сопоставимой по территории с США.'
+      },
     },
   };
 
@@ -414,13 +750,13 @@
     const [lat, lon] = info.coords;
     return `
       <div class="popup-box">
-        <span class="popup-label" style="color:${info.color}">${info.category}</span>
-        <b class="popup-title">${info.name}</b>
-        <span class="popup-mission" style="color:var(--text-muted)">${info.type}</span>
+        <span class="popup-label" style="color:${info.color}">${t(info.category)}</span>
+        <b class="popup-title">${t(info.name)}</b>
+        <span class="popup-mission" style="color:var(--text-muted)">${t(info.type)}</span>
         <span class="popup-coords">${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}, ${formatLongitude(lon)}</span>
         <div class="detail-row" style="margin-top:6px; height:auto; padding:4px 0; border-top:1px solid var(--line); border-bottom:0;">
-          <span style="font-size:10px; color:var(--text-muted)">Высота:</span>
-          <b style="font-size:11px; color:#d6c083">${info.elevation}</b>
+          <span style="font-size:10px; color:var(--text-muted)">${currentLang === 'ru' ? 'Высота:' : 'Elevation:'}</span>
+          <b style="font-size:11px; color:#d6c083">${t(info.elevation)}</b>
         </div>
       </div>
     `;
@@ -430,22 +766,47 @@
     return L.divIcon({
       className: 'landmark-marker',
       html: `<div class="landmark-marker__icon" style="--lm-color:${info.color};" title="${info.name}">${info.iconText}</div>`,
-      iconSize: [20, 20],
-      iconAnchor: [10, 10],
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
     });
   }
 
   const landmarkMarkers = {};
   const landmarkLayers = {};
 
+  function focusLandmark(id) {
+    const info = landmarkData[id];
+    if (!info) return;
+
+    // Ensure layer is visible
+    const input = document.querySelector(`.landmark-filter[value="${id}"]`);
+    if (input && !input.checked) {
+      input.checked = true;
+      if (landmarkLayers[id] && !map.hasLayer(landmarkLayers[id])) {
+        landmarkLayers[id].addTo(map);
+      }
+    }
+
+    const targetZoom = id === 'olympus' ? 4 : (id === 'valles' ? 4 : (id === 'hellas' ? 4 : 5));
+    map.flyTo(info.coords, targetZoom, { duration: 1.1 });
+
+    mapCoordinates(info.coords);
+    updateInfoCard(info);
+    if (typeof updateWeatherView === 'function') {
+      updateWeatherView(id);
+    }
+    if (landmarkMarkers[id]) {
+      landmarkMarkers[id].openPopup();
+    }
+    showMissionTab();
+    highlightSidebarItem('landmark', id);
+  }
+
   Object.entries(landmarkData).forEach(([id, info]) => {
     const marker = L.marker(info.coords, { icon: landmarkIcon(info) })
       .bindPopup(landmarkPopup(info))
       .on('click', () => {
-        map.flyTo(info.coords, 5, { duration: 1.1 });
-        mapCoordinates(info.coords);
-        updateInfoCard(info);
-        showMissionTab();
+        focusLandmark(id);
       });
     landmarkMarkers[id] = marker;
     landmarkLayers[id] = L.layerGroup([marker]).addTo(map);
@@ -462,18 +823,17 @@
 
   document.querySelectorAll('.landmark-option').forEach((opt) => {
     opt.addEventListener('click', (e) => {
-      if (e.target.tagName === 'INPUT') return;
       const input = opt.querySelector('input');
       if (!input) return;
       const id = input.value;
-      const info = landmarkData[id];
-      if (info) {
-        map.flyTo(info.coords, 5, { duration: 1.1 });
-        mapCoordinates(info.coords);
-        updateInfoCard(info);
-        landmarkMarkers[id]?.openPopup();
-        showMissionTab();
+      if (e.target === input) {
+        if (input.checked) {
+          focusLandmark(id);
+        }
+        return;
       }
+      e.preventDefault();
+      focusLandmark(id);
     });
   });
 
@@ -554,6 +914,22 @@
     });
   });
 
+  document.querySelectorAll('.mission-option').forEach((opt) => {
+    opt.addEventListener('click', (e) => {
+      const input = opt.querySelector('input');
+      if (!input) return;
+      const id = input.value;
+      if (e.target === input) {
+        if (input.checked) {
+          focusMission(id);
+        }
+        return;
+      }
+      e.preventDefault();
+      focusMission(id);
+    });
+  });
+
   const zoomInBtn = document.querySelector('#zoom-in');
   const zoomOutBtn = document.querySelector('#zoom-out');
   const resetBtn = document.querySelector('#reset-view');
@@ -566,6 +942,85 @@
       map.fitBounds(targetBounds);
     });
   }
+
+  // =========================================================================
+  // Fullscreen Map Controller (F, F11, Button)
+  // =========================================================================
+
+  const mapStage = document.querySelector('.map-stage');
+  const fullscreenBtn = document.querySelector('#btn-toggle-fullscreen');
+
+  function isMapFullscreen() {
+    return Boolean(
+      document.fullscreenElement ||
+      (mapStage && mapStage.classList.contains('is-fullscreen'))
+    );
+  }
+
+  function updateFullscreenUI(active) {
+    if (fullscreenBtn) {
+      fullscreenBtn.classList.toggle('active', active);
+      fullscreenBtn.textContent = active ? '⤓' : '⛶';
+      fullscreenBtn.setAttribute(
+        'title',
+        active
+          ? 'Выйти из полноэкранного режима (F, F11 или Esc)'
+          : 'Полноэкранный режим (F или F11)'
+      );
+    }
+  }
+
+  function invalidateMap() {
+    setTimeout(() => map.invalidateSize(), 50);
+    setTimeout(() => map.invalidateSize(), 200);
+  }
+
+  function enterFullscreen() {
+    if (!mapStage) return;
+    if (mapStage.requestFullscreen) {
+      mapStage.requestFullscreen().catch(() => {
+        mapStage.classList.add('is-fullscreen');
+        updateFullscreenUI(true);
+        invalidateMap();
+      });
+    } else {
+      mapStage.classList.add('is-fullscreen');
+      updateFullscreenUI(true);
+      invalidateMap();
+    }
+  }
+
+  function exitFullscreen() {
+    if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+    if (mapStage) {
+      mapStage.classList.remove('is-fullscreen');
+    }
+    updateFullscreenUI(false);
+    invalidateMap();
+  }
+
+  function toggleFullscreen() {
+    if (isMapFullscreen()) {
+      exitFullscreen();
+    } else {
+      enterFullscreen();
+    }
+  }
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    const isFs = Boolean(document.fullscreenElement);
+    if (mapStage) {
+      mapStage.classList.toggle('is-fullscreen', isFs);
+    }
+    updateFullscreenUI(isFs);
+    invalidateMap();
+  });
 
   map.on('move', () => mapCoordinates([map.getCenter().lat, map.getCenter().lng]));
   map.on('zoomend', () => {
@@ -587,16 +1042,8 @@
       );
 
       if (missionMatch) {
-        const [id, item] = missionMatch;
-        const inCoverage = isMissionInCoverage(item, activeKey);
-        if (!inCoverage && activeKey === 'thermalNight') {
-          map.flyTo([65.0, item.coords[1]], 4, { duration: 1.2 });
-        } else {
-          map.flyTo(item.coords, 5, { duration: 1.2 });
-        }
-        missionLayers[id]?.getLayers()[0]?.openPopup();
-        updateInfoCard(item);
-        showMissionTab();
+        const [id] = missionMatch;
+        focusMission(id);
         return;
       }
 
@@ -609,11 +1056,8 @@
       );
 
       if (landmarkMatch) {
-        const [id, item] = landmarkMatch;
-        map.flyTo(item.coords, 5, { duration: 1.2 });
-        landmarkLayers[id]?.getLayers()[0]?.openPopup();
-        updateInfoCard(item);
-        showMissionTab();
+        const [id] = landmarkMatch;
+        focusLandmark(id);
         return;
       }
 
@@ -1435,10 +1879,10 @@
   // Custom Icon Makers
   function createRouteMarkerIcon(letter, type) {
     return L.divIcon({
-      className: '',
-      html: `<div class="route-map-marker route-map-marker--${type}" style="width:26px; height:26px;">${letter}</div>`,
-      iconSize: [26, 26],
-      iconAnchor: [13, 13],
+      className: 'route-map-marker-container',
+      html: `<div class="route-map-marker route-map-marker--${type}">${letter}</div>`,
+      iconSize: [38, 38],
+      iconAnchor: [19, 19],
     });
   }
 
@@ -1708,11 +2152,17 @@
   function updatePromptBanner() {
     if (!routePromptText) return;
     if (!routeState.pointA) {
-      routePromptText.textContent = 'Кликните на карту, чтобы установить Точку А (Старт)';
+      routePromptText.textContent = currentLang === 'ru'
+        ? 'Кликните на карту, чтобы установить Точку А (Старт)'
+        : 'Click map to set Point A (Start)';
     } else if (!routeState.pointB) {
-      routePromptText.textContent = 'Точка А установлена. Кликните для выбора Точки Б (Финиш)';
+      routePromptText.textContent = currentLang === 'ru'
+        ? 'Точка А установлена. Кликните для выбора Точки Б (Финиш)'
+        : 'Point A set. Click map to set Point B (Target)';
     } else {
-      routePromptText.textContent = 'Точки заданы. Кликните для смены Точки Б или перетащите маркеры';
+      routePromptText.textContent = currentLang === 'ru'
+        ? 'Точки заданы. Кликните для смены Точки Б или перетащите маркеры'
+        : 'Waypoints set. Click map to change Point B or drag markers';
     }
   }
 
@@ -1730,7 +2180,28 @@
   }
 
   window.addEventListener('keydown', (e) => {
+    const tag = document.activeElement ? document.activeElement.tagName : '';
+    const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+    // F key toggle (when not typing in an input and without Ctrl/Alt/Meta)
+    if (!isInput && !e.ctrlKey && !e.altKey && !e.metaKey && e.code === 'KeyF') {
+      e.preventDefault();
+      toggleFullscreen();
+      return;
+    }
+
+    // F11 key toggle
+    if (e.key === 'F11') {
+      e.preventDefault();
+      toggleFullscreen();
+      return;
+    }
+
     if (e.key === 'Escape') {
+      if (isMapFullscreen()) {
+        exitFullscreen();
+        return;
+      }
       if (routeState && routeState.modeActive) {
         setRouteMode(false);
       } else if (swipeController && swipeController.isActive()) {
@@ -1860,37 +2331,406 @@
     });
   }
 
+  // =========================================================================
+  // Meteorological Data & Weather Station Controller
+  // =========================================================================
+
+  const weatherData = {
+    perseverance: {
+      name: { en: 'Jezero Crater', ru: 'Jezero Crater (Езеро)' },
+      station: { en: 'NASA Mars 2020 • MEDA Instrument Suite', ru: 'NASA Mars 2020 • Прибор MEDA' },
+      sol: 'Sol 1320',
+      coordsText: { en: '18.4447° N, 77.4508° E • Elevation -2,575 m', ru: '18.4447° N, 77.4508° E • Высота -2 575 м' },
+      temp: '-58°C',
+      tempRange: { en: 'Day -15°C • Night -82°C', ru: 'День -15°C • Ночь -82°C' },
+      pressure: '7.5 hPa',
+      pressureSub: { en: '0.0074 atm (750 Pa)', ru: '0.0074 атм (750 Па)' },
+      wind: '4.8 m/s',
+      windSub: { en: 'Gusts up to 19 m/s • WNW', ru: 'Порывы до 19 м/с • WNW' },
+      tau: 'τ = 0.42',
+      uvSub: { en: 'Moderate • UV Index 9', ru: 'Умеренно • УФ-индекс 9' },
+      microclimate: {
+        en: 'Diurnal convective dust devils up to 1 km high. The MEDA instrument suite detects microbaric waves and seasonal pressure oscillations as CO₂ freezes out at polar caps.',
+        ru: 'Суточные ветровые вихри («пылевые дьяволы») высотой до 1 км. Прибор MEDA фиксирует микробаровые волны и сезонное падение давления при замерзании CO₂ на полярных шапках.'
+      },
+    },
+    curiosity: {
+      name: { en: 'Gale Crater', ru: 'Gale Crater (Гейл)' },
+      station: { en: 'NASA MSL • REMS Meteorological Station', ru: 'NASA MSL • Станция REMS' },
+      sol: 'Sol 4360',
+      coordsText: { en: '4.5895° S, 137.4417° E • Elevation -4,450 m', ru: '4.5895° S, 137.4417° E • Высота -4 450 м' },
+      temp: '-52°C',
+      tempRange: { en: 'Day -8°C • Night -78°C', ru: 'День -8°C • Ночь -78°C' },
+      pressure: '8.4 hPa',
+      pressureSub: { en: '0.0083 atm (840 Pa)', ru: '0.0083 атм (840 Па)' },
+      wind: '3.5 m/s',
+      windSub: { en: 'Breeze along Aeolis Mons slope', ru: 'Порывы до 14 м/с • бриз со склона' },
+      tau: 'τ = 0.55',
+      uvSub: { en: 'Equatorial • UV Index 10', ru: 'Экваториальный • УФ-индекс 10' },
+      microclimate: {
+        en: 'Intra-crater wind circulation: daytime warm upslope breezes along Mount Sharp and nocturnal drainage of cold air to crater floor. Seasonal methane background pulses.',
+        ru: 'Кратерная ветровая циркуляция: теплый восходящий поток днем по склонам горы Эолида (Шарпа) и ночной сток холодного воздуха на дно кратера. Сезонные колебания фонового метана.'
+      },
+    },
+    insight: {
+      name: { en: 'Elysium Planitia', ru: 'Elysium Planitia (Элизий)' },
+      station: { en: 'NASA InSight • TWINS Sensors', ru: 'NASA InSight • Сенсоры TWINS' },
+      sol: { en: 'Mission Archive', ru: 'Архив миссии' },
+      coordsText: { en: '4.5024° N, 135.6234° E • Elevation -2,600 m', ru: '4.5024° N, 135.6234° E • Высота -2 600 м' },
+      temp: '-62°C',
+      tempRange: { en: 'Day -17°C • Night -89°C', ru: 'День -17°C • Ночь -89°C' },
+      pressure: '7.4 hPa',
+      pressureSub: { en: '0.0073 atm (740 Pa)', ru: '0.0073 атм (740 Па)' },
+      wind: '5.2 m/s',
+      windSub: { en: 'Gusts up to 22 m/s • SW', ru: 'Порывы до 22 м/с • SW' },
+      tau: 'τ = 0.48',
+      uvSub: { en: 'Equatorial • UV Index 9', ru: 'Экваториальный • УФ-индекс 9' },
+      microclimate: {
+        en: 'Smooth volcanic expanse: TWINS and SEIS recorded thousands of microbaric vortex encounters and low-frequency infrasound from unobstructed Martian surface winds.',
+        ru: 'Гладкая вулканическая равнина: датчики TWINS и сейсмометр SEIS зарегистрировали тысячи микровихрей давления и инфразвуковые колебания открытого марсианского ветра.'
+      },
+    },
+    phoenix: {
+      name: { en: 'Vastitas Borealis', ru: 'Vastitas Borealis (Северная равнина)' },
+      station: { en: 'NASA Phoenix • MET Station & Lidar', ru: 'NASA Phoenix • Станция MET и Лидар' },
+      sol: { en: 'Mission Archive', ru: 'Архив миссии' },
+      coordsText: { en: '68.2188° N, 125.7518° W • Elevation -4,100 m', ru: '68.2188° N, 125.7518° W • Высота -4 100 м' },
+      temp: '-78°C',
+      tempRange: { en: 'Day -31°C • Night -96°C', ru: 'День -31°C • Ночь -96°C' },
+      pressure: '8.1 hPa',
+      pressureSub: { en: '0.0080 atm (810 Pa)', ru: '0.0080 атм (810 Па)' },
+      wind: '4.1 m/s',
+      windSub: { en: 'Gusts up to 16 m/s • E', ru: 'Порывы до 16 м/с • E' },
+      tau: 'τ = 0.28',
+      uvSub: { en: 'Circumpolar • UV Index 3', ru: 'Полярный • УФ-индекс 3' },
+      microclimate: {
+        en: 'Subarctic polar belt: the MET atmospheric lidar detected precipitation of water-ice crystal virga from 4 km altitude sublimating prior to ground impact.',
+        ru: 'Субарктический приполярный пояс: атмосферный лазерный лидар MET зафиксировал снегопад из кристаллов водяного льда на высоте 4 км, сублимирующий до касания поверхности (вирга).'
+      },
+    },
+    olympus: {
+      name: { en: 'Olympus Mons', ru: 'Гора Олимп (Olympus Mons)' },
+      station: { en: 'MCD Orbital Model • Elevation +21.2 km', ru: 'Орбитальная модель MCD • Высота +21.2 км' },
+      sol: { en: 'Ls 180° (Equinox)', ru: 'Ls 180° (Равноденствие)' },
+      coordsText: { en: '18.65° N, 133.80° W • Elevation +21,229 m', ru: '18.65° N, 133.80° W • Высота +21 229 м' },
+      temp: '-95°C',
+      tempRange: { en: 'Day -48°C • Night -120°C', ru: 'День -48°C • Ночь -120°C' },
+      pressure: '0.6 hPa',
+      pressureSub: { en: '0.0006 atm (60 Pa — near vacuum)', ru: '0.0006 атм (60 Па — вакуум)' },
+      wind: '14.5 m/s',
+      windSub: { en: 'Jet streams up to 45 m/s', ru: 'Струйные течения до 45 м/с' },
+      tau: 'τ = 0.12',
+      uvSub: { en: 'Extreme • UV Index 12+', ru: 'Критический • УФ-индекс 12+' },
+      microclimate: {
+        en: 'Summit towers above 80% of Mars atmosphere. Ambient density is near-vacuum; boiling point of water drops to +0.5°C, instantly vaporizing. Flank slopes spawn colossal orographic clouds.',
+        ru: 'Вершина возвышается над 80% марсианской атмосферы. Плотность воздуха экстремально низкая, вода закипает при +0.5°C и сразу возгоняется. У подножия образуются грандиозные ледяные орографические облака.'
+      },
+    },
+    valles: {
+      name: { en: 'Valles Marineris', ru: 'Долины Маринер (Valles Marineris)' },
+      station: { en: 'MCD Orbital Model • Melas Chasma', ru: 'Орбитальная модель MCD • Каньон Мелас' },
+      sol: { en: 'Ls 180° (Equinox)', ru: 'Ls 180° (Равноденствие)' },
+      coordsText: { en: '13.90° S, 59.20° W • Depth -7,200 m', ru: '13.90° S, 59.20° W • Глубина -7 200 м' },
+      temp: '-48°C',
+      tempRange: { en: 'Day -4°C • Night -72°C', ru: 'День -4°C • Ночь -72°C' },
+      pressure: '10.2 hPa',
+      pressureSub: { en: '0.0101 atm (1,020 Pa)', ru: '0.0101 атм (1 020 Па)' },
+      wind: '8.4 m/s',
+      windSub: { en: 'Katabatic channel drainage winds', ru: 'Катабатические ветры вдоль русла' },
+      tau: 'τ = 0.65',
+      uvSub: { en: 'Canyon wall shielding • UV 8', ru: 'Экранирован стенами • УФ 8' },
+      microclimate: {
+        en: 'Deepest canyon chasm: morning floors fill with dense water-ice fog. Due to elevated pressure, daytime temperatures can approach 0°C on sun-facing screes.',
+        ru: 'Глубочайший рифтовый каньон: утреннее дно заполняется плотными туманами из водяного льда. Из-за повышенного давления температура днем способна приближаться к нулевой отметке.'
+      },
+    },
+    noctis: {
+      name: { en: 'Noctis Labyrinthus', ru: 'Лабиринт Ночи (Noctis Labyrinthus)' },
+      station: { en: 'MCD Orbital Model • Graben Grid', ru: 'Орбитальная модель MCD • Сетка грабенов' },
+      sol: { en: 'Ls 180° (Equinox)', ru: 'Ls 180° (Равноденствие)' },
+      coordsText: { en: '7.00° S, 102.20° W • Elevation +3,200 m', ru: '7.00° S, 102.20° W • Высота +3 200 м' },
+      temp: '-68°C',
+      tempRange: { en: 'Day -22°C • Night -94°C', ru: 'День -22°C • Ночь -94°C' },
+      pressure: '5.2 hPa',
+      pressureSub: { en: '0.0051 atm (520 Pa)', ru: '0.0051 атм (520 Па)' },
+      wind: '6.8 m/s',
+      windSub: { en: 'Turbulent canyon eddies', ru: 'Сложные лабиринтные завихрения' },
+      tau: 'τ = 0.38',
+      uvSub: { en: 'Highland • UV Index 10', ru: 'Высокогорный • УФ-индекс 10' },
+      microclimate: {
+        en: 'Intersecting grabens create closed wind recirculation cells. Early mornings see brief moisture condensation forming delicate cirrus-like plumes above narrow troughs.',
+        ru: 'Сетка каньонов создает замкнутые ветровые вихри. Ранним утром в узких тектонических провалах наблюдается кратковременная конденсация паров в тонкие перистые микрооблака.'
+      },
+    },
+    hellas: {
+      name: { en: 'Hellas Planitia', ru: 'Равнина Эллада (Hellas Planitia)' },
+      station: { en: 'MCD Orbital Model • Basin Floor', ru: 'Орбитальная модель MCD • Дно бассейна' },
+      sol: { en: 'Ls 180° (Equinox)', ru: 'Ls 180° (Равноденствие)' },
+      coordsText: { en: '42.40° S, 70.50° E • Floor -7,152 m', ru: '42.40° S, 70.50° E • Дно -7 152 м' },
+      temp: '-45°C',
+      tempRange: { en: 'Day -2°C • Night -74°C', ru: 'День -2°C • Ночь -74°C' },
+      pressure: '11.8 hPa',
+      pressureSub: { en: '0.0116 atm (1,180 Pa — maximum)', ru: '0.0116 атм (1 180 Па — максимум)' },
+      wind: '11.2 m/s',
+      windSub: { en: 'Storm gusts up to 35 m/s', ru: 'Порывы до 35 м/с • Штормовой' },
+      tau: 'τ = 0.85',
+      uvSub: { en: 'Dust-attenuated • UV 7', ru: 'Пылевое рассеяние • УФ 7' },
+      microclimate: {
+        en: 'Barometric apex of Mars: at pressures reaching 12.4 hPa, liquid water can transiently exist above 0°C in metastable state. Principal breeding zone for planet-encircling dust storms.',
+        ru: 'Барометрический рекорд Марса: при давлении до 12.4 гПа вода может теоретически существовать в метастабильной жидкой фазе при температуре выше 0°C. Главный очаг зарождения глобальных пылевых бурь.'
+      },
+    },
+    cydonia: {
+      name: { en: 'Cydonia Mensae', ru: 'Кидония (Cydonia Mensae)' },
+      station: { en: 'MCD Orbital Model • Mesa Field', ru: 'Орбитальная модель MCD • Останцовые горы' },
+      sol: { en: 'Ls 180° (Equinox)', ru: 'Ls 180° (Равноденствие)' },
+      coordsText: { en: '40.75° N, 9.46° W • Elevation -2,100 m', ru: '40.75° N, 9.46° W • Высота -2 100 м' },
+      temp: '-66°C',
+      tempRange: { en: 'Day -24°C • Night -90°C', ru: 'День -24°C • Ночь -90°C' },
+      pressure: '7.2 hPa',
+      pressureSub: { en: '0.0071 atm (720 Pa)', ru: '0.0071 атм (720 Па)' },
+      wind: '5.5 m/s',
+      windSub: { en: 'Gusts up to 18 m/s • W', ru: 'Порывы до 18 м/с • W' },
+      tau: 'τ = 0.44',
+      uvSub: { en: 'Moderate • UV Index 6', ru: 'Умеренный • УФ-индекс 6' },
+      microclimate: {
+        en: 'Boundary between southern cratered uplands and Acidalia Planitia. Regular frontal winds sweep past isolated mesas, carving prominent streaks and yardang fields.',
+        ru: 'Граница между южными плато и низменностью Ацидалия. Регулярные фронтальные пылевые ветры огибают столовые возвышенности, формируя длинные ветровые полосы и дюны.'
+      },
+    },
+    korolev: {
+      name: { en: 'Korolev Crater', ru: 'Кратер Королёв (Korolev Crater)' },
+      station: { en: 'ESA / NASA Model • Circumpolar Glacier', ru: 'ESA / NASA Модель • Приполярный ледник' },
+      sol: { en: 'Polar Summer', ru: 'Полярное лето' },
+      coordsText: { en: '73.00° N, 164.50° E • Elevation -3,800 m', ru: '73.00° N, 164.50° E • Высота -3 800 м' },
+      temp: '-86°C',
+      tempRange: { en: 'Day -42°C • Night -112°C', ru: 'День -42°C • Ночь -112°C' },
+      pressure: '7.8 hPa',
+      pressureSub: { en: '0.0077 atm (780 Pa)', ru: '0.0077 атм (780 Па)' },
+      wind: '3.2 m/s',
+      windSub: { en: 'Cold descending katabatic flow', ru: 'Холодный нисходящий сток' },
+      tau: 'τ = 0.22',
+      uvSub: { en: 'Polar • UV Index 2', ru: 'Полярный • УФ-индекс 2' },
+      microclimate: {
+        en: 'Natural "cold trap": an evergreen dome of dense chilled air stays pinned inside the crater, shielding 2,200 km³ of water ice from sublimation year-round.',
+        ru: 'Природная «холодная ловушка»: купол тяжелого охлажденного воздуха лежит на дне кратера, экранируя 2 200 км³ водяного льда от сублимации и разрушения круглый год.'
+      },
+    },
+    alba: {
+      name: { en: 'Alba Mons', ru: 'Гора Белая (Alba Mons)' },
+      station: { en: 'MCD Orbital Model • Northern Flank', ru: 'Орбитальная модель MCD • Северный склон' },
+      sol: { en: 'Ls 180° (Equinox)', ru: 'Ls 180° (Равноденствие)' },
+      coordsText: { en: '40.50° N, 109.90° W • Elevation +6,800 m', ru: '40.50° N, 109.90° W • Высота +6 800 м' },
+      temp: '-75°C',
+      tempRange: { en: 'Day -28°C • Night -102°C', ru: 'День -28°C • Ночь -102°C' },
+      pressure: '3.9 hPa',
+      pressureSub: { en: '0.0038 atm (390 Pa)', ru: '0.0038 атм (390 Па)' },
+      wind: '9.1 m/s',
+      windSub: { en: 'Orographic waves up to 28 m/s', ru: 'Орографические волны до 28 м/с' },
+      tau: 'τ = 0.32',
+      uvSub: { en: 'High Altitude • UV Index 8', ru: 'Высокогорный • УФ-индекс 8' },
+      microclimate: {
+        en: 'Broad volcanic edifice spanning 1,000 km generates gravity-wave perturbations in the mesosphere, creating persistent high-altitude ice-cloud streamers.',
+        ru: 'Низкопрофильный гигантский вулкан диаметром 1 000 км формирует волновые орографические потоки в марсианской мезосфере с образованием протяженных ледяных шлейфов.'
+      },
+    },
+  };
+
+  let activeWeatherKey = 'perseverance';
+
+  function updateWeatherView(key) {
+    if (key && weatherData[key]) {
+      activeWeatherKey = key;
+    }
+    const data = weatherData[activeWeatherKey] || weatherData.perseverance;
+
+    const badgeEl = document.querySelector('#weather-station-badge');
+    const solEl = document.querySelector('#weather-sol-tag');
+    const nameEl = document.querySelector('#weather-location-name');
+    const coordsEl = document.querySelector('#weather-coords-sub');
+    const tempEl = document.querySelector('#weather-temp');
+    const tempRangeEl = document.querySelector('#weather-temp-range');
+    const pressureEl = document.querySelector('#weather-pressure');
+    const pressureSubEl = document.querySelector('#weather-pressure-sub');
+    const windEl = document.querySelector('#weather-wind');
+    const windSubEl = document.querySelector('#weather-wind-sub');
+    const tauEl = document.querySelector('#weather-tau');
+    const uvSubEl = document.querySelector('#weather-uv-sub');
+    const microclimateEl = document.querySelector('#weather-microclimate');
+
+    if (badgeEl) badgeEl.textContent = t(data.station);
+    if (solEl) solEl.textContent = t(data.sol);
+    if (nameEl) nameEl.textContent = t(data.name);
+    if (coordsEl) coordsEl.textContent = t(data.coordsText);
+    if (tempEl) tempEl.textContent = data.temp;
+    if (tempRangeEl) tempRangeEl.textContent = t(data.tempRange);
+    if (pressureEl) pressureEl.textContent = data.pressure;
+    if (pressureSubEl) pressureSubEl.textContent = t(data.pressureSub);
+    if (windEl) windEl.textContent = data.wind;
+    if (windSubEl) windSubEl.textContent = t(data.windSub);
+    if (tauEl) tauEl.textContent = data.tau;
+    if (uvSubEl) uvSubEl.textContent = t(data.uvSub);
+    if (microclimateEl) microclimateEl.textContent = t(data.microclimate);
+
+    // Gravity calculation
+    const earthVal = parseFloat(document.querySelector('#earth-weight-input')?.value) || 70;
+    const marsVal = (earthVal * 0.3794).toFixed(1);
+    const marsWeightEl = document.querySelector('#mars-weight-val');
+    if (marsWeightEl) marsWeightEl.textContent = `${marsVal} ${currentLang === 'ru' ? 'кг' : 'kg'}`;
+    const marsJumpEl = document.querySelector('#mars-jump-val');
+    if (marsJumpEl) marsJumpEl.textContent = currentLang === 'ru' ? 'в 2.64× выше' : '2.64× higher';
+  }
+
+  // Gravity Calculator
+  const earthWeightInput = document.querySelector('#earth-weight-input');
+  if (earthWeightInput) {
+    earthWeightInput.addEventListener('input', () => {
+      const val = parseFloat(earthWeightInput.value) || 0;
+      const marsVal = (val * 0.3794).toFixed(1);
+      const marsWeightEl = document.querySelector('#mars-weight-val');
+      if (marsWeightEl) marsWeightEl.textContent = `${marsVal} кг`;
+    });
+  }
+
   // Info Rail Tabs Logic
   const tabMission = document.querySelector('#tab-mission');
+  const tabWeather = document.querySelector('#tab-weather');
   const tabRoute = document.querySelector('#tab-route');
   const missionCard = document.querySelector('#mission-card');
+  const weatherView = document.querySelector('#weather-view');
   const telemetryView = document.querySelector('#route-telemetry-view');
   const railHeading = document.querySelector('#rail-heading');
 
   function showMissionTab() {
     if (tabMission) tabMission.classList.add('active');
+    if (tabWeather) tabWeather.classList.remove('active');
     if (tabRoute) tabRoute.classList.remove('active');
     if (missionCard) missionCard.classList.remove('hidden');
+    if (weatherView) weatherView.classList.add('hidden');
     if (telemetryView) telemetryView.classList.add('hidden');
     if (railHeading) railHeading.textContent = 'Информация об объекте';
   }
 
+  function showWeatherTab() {
+    if (tabMission) tabMission.classList.remove('active');
+    if (tabWeather) tabWeather.classList.add('active');
+    if (tabRoute) tabRoute.classList.remove('active');
+    if (missionCard) missionCard.classList.add('hidden');
+    if (weatherView) weatherView.classList.remove('hidden');
+    if (telemetryView) telemetryView.classList.add('hidden');
+    if (railHeading) railHeading.textContent = 'Метеосводка и климат';
+    updateWeatherView();
+  }
+
   function showRouteTab() {
     if (tabMission) tabMission.classList.remove('active');
+    if (tabWeather) tabWeather.classList.remove('active');
     if (tabRoute) tabRoute.classList.add('active');
     if (missionCard) missionCard.classList.add('hidden');
+    if (weatherView) weatherView.classList.add('hidden');
     if (telemetryView) telemetryView.classList.remove('hidden');
     if (railHeading) railHeading.textContent = 'Телеметрия SafeNav';
   }
 
   if (tabMission) tabMission.addEventListener('click', showMissionTab);
+  if (tabWeather) tabWeather.addEventListener('click', showWeatherTab);
   if (tabRoute) tabRoute.addEventListener('click', showRouteTab);
+
+  const btnGotoWeather = document.querySelector('#btn-goto-weather');
+  if (btnGotoWeather) {
+    btnGotoWeather.addEventListener('click', showWeatherTab);
+  }
 
   const btnShowTelemetry = document.querySelector('#btn-show-telemetry');
   if (btnShowTelemetry) {
     btnShowTelemetry.addEventListener('click', showRouteTab);
   }
 
-  // Initial call
+  // Language Switcher Function
+  function setLanguage(lang) {
+    if (lang !== 'en' && lang !== 'ru') lang = 'en';
+    currentLang = lang;
+    localStorage.setItem('martian_lang', lang);
+    document.documentElement.lang = lang;
+
+    const btnEn = document.querySelector('#lang-en');
+    const btnRu = document.querySelector('#lang-ru');
+    if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+    if (btnRu) btnRu.classList.toggle('active', lang === 'ru');
+
+    // Update static DOM elements
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
+      if (i18n[lang] && i18n[lang][key]) {
+        el.textContent = i18n[lang][key];
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (i18n[lang] && i18n[lang][key]) {
+        el.setAttribute('placeholder', i18n[lang][key]);
+      }
+    });
+
+    // Update swipe selectors
+    const selectLeft = document.querySelector('#swipe-select-left');
+    const selectRight = document.querySelector('#swipe-select-right');
+    const optMap = {
+      color: i18n[lang].layer_opt_viking,
+      relief: i18n[lang].layer_opt_mola,
+      thermalDay: i18n[lang].layer_opt_themis_day,
+      thermalNight: i18n[lang].layer_opt_themis_night,
+    };
+    [selectLeft, selectRight].forEach((sel) => {
+      if (!sel) return;
+      Array.from(sel.options).forEach((opt) => {
+        if (optMap[opt.value]) opt.textContent = optMap[opt.value];
+      });
+    });
+
+    // Update map status and attribution
+    if (status) {
+      status.textContent = `${lang === 'ru' ? 'Слой:' : 'Layer:'} ${t(layerConfigs[activeKey].name)}`;
+    }
+    const mapAttribution = document.querySelector('#map-attribution');
+    if (mapAttribution) {
+      mapAttribution.textContent = `${lang === 'ru' ? 'Слой:' : 'Layer:'} NASA ${t(layerConfigs[activeKey].name)}`;
+    }
+
+    // Update prompt banner if active
+    if (typeof updatePromptBanner === 'function') {
+      updatePromptBanner();
+    }
+
+    // Update zoom readout
+    const zoomReadout = document.querySelector('#zoom-readout');
+    if (zoomReadout) {
+      const z = map.getZoom();
+      if (z <= 2) zoomReadout.textContent = i18n[lang].zoom_global;
+      else if (z <= 5) zoomReadout.textContent = i18n[lang].zoom_regional;
+      else zoomReadout.textContent = i18n[lang].zoom_local;
+    }
+
+    // Update active card and weather
+    if (lastFocusedObject) {
+      updateInfoCard(lastFocusedObject);
+    } else if (markerStyles.perseverance) {
+      updateInfoCard(markerStyles.perseverance);
+    }
+    updateWeatherView();
+  }
+
+  const langBtnEn = document.querySelector('#lang-en');
+  const langBtnRu = document.querySelector('#lang-ru');
+  if (langBtnEn) {
+    langBtnEn.addEventListener('click', () => setLanguage('en'));
+  }
+  if (langBtnRu) {
+    langBtnRu.addEventListener('click', () => setLanguage('ru'));
+  }
+
+  // Initial call with saved or default language
+  setLanguage(currentLang);
   updateMissionUIForActiveLayer();
 })();
