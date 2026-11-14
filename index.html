@@ -118,6 +118,95 @@
           </label>
         </section>
 
+        <section class="panel-section route-section">
+          <div class="section-heading route-heading">
+            <h2>Безопасный маршрут</h2>
+            <span class="route-badge">Rover SafeNav</span>
+          </div>
+
+          <p class="route-section__hint">Автономная прокладка траектории марсохода в обход каньонов, обрывов и вулканических уступов.</p>
+
+          <div class="route-mode-bar">
+            <button type="button" class="route-btn route-btn--primary" id="btn-toggle-route-mode">
+              <span class="btn-icon">📍</span>
+              <span id="route-mode-text">Выбрать точки на карте</span>
+            </button>
+          </div>
+
+          <div class="route-points">
+            <div class="route-point" id="point-a-container">
+              <span class="point-badge point-badge--a">A</span>
+              <div class="point-details">
+                <span class="point-label">Старт</span>
+                <span class="point-coords" id="point-a-coords">Не задано (кликните на карту)</span>
+              </div>
+            </div>
+            <div class="route-swap-row">
+              <button type="button" class="btn-swap-points" id="btn-swap-points" title="Поменять местами точки А и Б" aria-label="Поменять местами точки А и Б">⇅</button>
+            </div>
+            <div class="route-point" id="point-b-container">
+              <span class="point-badge point-badge--b">B</span>
+              <div class="point-details">
+                <span class="point-label">Финиш</span>
+                <span class="point-coords" id="point-b-coords">Не задано (кликните на карту)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="route-presets">
+            <span class="presets-label">Быстрые сценарии:</span>
+            <div class="presets-list">
+              <button type="button" class="preset-chip" data-start="perseverance" data-end="curiosity">Jezero → Gale</button>
+              <button type="button" class="preset-chip" data-start="insight" data-end="perseverance">InSight → Jezero</button>
+              <button type="button" class="preset-chip" data-start="curiosity" data-end="valles">Gale → Valles M.</button>
+            </div>
+          </div>
+
+          <div class="route-options">
+            <label class="route-checkbox-label">
+              <input type="checkbox" id="toggle-hazards" checked>
+              <span>Показывать опасные зоны (обрывы)</span>
+            </label>
+            <label class="route-checkbox-label">
+              <input type="checkbox" id="toggle-direct-path" checked>
+              <span>Сравнить с прямой линией</span>
+            </label>
+          </div>
+
+          <div class="route-actions">
+            <button type="button" class="route-btn route-btn--accent" id="btn-calc-route" disabled>
+              Рассчитать безопасный путь
+            </button>
+            <button type="button" class="route-btn route-btn--ghost" id="btn-clear-route">
+              Сбросить
+            </button>
+          </div>
+
+          <div class="route-summary-card hidden" id="route-summary-card">
+            <div class="route-summary-header">
+              <span class="summary-tag">Траектория рассчитана</span>
+              <b class="summary-score" id="summary-score">99.2% безопасность</b>
+            </div>
+            <div class="summary-metrics">
+              <div class="summary-metric">
+                <span>Дистанция</span>
+                <b id="summary-distance">—</b>
+              </div>
+              <div class="summary-metric">
+                <span>Время хода</span>
+                <b id="summary-time">—</b>
+              </div>
+            </div>
+            <div class="summary-avoided" id="summary-avoided">
+              <span>Обойдено зон риска:</span>
+              <b id="summary-avoided-list">—</b>
+            </div>
+            <button type="button" class="route-btn route-btn--telemetry" id="btn-show-telemetry">
+              Открыть телеметрию маршрута →
+            </button>
+          </div>
+        </section>
+
         <div class="sidebar__bottom">
           <span id="data-status">Данные NASA Mars Trek</span>
           <a href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer" aria-label="Открыть NASA Mars Trek">↗</a>
@@ -139,15 +228,24 @@
           <span>Центр карты</span>
           <b>18.44° N, 77.45° E</b>
         </div>
+        <div class="map-route-prompt hidden" id="map-route-prompt">
+          <span class="route-prompt-dot"></span>
+          <span id="route-prompt-text">Кликните на карту, чтобы установить Точку А (Старт)</span>
+          <button type="button" id="btn-cancel-route-mode" aria-label="Отменить выбор точек">✕</button>
+        </div>
         <div class="map-attribution" id="map-attribution">Слой: NASA Viking (видимый диапазон)</div>
         <div class="loading-indicator hidden" id="loading-indicator">Загрузка слоя...</div>
       </section>
 
       <aside class="info-rail" aria-label="Информация об объекте">
         <div class="rail-top">
-          <span>Информация об объекте</span>
+          <span id="rail-heading">Информация об объекте</span>
+          <div class="rail-tabs" id="rail-tabs">
+            <button type="button" class="rail-tab-btn active" id="tab-mission">Объект</button>
+            <button type="button" class="rail-tab-btn" id="tab-route">Маршрут</button>
+          </div>
         </div>
-        <div class="selected-card">
+        <div class="selected-card" id="mission-card">
           <div class="selected-card__image">
             <span class="image-caption">Jezero Crater (Mars 2020)</span>
           </div>
@@ -180,6 +278,48 @@
           <a class="external-card-link" href="https://trek.nasa.gov/mars/" target="_blank" rel="noreferrer">
             Открыть в NASA Mars Trek <span>↗</span>
           </a>
+        </div>
+
+        <div class="route-telemetry-view hidden" id="route-telemetry-view">
+          <div class="telemetry-badge-row">
+            <span class="telemetry-badge">SafeNav Telemetry</span>
+            <span class="telemetry-status" id="telemetry-status">Ожидание точек</span>
+          </div>
+          <h2 class="telemetry-title" id="telemetry-title">Маршрут марсохода</h2>
+          <p class="telemetry-subtitle" id="telemetry-subtitle">Выберите точки на карте или активируйте готовый сценарий для расчета безопасной траектории.</p>
+
+          <div class="telemetry-grid">
+            <div class="telemetry-stat">
+              <span>Дистанция (Марс)</span>
+              <b id="telemetry-distance">—</b>
+            </div>
+            <div class="telemetry-stat">
+              <span>Время перехода</span>
+              <b id="telemetry-duration">—</b>
+            </div>
+            <div class="telemetry-stat">
+              <span>Прямой путь</span>
+              <b id="telemetry-direct">—</b>
+            </div>
+            <div class="telemetry-stat">
+              <span>Безопасность</span>
+              <b id="telemetry-risk">—</b>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="telemetry-section-title">Геологический анализ траектории:</div>
+          <div class="hazards-avoided-list" id="hazards-avoided-list">
+            <div class="telemetry-empty">Маршрут еще не построен</div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="telemetry-section-title">Контрольные точки (Waypoints):</div>
+          <div class="waypoints-timeline" id="waypoints-timeline">
+            <!-- Dynamically populated waypoints -->
+          </div>
         </div>
         <div class="rail-note">
           <p><b>Навигация по карте</b><br>Переключайте слои и выбирайте посадочные площадки для детального просмотра параметров рельефа.</p>

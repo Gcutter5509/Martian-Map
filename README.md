@@ -56,8 +56,17 @@ All planetary map layers and coordinates are retrieved directly from NASA's offi
 ## Technical Architecture
 
 - `index.html` — Clean, semantic UI with responsive 3-pane layout (Navigation sidebar, Interactive map stage, Object info rail).
-- `style.css` — Modern, accessible theme using the Inter typeface, customized Leaflet controls, and responsive breakpoints for mobile/desktop.
-- `script.js` — Leaflet.js engine configured with `L.CRS.EPSG4326` (Equirectangular Simple Cylindrical), handling layer bounds, coordinate transformations, mission filtering, and search.
+- `style.css` — Modern, accessible theme using the Inter typeface, customized Leaflet controls, route styling, and responsive breakpoints for mobile/desktop.
+- `script.js` — Leaflet.js engine configured with `L.CRS.EPSG4326` (Equirectangular Simple Cylindrical), handling layer bounds, coordinate transformations, mission filtering, search, and the **Rover SafeNav routing engine** (A* pathfinding with geological hazard avoidance on the Martian sphere).
+
+---
+
+## Autonomous Rover SafeNav (Safe Routing)
+
+The application includes an autonomous rover path planner designed for realistic planetary traversing:
+- **Martian Geodesics:** Distances calculated along great-circle arcs on the Martian sphere ($R_{\text{Mars}} = 3389.5\text{ km}$).
+- **Geological Barrier Avoidance:** Prevents rovers from entering impassable Martian chasms and volcanic scarps (Valles Marineris rift walls, Olympus Mons basal scarps, Tharsis Montes shield calderas, and polar ice sheets).
+- **Interactive Waypoints & Dragging:** Click anywhere on the map or select landing site presets (Jezero, Gale, InSight, Valles Marineris) to plot trajectories, drag markers in real-time, inspect waypoints, and view route telemetry in the Info Rail.
 
 ---
 
