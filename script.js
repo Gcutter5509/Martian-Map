@@ -549,8 +549,14 @@
     const [lat, lon] = info.coords;
     const inCoverage = isMissionInCoverage(info, activeKey);
     const coverageWarning = !inCoverage
-      ? `<div class="popup-warning">${currentLang === 'ru' ? 'Внимание: район 68.2° N находится севернее границы ночной съемки NASA THEMIS (граница: 65° N).' : 'Warning: 68.2° N is north of NASA THEMIS Night coverage boundary (limit: 65° N).'}</div>`
+      ? `<div class="popup-warning">${currentLang === 'ru' ? 'Внимание: район находится севернее границы ночной съемки NASA THEMIS (граница: 65° N).' : 'Warning: site is north of NASA THEMIS Night coverage boundary (limit: 65° N).'}</div>`
       : '';
+
+    const wData = (info.id && weatherData[info.id]) ? weatherData[info.id] : weatherData.perseverance;
+    const elev = t(info.elevation);
+    const tempVal = t(wData?.temp) || '-58°C';
+    const pressVal = t(wData?.pressure) || '7.5 hPa';
+    const gVal = calcLocalGravity(lat, (wData?.physicsElev ? wData.physicsElev / 1000 : 0)).toFixed(3);
 
     return `
       <div class="popup-box">
@@ -558,9 +564,36 @@
         <b class="popup-title">${t(info.crater)}</b>
         <span class="popup-mission">${t(info.name)} (${info.sol})</span>
         <span class="popup-coords">${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}, ${formatLongitude(lon)}</span>
-        <div class="detail-row" style="margin-top:6px; height:auto; padding:4px 0; border-top:1px solid var(--line); border-bottom:0;">
-          <span style="font-size:10px; color:var(--text-muted)">${currentLang === 'ru' ? 'Высота:' : 'Elevation:'}</span>
-          <b style="font-size:11px; color:#d6c083">${t(info.elevation)}</b>
+
+        <div class="popup-metrics-grid">
+          <div class="popup-metric-chip chip-elev" title="${currentLang === 'ru' ? 'Абсолютная высота MOLA' : 'MOLA Elevation'}">
+            <span class="chip-icon">📐</span>
+            <div class="chip-body">
+              <small>${currentLang === 'ru' ? 'Высота' : 'Elevation'}</small>
+              <b>${elev}</b>
+            </div>
+          </div>
+          <div class="popup-metric-chip chip-temp" title="${currentLang === 'ru' ? 'Температура воздуха' : 'Air Temperature'}">
+            <span class="chip-icon">🌡️</span>
+            <div class="chip-body">
+              <small>${currentLang === 'ru' ? 'Темп.' : 'Temp'}</small>
+              <b>${tempVal}</b>
+            </div>
+          </div>
+          <div class="popup-metric-chip chip-press" title="${currentLang === 'ru' ? 'Атмосферное давление' : 'Barometric Pressure'}">
+            <span class="chip-icon">🧭</span>
+            <div class="chip-body">
+              <small>${currentLang === 'ru' ? 'Давление' : 'Pressure'}</small>
+              <b>${pressVal}</b>
+            </div>
+          </div>
+          <div class="popup-metric-chip chip-grav" title="${currentLang === 'ru' ? 'Локальная гравитация Сомильяны' : 'Somigliana Gravity'}">
+            <span class="chip-icon">⚖️</span>
+            <div class="chip-body">
+              <small>${currentLang === 'ru' ? 'Гравитация' : 'Gravity'}</small>
+              <b>${gVal} m/s²</b>
+            </div>
+          </div>
         </div>
         ${coverageWarning}
       </div>
@@ -713,6 +746,7 @@
   }
 
   Object.entries(markerStyles).forEach(([id, info]) => {
+    info.id = id;
     const marker = L.marker(info.coords, { icon: pointIcon(info.color) })
       .bindPopup(popup(info))
       .on('click', () => {
@@ -840,19 +874,46 @@
 
   function landmarkPopup(info) {
     const [lat, lon] = info.coords;
+    const wData = (info.id && weatherData[info.id]) ? weatherData[info.id] : weatherData.olympus;
+    const tempVal = t(wData?.temp) || '-60°C';
+    const gVal = calcLocalGravity(lat, (wData?.physicsElev ? wData.physicsElev / 1000 : 0)).toFixed(3);
+
     return `
       <div class="popup-box">
         <span class="popup-label" style="color:${info.color}">${t(info.category)}</span>
         <b class="popup-title">${t(info.name)}</b>
         <span class="popup-mission" style="color:var(--text-muted)">${t(info.type)}</span>
         <span class="popup-coords">${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}, ${formatLongitude(lon)}</span>
-        <div class="detail-row" style="margin-top:6px; height:auto; padding:4px 0; border-top:1px solid var(--line); border-bottom:0;">
-          <span style="font-size:10px; color:var(--text-muted)">${currentLang === 'ru' ? 'Высота:' : 'Elevation:'}</span>
-          <b style="font-size:11px; color:#d6c083">${t(info.elevation)}</b>
-        </div>
-        <div class="detail-row" style="height:auto; padding:2px 0 4px 0; border-bottom:0;">
-          <span style="font-size:10px; color:var(--text-muted)">${currentLang === 'ru' ? 'Размеры:' : 'Dimensions:'}</span>
-          <b style="font-size:11px; color:#a5b4fc">${t(info.dimensions)}</b>
+
+        <div class="popup-metrics-grid">
+          <div class="popup-metric-chip chip-elev" title="${currentLang === 'ru' ? 'Абсолютная высота MOLA' : 'MOLA Elevation'}">
+            <span class="chip-icon">📐</span>
+            <div class="chip-body">
+              <small>${currentLang === 'ru' ? 'Высота' : 'Elevation'}</small>
+              <b>${t(info.elevation)}</b>
+            </div>
+          </div>
+          <div class="popup-metric-chip chip-dim" title="${currentLang === 'ru' ? 'Геометрические размеры' : 'Dimensions'}">
+            <span class="chip-icon">📏</span>
+            <div class="chip-body">
+              <small>${currentLang === 'ru' ? 'Размеры' : 'Dimensions'}</small>
+              <b>${t(info.dimensions)}</b>
+            </div>
+          </div>
+          <div class="popup-metric-chip chip-temp" title="${currentLang === 'ru' ? 'Температура воздуха' : 'Air Temperature'}">
+            <span class="chip-icon">🌡️</span>
+            <div class="chip-body">
+              <small>${currentLang === 'ru' ? 'Темп.' : 'Temp'}</small>
+              <b>${tempVal}</b>
+            </div>
+          </div>
+          <div class="popup-metric-chip chip-grav" title="${currentLang === 'ru' ? 'Локальная гравитация Сомильяны' : 'Somigliana Gravity'}">
+            <span class="chip-icon">⚖️</span>
+            <div class="chip-body">
+              <small>${currentLang === 'ru' ? 'Гравитация' : 'Gravity'}</small>
+              <b>${gVal} m/s²</b>
+            </div>
+          </div>
         </div>
       </div>
     `;

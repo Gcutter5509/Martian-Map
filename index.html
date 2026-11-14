@@ -423,43 +423,67 @@
           <p class="weather-subtitle" id="weather-coords-sub">18.44° N, 77.45° E • Elevation -2,575 m</p>
 
           <div class="weather-grid">
-            <div class="weather-stat">
-              <span class="weather-stat__label" data-i18n="weather_stat_temp">Air Temperature</span>
+            <div class="weather-stat weather-stat--temp">
+              <div class="weather-stat__header">
+                <span class="stat-icon" aria-hidden="true">🌡️</span>
+                <span class="weather-stat__label" data-i18n="weather_stat_temp">Air Temperature</span>
+              </div>
               <b class="weather-stat__val weather-stat__val--temp" id="weather-temp">-72.4°F (-58°C)</b>
               <small class="weather-stat__sub" id="weather-temp-range">Day 5.0°F • Night -115.6°F</small>
             </div>
-            <div class="weather-stat">
-              <span class="weather-stat__label" data-i18n="weather_stat_press">Atmospheric Pressure</span>
+            <div class="weather-stat weather-stat--press">
+              <div class="weather-stat__header">
+                <span class="stat-icon" aria-hidden="true">🧭</span>
+                <span class="weather-stat__label" data-i18n="weather_stat_press">Atmospheric Pressure</span>
+              </div>
               <b class="weather-stat__val" id="weather-pressure">0.109 psi (7.5 hPa)</b>
               <small class="weather-stat__sub" id="weather-pressure-sub">0.22 inHg • 0.0074 atm</small>
             </div>
-            <div class="weather-stat">
-              <span class="weather-stat__label" data-i18n="weather_stat_wind">Wind Regime</span>
+            <div class="weather-stat weather-stat--wind">
+              <div class="weather-stat__header">
+                <span class="stat-icon" aria-hidden="true">💨</span>
+                <span class="weather-stat__label" data-i18n="weather_stat_wind">Wind Regime</span>
+              </div>
               <b class="weather-stat__val" id="weather-wind">10.7 mph (4.8 m/s)</b>
               <small class="weather-stat__sub" id="weather-wind-sub">Gusts up to 42.5 mph • WNW</small>
             </div>
-            <div class="weather-stat">
-              <span class="weather-stat__label" data-i18n="weather_stat_dust">Dust & UV Radiation</span>
+            <div class="weather-stat weather-stat--dust">
+              <div class="weather-stat__header">
+                <span class="stat-icon" aria-hidden="true">☀️</span>
+                <span class="weather-stat__label" data-i18n="weather_stat_dust">Dust & UV Radiation</span>
+              </div>
               <b class="weather-stat__val" id="weather-tau">τ = 0.42</b>
               <small class="weather-stat__sub" id="weather-uv-sub">Moderate • UV Index 9</small>
             </div>
-            <div class="weather-stat">
-              <span class="weather-stat__label" data-i18n="weather_stat_density">Air Density</span>
+            <div class="weather-stat weather-stat--density">
+              <div class="weather-stat__header">
+                <span class="stat-icon" aria-hidden="true">⚖️</span>
+                <span class="weather-stat__label" data-i18n="weather_stat_density">Air Density</span>
+              </div>
               <b class="weather-stat__val" id="weather-density">18.2 g/m³</b>
               <small class="weather-stat__sub" id="weather-density-sub">1.48% of Earth sea-level</small>
             </div>
-            <div class="weather-stat">
-              <span class="weather-stat__label" data-i18n="weather_stat_sound">Speed of Sound</span>
+            <div class="weather-stat weather-stat--sound">
+              <div class="weather-stat__header">
+                <span class="stat-icon" aria-hidden="true">🔊</span>
+                <span class="weather-stat__label" data-i18n="weather_stat_sound">Speed of Sound</span>
+              </div>
               <b class="weather-stat__val" id="weather-sound">230.7 m/s (516 mph)</b>
               <small class="weather-stat__sub" id="weather-sound-sub">SuperCam benchmark (Nature 2022)</small>
             </div>
-            <div class="weather-stat">
-              <span class="weather-stat__label" data-i18n="weather_stat_boil">Water Boiling Point</span>
+            <div class="weather-stat weather-stat--boil">
+              <div class="weather-stat__header">
+                <span class="stat-icon" aria-hidden="true">💧</span>
+                <span class="weather-stat__label" data-i18n="weather_stat_boil">Water Boiling Point</span>
+              </div>
               <b class="weather-stat__val" id="weather-boil">+2.8°C (37.1°F)</b>
               <small class="weather-stat__sub" id="weather-boil-sub">Armstrong Limit: Liquid Phase Permitted</small>
             </div>
-            <div class="weather-stat">
-              <span class="weather-stat__label" data-i18n="weather_stat_radiation">Radiation & Solar Flux</span>
+            <div class="weather-stat weather-stat--radiation">
+              <div class="weather-stat__header">
+                <span class="stat-icon" aria-hidden="true">☢️</span>
+                <span class="weather-stat__label" data-i18n="weather_stat_radiation">Radiation & Solar Flux</span>
+              </div>
               <b class="weather-stat__val" id="weather-radiation">0.67 mSv/sol</b>
               <small class="weather-stat__sub" id="weather-radiation-sub">586 W/m² solar • MSL RAD</small>
             </div>
@@ -526,22 +550,34 @@
               </label>
             </div>
             <div class="gravity-result-row">
-              <div class="gravity-stat">
-                <span data-i18n="weather_mars_weight">Weight at location:</span>
+              <div class="gravity-stat gravity-stat--weight">
+                <div class="gravity-stat__header">
+                  <span class="stat-icon" aria-hidden="true">⚖️</span>
+                  <span data-i18n="weather_mars_weight">Weight at location:</span>
+                </div>
                 <b id="mars-weight-val">58.4 lbs</b>
               </div>
-              <div class="gravity-stat">
-                <span data-i18n="weather_local_gravity">Local Surface Gravity:</span>
+              <div class="gravity-stat gravity-stat--grav">
+                <div class="gravity-stat__header">
+                  <span class="stat-icon" aria-hidden="true">🪐</span>
+                  <span data-i18n="weather_local_gravity">Local Surface Gravity:</span>
+                </div>
                 <b id="mars-gravity-val">3.721 m/s² (0.379 g)</b>
               </div>
             </div>
             <div class="gravity-result-row">
-              <div class="gravity-stat">
-                <span data-i18n="weather_jump_height">Jump height:</span>
+              <div class="gravity-stat gravity-stat--jump">
+                <div class="gravity-stat__header">
+                  <span class="stat-icon" aria-hidden="true">🦘</span>
+                  <span data-i18n="weather_jump_height">Jump height:</span>
+                </div>
                 <b id="mars-jump-val" data-i18n="weather_jump_mult">2.64× higher (~4.3 ft)</b>
               </div>
-              <div class="gravity-stat">
-                <span data-i18n="weather_hang_time">Hang time in air:</span>
+              <div class="gravity-stat gravity-stat--hang">
+                <div class="gravity-stat__header">
+                  <span class="stat-icon" aria-hidden="true">⏱️</span>
+                  <span data-i18n="weather_hang_time">Hang time in air:</span>
+                </div>
                 <b id="mars-hang-val">1.62× longer float</b>
               </div>
             </div>
@@ -557,36 +593,60 @@
           <p class="telemetry-subtitle" id="telemetry-subtitle" data-i18n="telemetry_subtitle">Select waypoints on map or activate a scenario to calculate safe geodesic path.</p>
 
           <div class="telemetry-grid">
-            <div class="telemetry-stat">
-              <span data-i18n="telemetry_stat_dist">Distance (Mars)</span>
+            <div class="telemetry-stat telemetry-stat--dist">
+              <div class="telemetry-stat__header">
+                <span class="stat-icon" aria-hidden="true">📏</span>
+                <span data-i18n="telemetry_stat_dist">Distance (Mars)</span>
+              </div>
               <b id="telemetry-distance">—</b>
             </div>
-            <div class="telemetry-stat">
-              <span data-i18n="telemetry_stat_time">Travel Time (Robotic)</span>
+            <div class="telemetry-stat telemetry-stat--time">
+              <div class="telemetry-stat__header">
+                <span class="stat-icon" aria-hidden="true">🤖</span>
+                <span data-i18n="telemetry_stat_time">Travel Time (Robotic)</span>
+              </div>
               <b id="telemetry-duration">—</b>
             </div>
-            <div class="telemetry-stat">
-              <span data-i18n="telemetry_stat_direct">Direct Path</span>
+            <div class="telemetry-stat telemetry-stat--direct">
+              <div class="telemetry-stat__header">
+                <span class="stat-icon" aria-hidden="true">🧭</span>
+                <span data-i18n="telemetry_stat_direct">Direct Path</span>
+              </div>
               <b id="telemetry-direct">—</b>
             </div>
-            <div class="telemetry-stat">
-              <span data-i18n="telemetry_stat_safety">Safety Index</span>
+            <div class="telemetry-stat telemetry-stat--safety">
+              <div class="telemetry-stat__header">
+                <span class="stat-icon" aria-hidden="true">🛡️</span>
+                <span data-i18n="telemetry_stat_safety">Safety Index</span>
+              </div>
               <b id="telemetry-risk">—</b>
             </div>
-            <div class="telemetry-stat">
-              <span data-i18n="telemetry_stat_bearing">Initial Azimuth</span>
+            <div class="telemetry-stat telemetry-stat--bearing">
+              <div class="telemetry-stat__header">
+                <span class="stat-icon" aria-hidden="true">📐</span>
+                <span data-i18n="telemetry_stat_bearing">Initial Azimuth</span>
+              </div>
               <b id="telemetry-bearing">—</b>
             </div>
-            <div class="telemetry-stat">
-              <span data-i18n="telemetry_stat_energy">Traction Energy</span>
+            <div class="telemetry-stat telemetry-stat--energy">
+              <div class="telemetry-stat__header">
+                <span class="stat-icon" aria-hidden="true">⚡</span>
+                <span data-i18n="telemetry_stat_energy">Traction Energy</span>
+              </div>
               <b id="telemetry-energy">—</b>
             </div>
-            <div class="telemetry-stat">
-              <span data-i18n="telemetry_stat_latency">DSN Radio Latency</span>
+            <div class="telemetry-stat telemetry-stat--latency">
+              <div class="telemetry-stat__header">
+                <span class="stat-icon" aria-hidden="true">📡</span>
+                <span data-i18n="telemetry_stat_latency">DSN Radio Latency</span>
+              </div>
               <b id="telemetry-latency">—</b>
             </div>
-            <div class="telemetry-stat">
-              <span data-i18n="telemetry_stat_manned_time">Crew & Marswalk Time</span>
+            <div class="telemetry-stat telemetry-stat--crew">
+              <div class="telemetry-stat__header">
+                <span class="stat-icon" aria-hidden="true">👨‍🚀</span>
+                <span data-i18n="telemetry_stat_manned_time">Crew & Marswalk Time</span>
+              </div>
               <b id="telemetry-crew-time">—</b>
             </div>
           </div>
