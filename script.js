@@ -94,6 +94,7 @@
 
   let activeKey = 'color';
   let activeBasemap = basemaps.color.addTo(map);
+  let swipeController = null;
 
   // Visual coverage boundary indicator for THEMIS Night (NASA 65° N and 65° S limits)
   const nightCoverageLines = L.layerGroup([
@@ -222,18 +223,26 @@
 
   function updateInfoCard(info) {
     const titleEl = document.querySelector('.selected-card h2');
+    const kickerEl = document.querySelector('.selected-card .kicker');
     const descEl = document.querySelector('.selected-card__desc');
     const values = document.querySelectorAll('.coordinate-grid b');
     const captionEl = document.querySelector('.selected-card__image .image-caption');
     const elevationEl = document.querySelector('.detail-row:nth-of-type(1) b');
+    const reliefEl = document.querySelector('.detail-row:nth-of-type(2) b');
     const irEl = document.querySelector('.detail-row:nth-of-type(3) b');
+
+    if (kickerEl) {
+      kickerEl.textContent = info.category ? `Геологический объект • ${info.category}` : 'Район посадки';
+    }
+
+    const titleText = info.shortName || info.crater || info.name;
+    if (titleEl) titleEl.innerHTML = titleText.replace(' ', '<br>');
 
     const inCoverage = isMissionInCoverage(info, activeKey);
 
-    if (titleEl) titleEl.innerHTML = info.crater.replace(' ', '<br>');
     if (descEl) {
       if (!inCoverage && activeKey === 'thermalNight') {
-        descEl.innerHTML = `${info.desc}<br><br><span class="coverage-alert">По официальным данным NASA Mars Trek, ночная ИК-съемка THEMIS ограничена широтами от 65° S до 65° N. Район Phoenix (68.22° N) находится за границей ночной мозаики.</span><br><button class="switch-layer-btn" id="switch-to-day-btn">Переключить на дневную съемку</button>`;
+        descEl.innerHTML = `${info.desc}<br><br><span class="coverage-alert">По официальным данным NASA Mars Trek, ночная ИК-съемка THEMIS ограничена широтами от 65° S до 65° N. Район находится за границей ночной мозаики.</span><br><button class="switch-layer-btn" id="switch-to-day-btn">Переключить на дневную съемку</button>`;
         const switchBtn = document.querySelector('#switch-to-day-btn');
         if (switchBtn) {
           switchBtn.addEventListener('click', () => {
@@ -250,8 +259,9 @@
     }
     if (values[0]) values[0].textContent = `${Math.abs(info.coords[0]).toFixed(4)}° ${info.coords[0] >= 0 ? 'N' : 'S'}`;
     if (values[1]) values[1].textContent = formatLongitude(info.coords[1]);
-    if (captionEl) captionEl.textContent = `${info.crater} (${info.sol})`;
+    if (captionEl) captionEl.textContent = info.sol ? `${info.crater} (${info.sol})` : info.name;
     if (elevationEl && info.elevation) elevationEl.textContent = info.elevation;
+    if (reliefEl) reliefEl.textContent = info.dimensions || 'MOLA, 463 м/пикс';
     if (irEl) {
       if (!inCoverage && activeKey === 'thermalNight') {
         irEl.textContent = 'Вне зоны съемки (NASA: до 65° N)';
@@ -305,8 +315,186 @@
     missionLayers[id] = L.layerGroup([marker]).addTo(map);
   });
 
+  // Official Martian Geological Landmarks Catalog
+  const landmarkData = {
+    olympus: {
+      id: 'olympus',
+      name: 'Гора Олимп (Olympus Mons)',
+      shortName: 'Olympus Mons',
+      type: 'Щитовой вулкан (крупнейший в Солнечной системе)',
+      category: 'Вулкан',
+      coords: [18.65, -133.8],
+      elevation: '+21 229 м (над нулевым уровнем)',
+      dimensions: 'Диаметр 600 км, кальдера 80 км',
+      color: '#c084fc',
+      iconText: '▲',
+      desc: 'Высочайшая вулканическая гора в Солнечной системе. Ее колоссальное основание окружено отвесными базальными обрывами высотой до 8 км.',
+    },
+    valles: {
+      id: 'valles',
+      name: 'Долины Маринер (Valles Marineris)',
+      shortName: 'Valles Marineris',
+      type: 'Тектонический рифтовый каньон',
+      category: 'Каньон',
+      coords: [-13.9, -59.2],
+      elevation: '-7 200 м (дно каньона Мелас)',
+      dimensions: 'Длина 4 000 км, глубина до 10 км',
+      color: '#f43f5e',
+      iconText: '▼',
+      desc: 'Гигантская система каньонов, протянувшаяся на четверть окружности Марса. В 10 раз длиннее и в 5 раз глубже земного Гранд-Каньона.',
+    },
+    noctis: {
+      id: 'noctis',
+      name: 'Лабиринт Ночи (Noctis Labyrinthus)',
+      shortName: 'Noctis Labyrinthus',
+      type: 'Сеть каньонов и грабенов',
+      category: 'Каньон',
+      coords: [-7.0, -102.2],
+      elevation: '+3 200 м / -3 500 м',
+      dimensions: 'Протяженность около 1 200 км',
+      color: '#fb923c',
+      iconText: '❖',
+      desc: 'Впечатляющий лабиринт из глубоких ветвящихся каньонов и долин на стыке вулканической провинции Фарсида и Долин Маринер.',
+    },
+    hellas: {
+      id: 'hellas',
+      name: 'Равнина Эллада (Hellas Planitia)',
+      shortName: 'Hellas Planitia',
+      type: 'Гигантский импактный бассейн',
+      category: 'Впадина',
+      coords: [-42.4, 70.5],
+      elevation: '-7 152 м (самая глубокая точка Марса)',
+      dimensions: 'Диаметр чаши 2 300 км',
+      color: '#38bdf8',
+      iconText: '◌',
+      desc: 'Древнейший и глубочайший ударный кратер Марса. Плотность атмосферы здесь выше, из-за чего на дне часто наблюдаются сезонные туманы.',
+    },
+    cydonia: {
+      id: 'cydonia',
+      name: 'Кидония (Cydonia Mensae)',
+      shortName: 'Cydonia Mensae',
+      type: 'Столовые горы (мезы)',
+      category: 'Меза',
+      coords: [40.75, -9.46],
+      elevation: '-2 100 м (у подножия холмов)',
+      dimensions: 'Область столовых гор ~800 км',
+      color: '#eab308',
+      iconText: '◈',
+      desc: 'Район останцовых возвышенностей на равнине Ацидалия. Снимок аппарата «Викинг-1» в 1976 году создал известную оптическую иллюзию «Лица на Марсе».',
+    },
+    korolev: {
+      id: 'korolev',
+      name: 'Кратер Королёв (Korolev Crater)',
+      shortName: 'Korolev Crater',
+      type: 'Ледниковый ударный кратер',
+      category: 'Кратер',
+      coords: [73.0, 164.5],
+      elevation: '-3 800 м (купол водяного льда)',
+      dimensions: 'Диаметр 81 км, толща льда 1.8 км',
+      color: '#67e8f9',
+      iconText: '❄',
+      desc: 'Кратер в приполярной зоне, круглый год покрытый нетающим ледником из 2 200 км³ водяного льда благодаря явлению холодной ловушки.',
+    },
+    alba: {
+      id: 'alba',
+      name: 'Гора Белая (Alba Mons)',
+      shortName: 'Alba Mons',
+      type: 'Низкопрофильный щитовой вулкан',
+      category: 'Вулкан',
+      coords: [40.5, -109.9],
+      elevation: '+6 800 м (над нулевым уровнем)',
+      dimensions: 'Диаметр основания свыше 1 000 км',
+      color: '#fb7185',
+      iconText: '▲',
+      desc: 'Вулкан с самой обширной площадью основания в Солнечной системе, окруженный колоссальным кольцом концентрических грабенов и разломов.',
+    },
+  };
+
+  function landmarkPopup(info) {
+    const [lat, lon] = info.coords;
+    return `
+      <div class="popup-box">
+        <span class="popup-label" style="color:${info.color}">${info.category}</span>
+        <b class="popup-title">${info.name}</b>
+        <span class="popup-mission" style="color:var(--text-muted)">${info.type}</span>
+        <span class="popup-coords">${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}, ${formatLongitude(lon)}</span>
+        <div class="detail-row" style="margin-top:6px; height:auto; padding:4px 0; border-top:1px solid var(--line); border-bottom:0;">
+          <span style="font-size:10px; color:var(--text-muted)">Высота:</span>
+          <b style="font-size:11px; color:#d6c083">${info.elevation}</b>
+        </div>
+      </div>
+    `;
+  }
+
+  function landmarkIcon(info) {
+    return L.divIcon({
+      className: 'landmark-marker',
+      html: `<div class="landmark-marker__icon" style="--lm-color:${info.color};" title="${info.name}">${info.iconText}</div>`,
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+    });
+  }
+
+  const landmarkMarkers = {};
+  const landmarkLayers = {};
+
+  Object.entries(landmarkData).forEach(([id, info]) => {
+    const marker = L.marker(info.coords, { icon: landmarkIcon(info) })
+      .bindPopup(landmarkPopup(info))
+      .on('click', () => {
+        map.flyTo(info.coords, 5, { duration: 1.1 });
+        mapCoordinates(info.coords);
+        updateInfoCard(info);
+        showMissionTab();
+      });
+    landmarkMarkers[id] = marker;
+    landmarkLayers[id] = L.layerGroup([marker]).addTo(map);
+  });
+
+  document.querySelectorAll('.landmark-filter').forEach((input) => {
+    input.addEventListener('change', () => {
+      const layer = landmarkLayers[input.value];
+      if (!layer) return;
+      if (input.checked) layer.addTo(map);
+      else map.removeLayer(layer);
+    });
+  });
+
+  document.querySelectorAll('.landmark-option').forEach((opt) => {
+    opt.addEventListener('click', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      const input = opt.querySelector('input');
+      if (!input) return;
+      const id = input.value;
+      const info = landmarkData[id];
+      if (info) {
+        map.flyTo(info.coords, 5, { duration: 1.1 });
+        mapCoordinates(info.coords);
+        updateInfoCard(info);
+        landmarkMarkers[id]?.openPopup();
+        showMissionTab();
+      }
+    });
+  });
+
+  const toggleAllLandmarksBtn = document.querySelector('#landmarks-toggle-all');
+  if (toggleAllLandmarksBtn) {
+    let allShown = true;
+    toggleAllLandmarksBtn.addEventListener('click', () => {
+      allShown = !allShown;
+      toggleAllLandmarksBtn.textContent = allShown ? 'Скрыть все' : 'Показать все';
+      document.querySelectorAll('.landmark-filter').forEach((input) => {
+        input.checked = allShown;
+        input.dispatchEvent(new Event('change'));
+      });
+    });
+  }
+
   document.querySelectorAll('input[name="basemap"]').forEach((input) => {
     input.addEventListener('change', () => {
+      if (swipeController && swipeController.isActive()) {
+        swipeController.disable();
+      }
       const targetConfig = layerConfigs[input.value];
       if (!targetConfig || input.value === activeKey) return;
 
@@ -393,19 +581,39 @@
       if (event.key !== 'Enter') return;
       const query = search.value.trim().toLowerCase();
 
-      const match = Object.entries(markerStyles).find(([, item]) =>
+      // Check landing sites
+      const missionMatch = Object.entries(markerStyles).find(([, item]) =>
         item.name.toLowerCase().includes(query) || item.crater.toLowerCase().includes(query)
       );
 
-      if (match) {
-        const inCoverage = isMissionInCoverage(match[1], activeKey);
+      if (missionMatch) {
+        const [id, item] = missionMatch;
+        const inCoverage = isMissionInCoverage(item, activeKey);
         if (!inCoverage && activeKey === 'thermalNight') {
-          map.flyTo([65.0, match[1].coords[1]], 4, { duration: 1.2 });
+          map.flyTo([65.0, item.coords[1]], 4, { duration: 1.2 });
         } else {
-          map.flyTo(match[1].coords, 5, { duration: 1.2 });
+          map.flyTo(item.coords, 5, { duration: 1.2 });
         }
-        missionLayers[match[0]].getLayers()[0]?.openPopup();
-        updateInfoCard(match[1]);
+        missionLayers[id]?.getLayers()[0]?.openPopup();
+        updateInfoCard(item);
+        showMissionTab();
+        return;
+      }
+
+      // Check landmarks catalog
+      const landmarkMatch = Object.entries(landmarkData).find(([, item]) =>
+        item.name.toLowerCase().includes(query) ||
+        item.shortName.toLowerCase().includes(query) ||
+        item.type.toLowerCase().includes(query) ||
+        item.category.toLowerCase().includes(query)
+      );
+
+      if (landmarkMatch) {
+        const [id, item] = landmarkMatch;
+        map.flyTo(item.coords, 5, { duration: 1.2 });
+        landmarkLayers[id]?.getLayers()[0]?.openPopup();
+        updateInfoCard(item);
+        showMissionTab();
         return;
       }
 
@@ -421,6 +629,334 @@
       }
     });
   }
+
+  // =========================================================================
+  // Swipe Comparison Tool (Split Screen: Multi-Layer Selector)
+  // =========================================================================
+
+  function initSwipeController() {
+    const swipeContainer = document.querySelector('#swipe-container');
+    const swipeDivider = document.querySelector('#swipe-divider');
+    const swipeHandle = document.querySelector('#swipe-handle');
+    const toggleSwipeBtn = document.querySelector('#btn-toggle-swipe');
+    const sidebarSwipeBtn = document.querySelector('#sidebar-swipe-btn');
+
+    const selectLeft = document.querySelector('#swipe-select-left');
+    const selectRight = document.querySelector('#swipe-select-right');
+    const dotLeft = document.querySelector('#swipe-dot-left');
+    const dotRight = document.querySelector('#swipe-dot-right');
+    const badgeLeft = document.querySelector('#swipe-badge-left');
+    const badgeRight = document.querySelector('#swipe-badge-right');
+
+    let isSwipeActive = false;
+    let leftLayer = null;
+    let rightLayer = null;
+    let leftKey = selectLeft ? selectLeft.value : 'color';
+    let rightKey = selectRight ? selectRight.value : 'relief';
+    let isDragging = false;
+    let currentX = null;
+
+    const dotClasses = {
+      color: 'dot-color',
+      relief: 'dot-relief',
+      thermalDay: 'dot-thermal',
+      thermalNight: 'dot-night',
+    };
+
+    function updateDot(dotEl, key) {
+      if (!dotEl) return;
+      dotEl.className = 'swipe-badge__dot ' + (dotClasses[key] || 'dot-color');
+    }
+
+    function createSwipeTileLayer(key) {
+      if (key === 'color') {
+        return nasaTiles('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', {
+          bounds: globalBounds,
+        });
+      }
+      if (key === 'relief') {
+        return nasaTiles('Mars_MGS_MOLA_ClrShade_merge_global_463m', 'jpg', {
+          bounds: globalBounds,
+        });
+      }
+      if (key === 'thermalDay') {
+        return nasaTiles('Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly', 'png', {
+          className: 'themis-layer',
+          bounds: globalBounds,
+        });
+      }
+      if (key === 'thermalNight') {
+        return nasaTiles('THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018', 'png', {
+          className: 'themis-layer',
+          bounds: nightBounds,
+        });
+      }
+      return null;
+    }
+
+    function updateClip(x) {
+      if (!isSwipeActive) return;
+
+      const mapSize = map.getSize();
+      const mapWidth = mapSize.x;
+      if (x === undefined || x === null) {
+        x = currentX !== null ? currentX : mapWidth / 2;
+      }
+      const clampedX = Math.max(10, Math.min(mapWidth - 10, x));
+      currentX = clampedX;
+
+      if (swipeDivider) {
+        swipeDivider.style.left = `${clampedX}px`;
+      }
+
+      const nw = map.containerPointToLayerPoint([0, 0]);
+      const se = map.containerPointToLayerPoint(mapSize);
+      const clipX = nw.x + clampedX;
+
+      const clipLeft = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)';
+      const clipRight = 'rect(' + [nw.y, se.x, se.y, clipX].join('px,') + 'px)';
+
+      if (leftLayer && leftLayer.getContainer()) {
+        const c = leftLayer.getContainer();
+        c.style.clip = clipLeft;
+        c.style.clipPath = '';
+      }
+
+      if (rightLayer && rightLayer.getContainer()) {
+        const c = rightLayer.getContainer();
+        c.style.clip = clipRight;
+        c.style.clipPath = '';
+      }
+    }
+
+    function setLeftLayer(key) {
+      leftKey = key;
+      if (selectLeft && selectLeft.value !== key) selectLeft.value = key;
+      updateDot(dotLeft, key);
+      if (!isSwipeActive) return;
+
+      if (leftLayer) {
+        if (leftLayer.getContainer()) {
+          leftLayer.getContainer().style.clip = '';
+          leftLayer.getContainer().style.clipPath = '';
+        }
+        map.removeLayer(leftLayer);
+      }
+
+      leftLayer = createSwipeTileLayer(key);
+      if (leftLayer) {
+        leftLayer.addTo(map);
+        leftLayer.on('load add', () => {
+          if (isSwipeActive) updateClip();
+        });
+      }
+      updateClip();
+    }
+
+    function setRightLayer(key) {
+      rightKey = key;
+      if (selectRight && selectRight.value !== key) selectRight.value = key;
+      updateDot(dotRight, key);
+      if (!isSwipeActive) return;
+
+      if (rightLayer) {
+        if (rightLayer.getContainer()) {
+          rightLayer.getContainer().style.clip = '';
+          rightLayer.getContainer().style.clipPath = '';
+        }
+        map.removeLayer(rightLayer);
+      }
+
+      rightLayer = createSwipeTileLayer(key);
+      if (rightLayer) {
+        rightLayer.addTo(map);
+        rightLayer.on('load add', () => {
+          if (isSwipeActive) updateClip();
+        });
+      }
+      updateClip();
+    }
+
+    function enableSwipe() {
+      if (isSwipeActive) return;
+      isSwipeActive = true;
+
+      // Close route selection mode if active to avoid event conflicts
+      if (typeof setRouteMode === 'function' && typeof routeState !== 'undefined' && routeState.modeActive) {
+        setRouteMode(false);
+      }
+
+      // Hide background basemap so layers don't overlap underneath
+      if (activeBasemap && map.hasLayer(activeBasemap)) {
+        map.removeLayer(activeBasemap);
+      }
+
+      setLeftLayer(leftKey);
+      setRightLayer(rightKey);
+
+      if (swipeContainer) swipeContainer.classList.remove('hidden');
+      if (toggleSwipeBtn) toggleSwipeBtn.classList.add('active');
+      if (sidebarSwipeBtn) sidebarSwipeBtn.classList.add('active');
+
+      const initialX = Math.round(map.getSize().x / 2);
+      updateClip(initialX);
+    }
+
+    function disableSwipe() {
+      if (!isSwipeActive) return;
+      isSwipeActive = false;
+
+      if (leftLayer) {
+        if (leftLayer.getContainer()) {
+          leftLayer.getContainer().style.clip = '';
+          leftLayer.getContainer().style.clipPath = '';
+        }
+        map.removeLayer(leftLayer);
+        leftLayer = null;
+      }
+
+      if (rightLayer) {
+        if (rightLayer.getContainer()) {
+          rightLayer.getContainer().style.clip = '';
+          rightLayer.getContainer().style.clipPath = '';
+        }
+        map.removeLayer(rightLayer);
+        rightLayer = null;
+      }
+
+      // Restore active background basemap
+      if (activeBasemap && !map.hasLayer(activeBasemap)) {
+        activeBasemap.addTo(map);
+      }
+
+      if (swipeContainer) swipeContainer.classList.add('hidden');
+      if (toggleSwipeBtn) toggleSwipeBtn.classList.remove('active');
+      if (sidebarSwipeBtn) sidebarSwipeBtn.classList.remove('active');
+
+      if (map.dragging) map.dragging.enable();
+    }
+
+    function toggleSwipe() {
+      if (isSwipeActive) disableSwipe();
+      else enableSwipe();
+    }
+
+    if (toggleSwipeBtn) toggleSwipeBtn.addEventListener('click', toggleSwipe);
+    if (sidebarSwipeBtn) sidebarSwipeBtn.addEventListener('click', toggleSwipe);
+
+    // Dropdown change listeners
+    if (selectLeft) {
+      selectLeft.addEventListener('change', (e) => setLeftLayer(e.target.value));
+    }
+    if (selectRight) {
+      selectRight.addEventListener('change', (e) => setRightLayer(e.target.value));
+    }
+
+    const closeSwipeBtn = document.querySelector('#btn-close-swipe');
+    if (closeSwipeBtn) {
+      closeSwipeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        disableSwipe();
+      });
+    }
+
+    // Stop Leaflet map interference on dropdown controls (NOT on the divider or handle!)
+    if (window.L && L.DomEvent) {
+      [selectLeft, selectRight, badgeLeft, badgeRight, closeSwipeBtn].forEach((el) => {
+        if (el) {
+          L.DomEvent.disableClickPropagation(el);
+          L.DomEvent.disableScrollPropagation(el);
+        }
+      });
+    }
+
+    function getPointerX(e) {
+      let clientX = e.clientX;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+      } else if (e.changedTouches && e.changedTouches.length > 0) {
+        clientX = e.changedTouches[0].clientX;
+      }
+      const rect = map.getContainer().getBoundingClientRect();
+      return clientX - rect.left;
+    }
+
+    function onPointerDown(e) {
+      if (!isSwipeActive) return;
+      isDragging = true;
+      if (map.dragging) map.dragging.disable();
+      const x = getPointerX(e);
+      updateClip(x);
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging || !isSwipeActive) return;
+      const x = getPointerX(e);
+      updateClip(x);
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+    }
+
+    function onPointerUp() {
+      if (isDragging) {
+        isDragging = false;
+        if (map.dragging) map.dragging.enable();
+      }
+    }
+
+    if (swipeDivider) {
+      swipeDivider.addEventListener('mousedown', onPointerDown);
+      swipeDivider.addEventListener('touchstart', onPointerDown, { passive: false });
+    }
+
+    if (swipeHandle) {
+      swipeHandle.addEventListener('mousedown', onPointerDown);
+      swipeHandle.addEventListener('touchstart', onPointerDown, { passive: false });
+    }
+
+    window.addEventListener('mousemove', onPointerMove, { passive: false });
+    window.addEventListener('touchmove', onPointerMove, { passive: false });
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('touchend', onPointerUp);
+    window.addEventListener('mouseleave', onPointerUp);
+
+    if (swipeHandle) {
+      swipeHandle.addEventListener('keydown', (e) => {
+        if (!isSwipeActive) return;
+        const step = map.getSize().x * 0.05;
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          updateClip((currentX || map.getSize().x / 2) - step);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          updateClip((currentX || map.getSize().x / 2) + step);
+        }
+      });
+    }
+
+    // Re-clip on map movement, zoom, and resize
+    map.on('move zoom viewreset', () => {
+      if (isSwipeActive) updateClip();
+    });
+
+    map.on('resize', () => {
+      if (isSwipeActive && currentX !== null) {
+        updateClip(currentX);
+      }
+    });
+
+    swipeController = {
+      enable: enableSwipe,
+      disable: disableSwipe,
+      toggle: toggleSwipe,
+      isActive: () => isSwipeActive,
+    };
+    return swipeController;
+  }
+
+  swipeController = initSwipeController();
 
   // =========================================================================
   // Safe Rover Routing System (SafeNav)
@@ -1140,6 +1676,11 @@
   const routePromptText = document.querySelector('#route-prompt-text');
   const cancelRouteModeBtn = document.querySelector('#btn-cancel-route-mode');
 
+  if (routePrompt && window.L && L.DomEvent) {
+    L.DomEvent.disableClickPropagation(routePrompt);
+    L.DomEvent.disableScrollPropagation(routePrompt);
+  }
+
   function setRouteMode(active) {
     routeState.modeActive = active;
     if (routeModeBtn) {
@@ -1151,6 +1692,10 @@
     }
 
     if (active) {
+      // Mutual exclusivity: close swipe tool when user starts route point picking
+      if (swipeController && swipeController.isActive()) {
+        swipeController.disable();
+      }
       if (routePrompt) routePrompt.classList.remove('hidden');
       updatePromptBanner();
       map.getContainer().style.cursor = 'crosshair';
@@ -1178,10 +1723,21 @@
   }
 
   if (cancelRouteModeBtn) {
-    cancelRouteModeBtn.addEventListener('click', () => {
+    cancelRouteModeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       setRouteMode(false);
     });
   }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (routeState && routeState.modeActive) {
+        setRouteMode(false);
+      } else if (swipeController && swipeController.isActive()) {
+        swipeController.disable();
+      }
+    }
+  });
 
   map.on('click', (e) => {
     if (!routeState.modeActive) return;

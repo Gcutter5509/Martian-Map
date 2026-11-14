@@ -57,16 +57,30 @@ All planetary map layers and coordinates are retrieved directly from NASA's offi
 
 - `index.html` — Clean, semantic UI with responsive 3-pane layout (Navigation sidebar, Interactive map stage, Object info rail).
 - `style.css` — Modern, accessible theme using the Inter typeface, customized Leaflet controls, route styling, and responsive breakpoints for mobile/desktop.
-- `script.js` — Leaflet.js engine configured with `L.CRS.EPSG4326` (Equirectangular Simple Cylindrical), handling layer bounds, coordinate transformations, mission filtering, search, and the **Rover SafeNav routing engine** (A* pathfinding with geological hazard avoidance on the Martian sphere).
+- `script.js` — Leaflet.js engine configured with `L.CRS.EPSG4326` (Equirectangular Simple Cylindrical), handling layer bounds, coordinate transformations, mission filtering, search, the **Martian Landmarks Catalog**, **Optical / Relief Swipe Comparison Slider**, and the **Rover SafeNav routing engine** (A* pathfinding with geological hazard avoidance on the Martian sphere).
 
 ---
 
-## Autonomous Rover SafeNav (Safe Routing)
+## Interactive Features
 
-The application includes an autonomous rover path planner designed for realistic planetary traversing:
+### 1. Multi-Layer Swipe Comparison Tool
+A hardware-accelerated split-screen swipe tool enabling comparative exploration of any two planetary datasets simultaneously (*Viking MDIM 2.1 Optical*, *MOLA Altimetry Relief*, *THEMIS Day IR*, and *THEMIS Night IR*). Interactive dropdown selectors in the upper corners let users customize both the left and right layer in real-time, dragging the central divider to reveal terrain differences across spectra. Accessible via the top map control (`◧`) or the layer sidebar.
+
+### 2. Martian Geological Landmarks Catalog
+An interactive catalog of iconic Martian geological features with elevations, dimensions, and scientific descriptions:
+- **Olympus Mons:** Solar System's tallest shield volcano ($+21,229\text{ m}$).
+- **Valles Marineris:** Grand canyon network up to $10\text{ km}$ deep and $4,000\text{ km}$ long.
+- **Noctis Labyrinthus:** Labyrinth of fractured valleys and grabens.
+- **Hellas Planitia:** Deepest Martian impact crater ($-7,152\text{ m}$).
+- **Cydonia Mensae:** Mesa formations of the historical "Face on Mars" optical illusion.
+- **Korolev Crater:** Polar crater hosting a permanent $1.8\text{ km}$ water ice dome.
+- **Alba Mons:** Volcano with the largest surface footprint in the Solar System.
+
+### 3. Autonomous Rover SafeNav (Safe Routing)
+An autonomous rover path planner designed for realistic planetary traversing:
 - **Martian Geodesics:** Distances calculated along great-circle arcs on the Martian sphere ($R_{\text{Mars}} = 3389.5\text{ km}$).
 - **Geological Barrier Avoidance:** Prevents rovers from entering impassable Martian chasms and volcanic scarps (Valles Marineris rift walls, Olympus Mons basal scarps, Tharsis Montes shield calderas, and polar ice sheets).
-- **Interactive Waypoints & Dragging:** Click anywhere on the map or select landing site presets (Jezero, Gale, InSight, Valles Marineris) to plot trajectories, drag markers in real-time, inspect waypoints, and view route telemetry in the Info Rail.
+- **Interactive Waypoints & Dragging:** Click anywhere on the map or select presets (Jezero, Gale, InSight, Valles Marineris) to plot trajectories, drag markers in real-time, inspect waypoints, and view route telemetry in the Info Rail.
 
 ---
 

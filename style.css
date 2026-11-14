@@ -36,6 +36,10 @@ button, input {
   color: inherit;
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* ==========================================================================
    Header / Topbar
    ========================================================================== */
@@ -1133,22 +1137,23 @@ button, input {
 /* Map Interactive Route Prompt */
 .map-route-prompt {
   position: absolute;
-  top: 18px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 550;
+  z-index: 1000;
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(18, 20, 23, 0.92);
+  background: rgba(18, 20, 23, 0.95);
   border: 1px solid #38d9a9;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 8px 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 217, 169, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 15px rgba(56, 217, 169, 0.3);
   backdrop-filter: blur(10px);
   font-size: 12px;
   color: #edeae4;
   pointer-events: auto;
+  user-select: none;
 }
 
 .route-prompt-dot {
@@ -1385,6 +1390,373 @@ button, input {
 }
 
 /* ==========================================================================
+   Swipe Comparison Tool (Split Screen)
+   ========================================================================== */
+
+.swipe-mode-trigger {
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(178, 141, 79, 0.1);
+  border: 1px solid rgba(178, 141, 79, 0.35);
+  color: #d6c083;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.swipe-mode-trigger:hover {
+  background: rgba(178, 141, 79, 0.2);
+  border-color: #d6c083;
+  color: #fff;
+}
+
+.swipe-mode-trigger.active {
+  background: #b28d4f;
+  color: #111315;
+  border-color: #b28d4f;
+  box-shadow: 0 0 12px rgba(178, 141, 79, 0.4);
+}
+
+#btn-toggle-swipe.active {
+  background: #b28d4f;
+  color: #111315;
+  border-color: #b28d4f;
+  box-shadow: 0 0 10px rgba(178, 141, 79, 0.45);
+}
+
+.swipe-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 460;
+  overflow: hidden;
+}
+
+.swipe-container.hidden {
+  display: none !important;
+}
+
+.swipe-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: #edeae4;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 255, 255, 0.7);
+  pointer-events: auto;
+  cursor: ew-resize;
+  transform: translateX(-50%);
+  user-select: none;
+  touch-action: none;
+  z-index: 560;
+}
+
+.swipe-divider::before {
+  content: '';
+  position: absolute;
+  top: 60px;
+  bottom: 60px;
+  left: -20px;
+  right: -20px;
+  cursor: ew-resize;
+  pointer-events: auto;
+}
+
+.swipe-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #16181b;
+  border: 2px solid #edeae4;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #edeae4;
+  font-size: 10px;
+  cursor: ew-resize;
+  outline: none;
+  transition: transform 0.1s, box-shadow 0.15s;
+  pointer-events: auto;
+  z-index: 570;
+}
+
+.swipe-handle:active {
+  cursor: ew-resize;
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.9), 0 0 16px rgba(216, 138, 98, 0.7);
+  border-color: var(--orange);
+}
+
+.swipe-arrow {
+  font-size: 9px;
+  line-height: 1;
+  color: var(--orange);
+  pointer-events: none;
+}
+
+.swipe-badge {
+  position: absolute;
+  top: 18px;
+  z-index: 580;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(19, 21, 23, 0.94);
+  backdrop-filter: blur(10px);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  font-size: 11px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+
+.swipe-badge--left {
+  left: 175px;
+}
+
+.swipe-badge--right {
+  right: 75px;
+}
+
+.swipe-badge__label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.swipe-select {
+  background: transparent;
+  color: var(--text);
+  border: 0;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 3px 2px;
+  transition: color 0.15s;
+}
+
+.swipe-select:hover {
+  color: var(--orange);
+}
+
+.swipe-select option {
+  background: #181b1e;
+  color: #edeae4;
+  font-size: 12px;
+}
+
+.swipe-close-btn {
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 5px;
+  margin-left: 2px;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+}
+
+.swipe-close-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.swipe-badge__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-color {
+  background: #a86442;
+  box-shadow: 0 0 6px #a86442;
+}
+
+.dot-relief {
+  background: #b28d4f;
+  box-shadow: 0 0 6px #b28d4f;
+}
+
+.dot-thermal {
+  background: #54716e;
+  box-shadow: 0 0 6px #54716e;
+}
+
+.dot-night {
+  background: #4f596b;
+  box-shadow: 0 0 6px #4f596b;
+}
+
+/* ==========================================================================
+   Landmarks Catalog
+   ========================================================================== */
+
+.landmarks-section {
+  padding-top: 16px;
+}
+
+.landmarks-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.landmarks-toggle-all {
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+
+.landmarks-toggle-all:hover {
+  color: var(--text);
+  background: var(--panel-alt);
+}
+
+.landmark-option {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  cursor: pointer;
+  padding: 6px 8px;
+  margin: 0 -8px 2px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.landmark-option:hover {
+  background: var(--panel-alt);
+}
+
+.landmark-option input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.landmark-option:not(:has(input:checked)) {
+  opacity: 0.45;
+}
+
+.landmark-option__name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.landmark-option__name b {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.landmark-option__name small {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.landmark-dot {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  border-radius: 4px;
+  flex: none;
+  font-weight: 700;
+}
+
+.dot-volcano {
+  background: rgba(192, 132, 252, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(192, 132, 252, 0.4);
+}
+
+.dot-canyon {
+  background: rgba(244, 63, 94, 0.15);
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+}
+
+.dot-basin {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.dot-crater {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
+  border: 1px solid rgba(234, 179, 8, 0.4);
+}
+
+.dot-ice {
+  background: rgba(103, 232, 249, 0.15);
+  color: #67e8f9;
+  border: 1px solid rgba(103, 232, 249, 0.4);
+}
+
+/* Landmark Leaflet Pin */
+.landmark-marker {
+  background: transparent;
+  border: 0;
+}
+
+.landmark-marker__icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  background: #181b1e;
+  border: 1.5px solid var(--lm-color, #c084fc);
+  color: var(--lm-color, #c084fc);
+  box-shadow: 0 0 8px var(--lm-color, #c084fc), 0 2px 6px rgba(0, 0, 0, 0.7);
+  transition: transform 0.18s, box-shadow 0.18s;
+  cursor: pointer;
+}
+
+.landmark-marker__icon:hover {
+  transform: scale(1.25);
+  box-shadow: 0 0 14px var(--lm-color, #c084fc), 0 4px 10px rgba(0, 0, 0, 0.9);
+}
+
+/* ==========================================================================
    Responsive Adaptations
    ========================================================================== */
 
@@ -1448,5 +1820,29 @@ button, input {
     top: auto;
     bottom: 16px;
     flex-direction: row;
+  }
+  .swipe-badge--left {
+    left: 10px;
+    top: 10px;
+    padding: 3px 6px;
+  }
+  .swipe-badge--right {
+    right: 10px;
+    top: 10px;
+    padding: 3px 6px;
+  }
+  .swipe-badge__label {
+    display: none;
+  }
+  .swipe-select {
+    font-size: 10px;
+    max-width: 105px;
+  }
+  .map-route-prompt {
+    bottom: 60px;
+    font-size: 11px;
+    padding: 6px 12px;
+    max-width: 90%;
+    text-align: center;
   }
 }

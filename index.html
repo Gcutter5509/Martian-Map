@@ -78,6 +78,10 @@
               <small>THEMIS, ночная съемка</small>
             </span>
           </label>
+          <button type="button" class="swipe-mode-trigger" id="sidebar-swipe-btn">
+            <span class="trigger-icon">◧</span>
+            <span class="trigger-label">Шторка: Оптика / Рельеф MOLA</span>
+          </button>
         </section>
 
         <section class="panel-section missions-section">
@@ -114,6 +118,69 @@
             <span class="mission-option__name">
               <b>Phoenix</b>
               <small>Vastitas Borealis (2008)</small>
+            </span>
+          </label>
+        </section>
+
+        <section class="panel-section landmarks-section">
+          <div class="section-heading landmarks-heading">
+            <h2>Достопримечательности</h2>
+            <button type="button" class="landmarks-toggle-all" id="landmarks-toggle-all">Скрыть все</button>
+          </div>
+          <label class="landmark-option">
+            <input type="checkbox" class="landmark-filter" value="olympus" checked>
+            <span class="landmark-dot dot-volcano">▲</span>
+            <span class="landmark-option__name">
+              <b>Гора Олимп (Olympus Mons)</b>
+              <small>Высочайший вулкан (21,2 км)</small>
+            </span>
+          </label>
+          <label class="landmark-option">
+            <input type="checkbox" class="landmark-filter" value="valles" checked>
+            <span class="landmark-dot dot-canyon">▼</span>
+            <span class="landmark-option__name">
+              <b>Долины Маринер (Valles Marineris)</b>
+              <small>Большой каньон (глубина до 10 км)</small>
+            </span>
+          </label>
+          <label class="landmark-option">
+            <input type="checkbox" class="landmark-filter" value="noctis" checked>
+            <span class="landmark-dot dot-canyon">❖</span>
+            <span class="landmark-option__name">
+              <b>Лабиринт Ночи (Noctis Labyrinthus)</b>
+              <small>Сетка каньонов и грабенов</small>
+            </span>
+          </label>
+          <label class="landmark-option">
+            <input type="checkbox" class="landmark-filter" value="hellas" checked>
+            <span class="landmark-dot dot-basin">◌</span>
+            <span class="landmark-option__name">
+              <b>Равнина Эллада (Hellas Planitia)</b>
+              <small>Глубочайшая впадина (-7,1 км)</small>
+            </span>
+          </label>
+          <label class="landmark-option">
+            <input type="checkbox" class="landmark-filter" value="cydonia" checked>
+            <span class="landmark-dot dot-crater">◈</span>
+            <span class="landmark-option__name">
+              <b>Кидония (Cydonia Mensae)</b>
+              <small>Столовые горы («Лицо на Марсе»)</small>
+            </span>
+          </label>
+          <label class="landmark-option">
+            <input type="checkbox" class="landmark-filter" value="korolev" checked>
+            <span class="landmark-dot dot-ice">❄</span>
+            <span class="landmark-option__name">
+              <b>Кратер Королёв (Korolev Crater)</b>
+              <small>Купол водяного льда толщиной 1,8 км</small>
+            </span>
+          </label>
+          <label class="landmark-option">
+            <input type="checkbox" class="landmark-filter" value="alba" checked>
+            <span class="landmark-dot dot-volcano">▲</span>
+            <span class="landmark-option__name">
+              <b>Гора Белая (Alba Mons)</b>
+              <small>Вулкан диаметром свыше 1 000 км</small>
             </span>
           </label>
         </section>
@@ -219,10 +286,40 @@
           <span>Система координат</span>
           <b>Ареоцентрическая (0° E)</b>
         </div>
-        <div class="map-controls" aria-label="Управление масштабом">
+        <div class="map-controls" aria-label="Управление масштабом и слоями">
+          <button id="btn-toggle-swipe" aria-label="Шторка сравнения слоев" title="Шторка сравнения: Оптика / Рельеф MOLA">◧</button>
           <button id="zoom-in" aria-label="Увеличить масштаб">+</button>
           <button id="zoom-out" aria-label="Уменьшить масштаб">−</button>
           <button id="reset-view" aria-label="Показать весь Марс" title="Сбросить вид">◎</button>
+        </div>
+        <div class="swipe-container hidden" id="swipe-container">
+          <div class="swipe-divider" id="swipe-divider">
+            <div class="swipe-handle" id="swipe-handle" role="slider" aria-label="Шторка сравнения слоев" tabindex="0">
+              <span class="swipe-arrow">◀</span>
+              <span class="swipe-arrow">▶</span>
+            </div>
+          </div>
+          <div class="swipe-badge swipe-badge--left" id="swipe-badge-left">
+            <span class="swipe-badge__dot dot-color" id="swipe-dot-left"></span>
+            <label for="swipe-select-left" class="swipe-badge__label">Слева:</label>
+            <select id="swipe-select-left" class="swipe-select" aria-label="Слой слева">
+              <option value="color" selected>Оптика (Viking)</option>
+              <option value="relief">Рельеф (MOLA)</option>
+              <option value="thermalDay">ИК день (THEMIS)</option>
+              <option value="thermalNight">ИК ночь (THEMIS)</option>
+            </select>
+          </div>
+          <div class="swipe-badge swipe-badge--right" id="swipe-badge-right">
+            <span class="swipe-badge__dot dot-relief" id="swipe-dot-right"></span>
+            <label for="swipe-select-right" class="swipe-badge__label">Справа:</label>
+            <select id="swipe-select-right" class="swipe-select" aria-label="Слой справа">
+              <option value="color">Оптика (Viking)</option>
+              <option value="relief" selected>Рельеф (MOLA)</option>
+              <option value="thermalDay">ИК день (THEMIS)</option>
+              <option value="thermalNight">ИК ночь (THEMIS)</option>
+            </select>
+            <button type="button" class="swipe-close-btn" id="btn-close-swipe" title="Закрыть режим двойного просмотра (шторку)" aria-label="Закрыть режим двойного просмотра">✕</button>
+          </div>
         </div>
         <div class="map-coordinates" id="map-coordinates">
           <span>Центр карты</span>
