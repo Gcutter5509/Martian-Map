@@ -84,6 +84,14 @@
               <small data-i18n="layer_themis_night_sub">THEMIS, nighttime thermal</small>
             </span>
           </label>
+          <label class="layer-option">
+            <input type="radio" name="basemap" value="ctx">
+            <span class="layer-swatch swatch-ctx"></span>
+            <span class="layer-option__text">
+              <b data-i18n="layer_ctx_title">High-Res Mosaic</b>
+              <small data-i18n="layer_ctx_sub">MRO CTX, 6 m/px</small>
+            </span>
+          </label>
           <button type="button" class="swipe-mode-trigger" id="sidebar-swipe-btn">
             <span class="trigger-icon">◧</span>
             <span class="trigger-label" data-i18n="btn_swipe_sidebar">Swipe: Optical / MOLA Relief</span>
@@ -343,6 +351,7 @@
               <option value="relief">Relief (MOLA)</option>
               <option value="thermalDay">Thermal Day (THEMIS)</option>
               <option value="thermalNight">Thermal Night (THEMIS)</option>
+              <option value="ctx">High-Res (CTX 6m)</option>
             </select>
           </div>
           <div class="swipe-badge swipe-badge--right" id="swipe-badge-right">
@@ -353,9 +362,14 @@
               <option value="relief" selected>Relief (MOLA)</option>
               <option value="thermalDay">Thermal Day (THEMIS)</option>
               <option value="thermalNight">Thermal Night (THEMIS)</option>
+              <option value="ctx">High-Res (CTX 6m)</option>
             </select>
             <button type="button" class="swipe-close-btn" id="btn-close-swipe" title="Close swipe comparison view" aria-label="Close swipe comparison view">✕</button>
           </div>
+        </div>
+        <div class="hirise-badge hidden" id="hirise-active-badge" aria-live="polite">
+          <span class="hirise-badge__dot" aria-hidden="true"></span>
+          <span id="hirise-badge-text">HiRISE 25 cm/px</span>
         </div>
         <div class="map-coordinates" id="map-coordinates">
           <span data-i18n="map_center_label">Map Center</span>

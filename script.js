@@ -18,6 +18,8 @@
       layer_themis_day_sub: 'THEMIS, daytime thermal',
       layer_themis_night_title: 'Thermal IR (Night)',
       layer_themis_night_sub: 'THEMIS, nighttime thermal',
+      layer_ctx_title: 'High-Res Mosaic',
+      layer_ctx_sub: 'MRO CTX, 6 m/px',
       btn_swipe_sidebar: 'Swipe: Optical / MOLA Relief',
       missions_heading: 'Landing Sites',
       landmarks_heading: 'Geological Landmarks',
@@ -128,10 +130,13 @@
       zoom_global: 'Global View',
       zoom_regional: 'Regional View',
       zoom_local: 'Local View (Detail)',
+      zoom_highres_ctx: 'High-Res CTX (6 m/px)',
+      zoom_ultrahres_hirise: 'HiRISE Ultra-Res (25 cm/px)',
       layer_opt_viking: 'Optical (Viking)',
       layer_opt_mola: 'Relief (MOLA)',
       layer_opt_themis_day: 'Thermal Day (THEMIS)',
       layer_opt_themis_night: 'Thermal Night (THEMIS)',
+      layer_opt_ctx: 'High-Res CTX (6m)',
     },
     ru: {
       brand_subtitle: 'Атлас поверхности Марса',
@@ -148,6 +153,8 @@
       layer_themis_day_sub: 'THEMIS, дневная съемка',
       layer_themis_night_title: 'ИК-карта (ночь)',
       layer_themis_night_sub: 'THEMIS, ночная съемка',
+      layer_ctx_title: 'Сверхдетальная мозаика',
+      layer_ctx_sub: 'MRO CTX, 6 м/пикс',
       btn_swipe_sidebar: 'Шторка: Оптика / Рельеф MOLA',
       missions_heading: 'Посадочные площадки',
       landmarks_heading: 'Достопримечательности',
@@ -258,10 +265,13 @@
       zoom_global: 'Общий вид',
       zoom_regional: 'Региональный вид',
       zoom_local: 'Детальный масштаб',
+      zoom_highres_ctx: 'Высокое разрешение (CTX 6 м/пикс)',
+      zoom_ultrahres_hirise: 'HiRISE Ультра (25 см/пикс)',
       layer_opt_viking: 'Оптика (Viking)',
       layer_opt_mola: 'Рельеф (MOLA)',
       layer_opt_themis_day: 'ИК день (THEMIS)',
       layer_opt_themis_night: 'ИК ночь (THEMIS)',
+      layer_opt_ctx: 'Высокое разрешение CTX (6 м)',
     }
   };
 
@@ -297,7 +307,7 @@
     zoom: 4,
     crs: L.CRS.EPSG4326,
     minZoom: 1,
-    maxZoom: 9,
+    maxZoom: 14,
     zoomControl: false,
     attributionControl: false,
     maxBounds: globalBounds,
@@ -308,8 +318,8 @@
     `https://trek.nasa.gov/tiles/Mars/EQ/${layer}/1.0.0/default/default028mm/{z}/{y}/{x}.${ext}`,
     {
       minZoom: 1,
-      maxZoom: 9,
-      maxNativeZoom: 9,
+      maxZoom: 14,
+      maxNativeZoom: options.maxNativeZoom || 7,
       tileSize: 256,
       noWrap: true,
       keepBuffer: 3,
@@ -320,7 +330,7 @@
 
   const layerConfigs = {
     color: {
-      layer: nasaTiles('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', { bounds: globalBounds }),
+      layer: nasaTiles('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', { bounds: globalBounds, maxNativeZoom: 7, maxZoom: 14 }),
       name: { en: 'Viking (Visible Spectrum)', ru: 'Viking (видимый диапазон)' },
       bounds: globalBounds,
       minLat: -90,
@@ -328,7 +338,7 @@
       irContext: { en: 'Viking MDIM 2.1 (761 ft/px)', ru: 'Viking MDIM 2.1 (232 м/пикс)' },
     },
     relief: {
-      layer: nasaTiles('Mars_MGS_MOLA_ClrShade_merge_global_463m', 'jpg', { bounds: globalBounds }),
+      layer: nasaTiles('Mars_MGS_MOLA_ClrShade_merge_global_463m', 'jpg', { bounds: globalBounds, maxNativeZoom: 7, maxZoom: 14 }),
       name: { en: 'MOLA (Relief & Altimetry)', ru: 'MOLA (рельеф и высоты)' },
       bounds: globalBounds,
       minLat: -90,
@@ -339,6 +349,8 @@
       layer: nasaTiles('Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly', 'png', {
         className: 'themis-layer',
         bounds: globalBounds,
+        maxNativeZoom: 8,
+        maxZoom: 14,
       }),
       name: { en: 'THEMIS (Thermal IR Day)', ru: 'THEMIS (дневная ИК-съемка)' },
       bounds: globalBounds,
@@ -350,12 +362,26 @@
       layer: nasaTiles('THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018', 'png', {
         className: 'themis-layer',
         bounds: nightBounds,
+        maxNativeZoom: 9,
+        maxZoom: 14,
       }),
       name: { en: 'THEMIS (Thermal IR Night)', ru: 'THEMIS (ночная ИК-съемка)' },
       bounds: nightBounds,
       minLat: -65.0006576,
       maxLat: 65.0007535,
       irContext: { en: 'THEMIS Night IR (328 ft/px, NASA coverage: 65° S — 65° N)', ru: 'THEMIS Night IR (100 м/пикс, покрытие NASA: 65° S — 65° N)' },
+    },
+    ctx: {
+      layer: nasaTiles('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', {
+        bounds: globalBounds,
+        maxNativeZoom: 7,
+        maxZoom: 14,
+      }),
+      name: { en: 'High-Res CTX Mosaic (6m)', ru: 'Сверхдетальная мозаика CTX (6 м)' },
+      bounds: globalBounds,
+      minLat: -90,
+      maxLat: 90,
+      irContext: { en: 'MRO CTX Mosaic (19.7 ft/px, 6 m/px in landing sites)', ru: 'Мозаика MRO CTX (6 м/пикс в районах посадок)' },
     },
   };
 
@@ -364,11 +390,214 @@
     relief: layerConfigs.relief.layer,
     thermalDay: layerConfigs.thermalDay.layer,
     thermalNight: layerConfigs.thermalNight.layer,
+    ctx: layerConfigs.ctx.layer,
   };
 
   let activeKey = 'color';
   let activeBasemap = basemaps.color.addTo(map);
   let swipeController = null;
+
+  // =========================================================================
+  // Authentic NASA CTX Mosaics (Option B: 5-6 m/px Context Imagery)
+  // =========================================================================
+  const ctxMosaics = [
+    {
+      id: 'jezero_ctx',
+      name: { en: 'Jezero Crater CTX (6 m/px)', ru: 'Кратер Езеро CTX (6 м/пикс)' },
+      layer: 'JEZ_ctx_B_soc_008_orthoMosaic_6m_Eqc_latTs0_lon0',
+      bounds: L.latLngBounds([[18.2110, 77.1605], [18.7212, 77.6992]]),
+      maxNativeZoom: 13,
+      ext: 'png',
+    },
+    {
+      id: 'insight_ctx',
+      name: { en: 'InSight Elysium CTX (6 m/px)', ru: 'Элизий InSight CTX (6 м/пикс)' },
+      layer: 'InSightCTXMosaic_112917',
+      bounds: L.latLngBounds([[4.13727, 134.75369], [4.93600, 136.94436]]),
+      maxNativeZoom: 13,
+      ext: 'png',
+    },
+  ];
+
+  const ctxTileLayers = ctxMosaics.map((m) => {
+    const lyr = L.tileLayer(
+      `https://trek.nasa.gov/tiles/Mars/EQ/${m.layer}/1.0.0/default/default028mm/{z}/{y}/{x}.${m.ext}`,
+      {
+        minZoom: 8,
+        maxZoom: 14,
+        maxNativeZoom: m.maxNativeZoom,
+        tileSize: 256,
+        bounds: m.bounds,
+        noWrap: true,
+        keepBuffer: 3,
+        opacity: 1.0,
+        zIndex: 400,
+      }
+    ).addTo(map);
+
+    lyr.on('tileerror', (e) => {
+      if (e && e.tile) e.tile.style.display = 'none';
+    });
+    return { ...m, tileLayer: lyr };
+  });
+
+  // =========================================================================
+  // Authentic NASA HiRISE Ultra-Resolution Mosaics (Option C: 25 cm/px)
+  // =========================================================================
+  const hiriseMosaics = [
+    {
+      id: 'perseverance',
+      name: { en: 'Jezero Delta (Perseverance)', ru: 'Дельта Езеро (Perseverance)' },
+      layer: 'JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd',
+      bounds: L.latLngBounds([[18.3068, 77.2229], [18.6693, 77.5840]]),
+      maxNativeZoom: 14,
+      ext: 'png',
+    },
+    {
+      id: 'curiosity',
+      name: { en: 'Gale Crater (Curiosity)', ru: 'Кратер Гейл (Curiosity)' },
+      layer: 'curiosity_hirise_mosaic',
+      bounds: L.latLngBounds([[-5.1084, 136.7834], [-4.0661, 138.0688]]),
+      maxNativeZoom: 14,
+      ext: 'png',
+    },
+    {
+      id: 'opportunity',
+      name: { en: 'Meridiani Planum (Opportunity)', ru: 'Плато Меридиана (Opportunity)' },
+      layer: 'opportunity_hirise_mosaic',
+      bounds: L.latLngBounds([[-2.2, -5.8], [-1.7, -5.2]]),
+      maxNativeZoom: 14,
+      ext: 'png',
+    },
+    {
+      id: 'spirit',
+      name: { en: 'Gusev Crater (Spirit)', ru: 'Кратер Гусев (Spirit)' },
+      layer: 'spirit_hirise_mosaic',
+      bounds: L.latLngBounds([[-14.8, 175.2], [-14.3, 175.7]]),
+      maxNativeZoom: 14,
+      ext: 'png',
+    },
+    {
+      id: 'phoenix',
+      name: { en: 'Vastitas Borealis (Phoenix)', ru: 'Северная равнина (Phoenix)' },
+      layer: 'phoenix_hirise_mosaic',
+      bounds: L.latLngBounds([[68.0, -126.0], [68.5, -125.5]]),
+      maxNativeZoom: 14,
+      ext: 'png',
+    },
+    {
+      id: 'pathfinder',
+      name: { en: 'Ares Vallis (Sojourner)', ru: 'Долина Арес (Sojourner)' },
+      layer: 'sojourner_hirise_mosaic',
+      bounds: L.latLngBounds([[19.0, -33.8], [19.6, -33.2]]),
+      maxNativeZoom: 14,
+      ext: 'png',
+    },
+  ];
+
+  const hiriseTileLayers = hiriseMosaics.map((m) => {
+    const lyr = L.tileLayer(
+      `https://trek.nasa.gov/tiles/Mars/EQ/${m.layer}/1.0.0/default/default028mm/{z}/{y}/{x}.${m.ext}`,
+      {
+        minZoom: 10,
+        maxZoom: 14,
+        maxNativeZoom: m.maxNativeZoom,
+        tileSize: 256,
+        bounds: m.bounds,
+        noWrap: true,
+        keepBuffer: 3,
+        opacity: 0,
+        className: 'hirise-transition-layer',
+        zIndex: 450,
+      }
+    ).addTo(map);
+
+    lyr.on('tileerror', (e) => {
+      if (e && e.tile) e.tile.style.display = 'none';
+    });
+    return { ...m, tileLayer: lyr };
+  });
+
+  function updateZoomReadout(activeMosaic, hiriseOpacity) {
+    const readout = document.querySelector('#zoom-readout');
+    if (!readout) return;
+    const z = map.getZoom();
+    const bounds = map.getBounds();
+    const isRu = currentLang === 'ru';
+
+    if (activeMosaic && hiriseOpacity >= 0.6) {
+      readout.textContent = isRu ? 'HiRISE Ультра (25 см/пикс)' : 'HiRISE Ultra-Res (25 cm/px)';
+    } else if (activeMosaic && hiriseOpacity > 0) {
+      readout.textContent = isRu ? 'Переход: CTX → HiRISE' : 'Transition: CTX → HiRISE';
+    } else {
+      const inCtx = ctxMosaics.some((c) => c.bounds.intersects(bounds));
+      if (inCtx && z >= 9) {
+        readout.textContent = isRu ? 'CTX Детальный (6 м/пикс)' : 'CTX High-Res (6 m/px)';
+      } else if (z >= 10) {
+        if (activeKey === 'ctx') {
+          readout.textContent = isRu ? 'CTX Детальный (6 м/пикс)' : 'CTX High-Res (6 m/px)';
+        } else {
+          readout.textContent = isRu ? 'Детальный масштаб' : 'Local Detail View';
+        }
+      } else if (z >= 6) {
+        readout.textContent = isRu ? 'Локальный масштаб' : 'Local View (Detail)';
+      } else if (z >= 3) {
+        readout.textContent = isRu ? 'Региональный вид' : 'Regional View';
+      } else {
+        readout.textContent = isRu ? 'Общий вид' : 'Global View';
+      }
+    }
+  }
+
+  function updateHiRiseTransition() {
+    const z = map.getZoom();
+    const bounds = map.getBounds();
+    const isRu = currentLang === 'ru';
+
+    // Opacity schedule for seamless cross-fade:
+    // z <= 10: 0% HiRISE (Option B / CTX 6m or basemap is fully shown)
+    // z = 11: 25% HiRISE
+    // z = 12: 60% HiRISE
+    // z = 13: 85% HiRISE
+    // z >= 14: 100% HiRISE (Option C / HiRISE 25cm ultra-resolution)
+    let opacity = 0;
+    if (z >= 14) opacity = 1.0;
+    else if (z === 13) opacity = 0.85;
+    else if (z === 12) opacity = 0.60;
+    else if (z === 11) opacity = 0.25;
+    else opacity = 0;
+
+    let activeMosaic = null;
+
+    hiriseTileLayers.forEach((item) => {
+      const inView = item.bounds.intersects(bounds);
+      const targetOpacity = inView ? opacity : 0;
+      item.tileLayer.setOpacity(targetOpacity);
+      if (inView && targetOpacity > 0 && !activeMosaic) {
+        activeMosaic = item;
+      }
+    });
+
+    // Update UI Badge
+    const hiriseBadge = document.querySelector('#hirise-active-badge');
+    const hiriseText = document.querySelector('#hirise-badge-text');
+    if (hiriseBadge && hiriseText) {
+      if (activeMosaic && opacity > 0) {
+        hiriseBadge.classList.remove('hidden');
+        const pct = Math.round(opacity * 100);
+        const nameStr = t(activeMosaic.name);
+        hiriseText.textContent = isRu
+          ? `HiRISE 25 см/пикс: ${nameStr} (${pct}%)`
+          : `HiRISE 25cm/px: ${nameStr} (${pct}%)`;
+      } else {
+        hiriseBadge.classList.add('hidden');
+      }
+    }
+
+    updateZoomReadout(activeMosaic, opacity);
+  }
+
+  map.on('zoom move zoomend moveend', updateHiRiseTransition);
 
   // Visual coverage boundary indicator for THEMIS Night (NASA 65° N and 65° S limits)
   const nightCoverageLines = L.layerGroup([
@@ -620,6 +849,24 @@
               dayRadio.checked = true;
               dayRadio.dispatchEvent(new Event('change'));
             }
+          });
+        }
+      } else if (hiriseMosaics.some((m) => m.id === info.id)) {
+        const btnText = currentLang === 'ru' ? '🔍 Приблизить к HiRISE (25 см/пикс)' : '🔍 Zoom to HiRISE (25cm/px)';
+        descEl.innerHTML = `${t(info.desc)}<br><button type="button" class="btn-hirise-inspect" id="btn-inspect-hirise">${btnText}</button>`;
+        const btnInspect = document.querySelector('#btn-inspect-hirise');
+        if (btnInspect) {
+          btnInspect.addEventListener('click', () => {
+            map.flyTo(info.coords, 14, { duration: 1.5 });
+          });
+        }
+      } else if (info.id === 'insight') {
+        const btnText = currentLang === 'ru' ? '🔍 Приблизить к CTX (6 м/пикс)' : '🔍 Zoom to CTX (6m/px)';
+        descEl.innerHTML = `${t(info.desc)}<br><button type="button" class="btn-hirise-inspect" id="btn-inspect-hirise">${btnText}</button>`;
+        const btnInspect = document.querySelector('#btn-inspect-hirise');
+        if (btnInspect) {
+          btnInspect.addEventListener('click', () => {
+            map.flyTo(info.coords, 13, { duration: 1.5 });
           });
         }
       } else {
@@ -988,6 +1235,14 @@
         map.removeLayer(nightCoverageLines);
       }
 
+      if (input.value === 'ctx') {
+        const center = map.getCenter();
+        const distToJezero = map.distance(center, jezero);
+        if (distToJezero > 1500000) {
+          map.flyTo(jezero, 11, { duration: 1.5 });
+        }
+      }
+
       const loadPrefix = currentLang === 'ru' ? 'Загрузка:' : 'Loading:';
       loader.textContent = `${loadPrefix} ${t(targetConfig.name)}...`;
       loader.classList.remove('hidden');
@@ -1118,13 +1373,7 @@
 
   map.on('move', () => mapCoordinates([map.getCenter().lat, map.getCenter().lng]));
   map.on('zoomend', () => {
-    const readout = document.querySelector('#zoom-readout');
-    if (readout) {
-      const z = map.getZoom();
-      if (z <= 2) readout.textContent = i18n[currentLang]?.zoom_global || 'Global View';
-      else if (z <= 5) readout.textContent = i18n[currentLang]?.zoom_regional || 'Regional View';
-      else readout.textContent = i18n[currentLang]?.zoom_local || 'Local View (Detail)';
-    }
+    updateZoomReadout();
   });
 
   const search = document.querySelector('#coordinate-search');
@@ -1213,6 +1462,7 @@
       relief: 'dot-relief',
       thermalDay: 'dot-thermal',
       thermalNight: 'dot-night',
+      ctx: 'dot-ctx',
     };
 
     function updateDot(dotEl, key) {
@@ -1224,23 +1474,38 @@
       if (key === 'color') {
         return nasaTiles('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', {
           bounds: globalBounds,
+          maxNativeZoom: 7,
+          maxZoom: 14,
         });
       }
       if (key === 'relief') {
         return nasaTiles('Mars_MGS_MOLA_ClrShade_merge_global_463m', 'jpg', {
           bounds: globalBounds,
+          maxNativeZoom: 7,
+          maxZoom: 14,
         });
       }
       if (key === 'thermalDay') {
         return nasaTiles('Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly', 'png', {
           className: 'themis-layer',
           bounds: globalBounds,
+          maxNativeZoom: 8,
+          maxZoom: 14,
         });
       }
       if (key === 'thermalNight') {
         return nasaTiles('THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018', 'png', {
           className: 'themis-layer',
           bounds: nightBounds,
+          maxNativeZoom: 9,
+          maxZoom: 14,
+        });
+      }
+      if (key === 'ctx') {
+        return nasaTiles('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', {
+          bounds: globalBounds,
+          maxNativeZoom: 7,
+          maxZoom: 14,
         });
       }
       return null;
@@ -3664,6 +3929,7 @@
       relief: i18n[lang].layer_opt_mola,
       thermalDay: i18n[lang].layer_opt_themis_day,
       thermalNight: i18n[lang].layer_opt_themis_night,
+      ctx: i18n[lang].layer_opt_ctx,
     };
     [selectLeft, selectRight].forEach((sel) => {
       if (!sel) return;
@@ -3686,13 +3952,10 @@
       updatePromptBanner();
     }
 
-    // Update zoom readout
-    const zoomReadout = document.querySelector('#zoom-readout');
-    if (zoomReadout) {
-      const z = map.getZoom();
-      if (z <= 2) zoomReadout.textContent = i18n[lang].zoom_global;
-      else if (z <= 5) zoomReadout.textContent = i18n[lang].zoom_regional;
-      else zoomReadout.textContent = i18n[lang].zoom_local;
+    // Update zoom readout and HiRISE transition badge
+    updateZoomReadout();
+    if (typeof updateHiRiseTransition === 'function') {
+      updateHiRiseTransition();
     }
 
     // Update mission markers popups

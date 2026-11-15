@@ -71,6 +71,21 @@ All planetary map layers, physical constants, coordinates, and meteorological te
   - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/{z}/{y}/{x}.png`
   - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/1/0/0.png)
 
+- **High-Resolution Context Mosaics (Option B — 5-6 m/pixel CTX):**
+  *MRO CTX Orthomosaics* (`JEZ_ctx_B_soc_008_orthoMosaic_6m_Eqc_latTs0_lon0` for Jezero Crater; `InSightCTXMosaic_112917` for Elysium Planitia): 6 m/pixel context camera imagery synthesized from MRO Context Camera frames. Provides regional geological context bridging global basemaps to ultra-high-resolution exploration zones.
+  - Jezero CTX WMTS: `https://trek.nasa.gov/tiles/Mars/EQ/JEZ_ctx_B_soc_008_orthoMosaic_6m_Eqc_latTs0_lon0/1.0.0/default/default028mm/{z}/{y}/{x}.png`
+  - Coverage: Jezero Crater ($18.21^\circ\text{N} - 18.72^\circ\text{N}$, $77.16^\circ\text{E} - 77.70^\circ\text{E}$) and Elysium Planitia ($4.14^\circ\text{N} - 4.94^\circ\text{N}$, $134.75^\circ\text{E} - 136.94^\circ\text{E}$).
+
+- **Ultra-High-Resolution Landing Site Orthomosaics (Option C — 25 cm/pixel HiRISE):**
+  *NASA HiRISE Orthomosaics* from the High Resolution Imaging Science Experiment on MRO, with seamless dynamic opacity cross-fading from CTX ($Z=11\text{--}14$) to reveal rock outcrops, delta sedimentary strata, rover tracks, and landing hardware:
+  - **Jezero Crater (Perseverance / Mars 2020):** `JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd` ($18.31^\circ\text{N} - 18.67^\circ\text{N}$, $77.22^\circ\text{E} - 77.58^\circ\text{E}$).
+  - **Gale Crater (Curiosity / MSL):** `curiosity_hirise_mosaic` ($-5.11^\circ\text{N} - -4.07^\circ\text{N}$, $136.78^\circ\text{E} - 138.07^\circ\text{E}$).
+  - **Meridiani Planum (Opportunity / MER-B):** `opportunity_hirise_mosaic`.
+  - **Gusev Crater (Spirit / MER-A):** `spirit_hirise_mosaic`.
+  - **Vastitas Borealis (Phoenix Lander):** `phoenix_hirise_mosaic`.
+  - **Ares Vallis (Pathfinder & Sojourner):** `sojourner_hirise_mosaic`.
+  - Dynamic Seamless Cross-Fade: At $Z \le 10$, CTX (6 m/px) or basemap is fully active (0% HiRISE). From $Z=11$ (25%) to $Z=12$ (60%), $Z=13$ (85%), and $Z=14$ (100%), HiRISE imagery smoothly fades in over the CTX base. Map zoom is clamped to $Z=14$ with native zoom clamping on all basemaps, eliminating browser GPU memory and coordinate overflow (the "black screen" bug).
+
 ### 2. In-Situ Weather Stations & Planetary Climate Archives
 - **NASA Mars 2020 Perseverance (Jezero Crater):**
   *MEDA (Mars Environmental Dynamics Analyzer)* telemetry: ground and air temperatures, diurnal barometric oscillations, wind vector cycles, and dust optical depth ($\tau$).
