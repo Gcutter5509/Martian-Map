@@ -2,6 +2,7 @@
   // =========================================================================
   // Internationalization (i18n) Engine - NASA Space Apps Compliant (EN / RU)
   // =========================================================================
+  // Словарь переводов (i18n)
   const i18n = {
     en: {
       brand_subtitle: 'Interplanetary Atlas & Survival Guide',
@@ -275,16 +276,20 @@
     }
   };
 
+  // Текущий язык интерфейса
   let currentLang = localStorage.getItem('martian_lang') || 'en';
 
+  // Получение локализованной строки
   function t(val) {
     if (!val) return '';
     if (typeof val === 'object') return val[currentLang] || val.en || '';
     return val;
   }
+  // Элементы статуса и загрузки
   const status = document.querySelector('#data-status');
   const loader = document.querySelector('#loading-indicator');
 
+  // Проверка доступности Leaflet
   if (!window.L) {
     const isRu = currentLang === 'ru';
     if (status) status.textContent = isRu ? 'Карта недоступна (проверьте сеть)' : 'Map unavailable (check network connection)';
@@ -298,9 +303,11 @@
   // Official NASA Mars Trek Extents:
   // Global layers cover -180° to 180° lon and -90° to 90° lat.
   // THEMIS Night controlled mosaic covers -180° to 180° lon and -65.0006576° to 65.0007535° lat.
+  // Координатные границы карты
   const globalBounds = L.latLngBounds([[-90, -180], [90, 180]]);
   const nightBounds = L.latLngBounds([[-65.0006576, -180], [65.0007535, 180]]);
 
+  // Инициализация карты Leaflet
   const jezero = [18.4447, 77.4508];
   const map = L.map('map', {
     center: jezero,
@@ -314,6 +321,7 @@
     maxBoundsViscosity: 1.0,
   });
 
+  // Фабрика тайловых слоев NASA WMTS
   const nasaTiles = (layer, ext = 'jpg', options = {}) => L.tileLayer(
     `https://trek.nasa.gov/tiles/Mars/EQ/${layer}/1.0.0/default/default028mm/{z}/{y}/{x}.${ext}`,
     {
@@ -328,6 +336,7 @@
     }
   );
 
+  // Конфигурация базовых слоев
   const layerConfigs = {
     color: {
       layer: nasaTiles('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', { bounds: globalBounds, maxNativeZoom: 7, maxZoom: 14 }),
@@ -385,6 +394,7 @@
     },
   };
 
+  // Базовые картографические слои
   const basemaps = {
     color: layerConfigs.color.layer,
     relief: layerConfigs.relief.layer,
@@ -393,6 +403,7 @@
     ctx: layerConfigs.ctx.layer,
   };
 
+  // Текущий активный слой
   let activeKey = 'color';
   let activeBasemap = basemaps.color.addTo(map);
   let swipeController = null;
@@ -400,6 +411,7 @@
   // =========================================================================
   // Authentic NASA CTX Mosaics (Option B: 5-6 m/px Context Imagery)
   // =========================================================================
+  // Каталог детальных мозаик CTX (6 м/пикс)
   const ctxMosaics = [
     {
       id: 'jezero_ctx',
@@ -419,6 +431,7 @@
     },
   ];
 
+  // Подключение тайловых слоев CTX
   const ctxTileLayers = ctxMosaics.map((m) => {
     const lyr = L.tileLayer(
       `https://trek.nasa.gov/tiles/Mars/EQ/${m.layer}/1.0.0/default/default028mm/{z}/{y}/{x}.${m.ext}`,
@@ -444,6 +457,7 @@
   // =========================================================================
   // Authentic NASA HiRISE Ultra-Resolution Mosaics (Option C: 25 cm/px)
   // =========================================================================
+  // Каталог сверхдетальных мозаик HiRISE (25 см/пикс)
   const hiriseMosaics = [
     {
       id: 'perseverance',
@@ -495,6 +509,7 @@
     },
   ];
 
+  // Подключение тайловых слоев HiRISE
   const hiriseTileLayers = hiriseMosaics.map((m) => {
     const lyr = L.tileLayer(
       `https://trek.nasa.gov/tiles/Mars/EQ/${m.layer}/1.0.0/default/default028mm/{z}/{y}/{x}.${m.ext}`,
@@ -518,6 +533,7 @@
     return { ...m, tileLayer: lyr };
   });
 
+  // Обновление индикатора масштаба
   function updateZoomReadout(activeMosaic, hiriseOpacity) {
     const readout = document.querySelector('#zoom-readout');
     if (!readout) return;
@@ -549,6 +565,7 @@
     }
   }
 
+  // Плавное проявление слоя HiRISE при приближении
   function updateHiRiseTransition() {
     const z = map.getZoom();
     const bounds = map.getBounds();
@@ -600,6 +617,7 @@
   map.on('zoom move zoomend moveend', updateHiRiseTransition);
 
   // Visual coverage boundary indicator for THEMIS Night (NASA 65° N and 65° S limits)
+  // Границы ночной съемки THEMIS (±65°)
   const nightCoverageLines = L.layerGroup([
     L.polyline([[65.0, -180], [65.0, 180]], {
       color: '#d88a62',
@@ -615,6 +633,7 @@
     }),
   ]);
 
+  // Обработка загрузки тайлов базовых слоев
   Object.entries(basemaps).forEach(([key, layer]) => {
     layer.on('loading', () => {
       if (key === activeKey) {
@@ -639,11 +658,11 @@
     });
   });
 
-  // Forward declarations for route state & magnetic snapping
+  // Состояние маршрута и тайминги привязки
   let routeState = null;
   let lastSnapTime = 0;
 
-  // Official landing sites and coordinates from NASA Trek API bookmarks
+  // Каталог посадочных площадок миссий
   const markerStyles = {
     perseverance: {
       color: '#dd9168',
@@ -755,9 +774,11 @@
     },
   };
 
+  // Хранилище маркеров и слоев миссий
   const missionMarkers = {};
   const missionLayers = {};
 
+  // DOM-иконка маркера посадочной площадки
   function pointIcon(color, isOutOfCoverage = false) {
     const extraClass = isOutOfCoverage ? ' mission-marker__dot--out-of-bounds' : '';
     const outTip = isOutOfCoverage ? (currentLang === 'ru' ? 'Вне зоны покрытия текущей карты' : 'Out of current basemap coverage') : '';
@@ -769,17 +790,20 @@
     });
   }
 
+  // Форматирование ареоцентрической долготы
   function formatLongitude(longitude) {
     const normalized = ((longitude + 180) % 360 + 360) % 360 - 180;
     return `${Math.abs(normalized).toFixed(4)}° ${normalized >= 0 ? 'E' : 'W'}`;
   }
 
+  // Проверка видимости объекта в текущем слое
   function isMissionInCoverage(info, key) {
     const config = layerConfigs[key];
     const lat = info.coords[0];
     return lat >= config.minLat && lat <= config.maxLat;
   }
 
+  // Шаблон всплывающего окна миссии
   function popup(info) {
     const [lat, lon] = info.coords;
     const inCoverage = isMissionInCoverage(info, activeKey);
@@ -802,6 +826,7 @@
     `;
   }
 
+  // Отображение координат центра карты
   function mapCoordinates(coords) {
     const coordEl = document.querySelector('#map-coordinates b');
     if (coordEl) {
@@ -811,6 +836,7 @@
 
   let lastFocusedObject = null;
 
+  // Заполнение инфокарточки объекта
   function updateInfoCard(info) {
     if (!info) return;
     lastFocusedObject = info;
@@ -895,6 +921,7 @@
     }
   }
 
+  // Обновление доступности маркеров для текущего слоя
   function updateMissionUIForActiveLayer() {
     const config = layerConfigs[activeKey];
 
@@ -922,6 +949,7 @@
     });
   }
 
+  // Подсветка активного пункта в меню
   function highlightSidebarItem(type, id) {
     document.querySelectorAll('.mission-option, .landmark-option').forEach((el) => {
       el.classList.remove('active');
@@ -935,6 +963,7 @@
     }
   }
 
+  // Фокусировка карты на миссии
   function focusMission(id) {
     const info = markerStyles[id];
     if (!info) return;
@@ -965,6 +994,7 @@
     highlightSidebarItem('mission', id);
   }
 
+  // Добавление маркеров миссий на карту
   Object.entries(markerStyles).forEach(([id, info]) => {
     info.id = id;
     const marker = L.marker(info.coords, { icon: pointIcon(info.color) })
@@ -998,7 +1028,7 @@
     missionLayers[id] = L.layerGroup([marker]).addTo(map);
   });
 
-  // Official Martian Geological Landmarks Catalog
+  // Каталог геологических ориентиров Марса
   const landmarkData = {
     olympus: {
       id: 'olympus',
@@ -1114,6 +1144,7 @@
     },
   };
 
+  // Шаблон всплывающего окна ориентира
   function landmarkPopup(info) {
     const [lat, lon] = info.coords;
     return `
@@ -1134,6 +1165,7 @@
     `;
   }
 
+  // DOM-иконка маркера ориентира
   function landmarkIcon(info) {
     return L.divIcon({
       className: 'landmark-marker',
@@ -1146,6 +1178,7 @@
   const landmarkMarkers = {};
   const landmarkLayers = {};
 
+  // Фокусировка карты на ориентире
   function focusLandmark(id) {
     const info = landmarkData[id];
     if (!info) return;
@@ -1171,6 +1204,7 @@
     highlightSidebarItem('landmark', id);
   }
 
+  // Добавление маркеров ориентиров на карту
   Object.entries(landmarkData).forEach(([id, info]) => {
     const marker = L.marker(info.coords, { icon: landmarkIcon(info) })
       .bindPopup(landmarkPopup(info))
@@ -1199,6 +1233,7 @@
     landmarkLayers[id] = L.layerGroup([marker]).addTo(map);
   });
 
+  // Обработчики кликов по ориентирам в меню
   document.querySelectorAll('.landmark-option').forEach((btn) => {
     btn.addEventListener('click', () => {
       const id = btn.getAttribute('data-landmark');
@@ -1208,6 +1243,7 @@
     });
   });
 
+  // Переключение базовых слоев карты
   document.querySelectorAll('input[name="basemap"]').forEach((input) => {
     input.addEventListener('change', () => {
       if (swipeController && swipeController.isActive()) {
@@ -1269,6 +1305,7 @@
     });
   });
 
+  // Обработчики кликов по миссиям в меню
   document.querySelectorAll('.mission-option').forEach((btn) => {
     btn.addEventListener('click', () => {
       const id = btn.getAttribute('data-mission');
@@ -1278,6 +1315,7 @@
     });
   });
 
+  // Кнопки масштабирования и сброса вида
   const zoomInBtn = document.querySelector('#zoom-in');
   const zoomOutBtn = document.querySelector('#zoom-out');
   const resetBtn = document.querySelector('#reset-view');
@@ -1298,6 +1336,7 @@
   const mapStage = document.querySelector('.map-stage');
   const fullscreenBtn = document.querySelector('#btn-toggle-fullscreen');
 
+  // Проверка полноэкранного режима
   function isMapFullscreen() {
     return Boolean(
       document.fullscreenElement ||
@@ -1305,6 +1344,7 @@
     );
   }
 
+  // Обновление кнопки полного экрана
   function updateFullscreenUI(active) {
     if (fullscreenBtn) {
       fullscreenBtn.classList.toggle('active', active);
@@ -1319,11 +1359,13 @@
     }
   }
 
+  // Пересчет размеров контейнера карты
   function invalidateMap() {
     setTimeout(() => map.invalidateSize(), 50);
     setTimeout(() => map.invalidateSize(), 200);
   }
 
+  // Вход в полноэкранный режим
   function enterFullscreen() {
     if (!mapStage) return;
     if (mapStage.requestFullscreen) {
@@ -1339,6 +1381,7 @@
     }
   }
 
+  // Выход из полноэкранного режима
   function exitFullscreen() {
     if (document.fullscreenElement && document.exitFullscreen) {
       document.exitFullscreen().catch(() => {});
@@ -1350,6 +1393,7 @@
     invalidateMap();
   }
 
+  // Переключение полноэкранного режима
   function toggleFullscreen() {
     if (isMapFullscreen()) {
       exitFullscreen();
@@ -1362,6 +1406,7 @@
     fullscreenBtn.addEventListener('click', toggleFullscreen);
   }
 
+  // Слушатель системного изменения режима экрана
   document.addEventListener('fullscreenchange', () => {
     const isFs = Boolean(document.fullscreenElement);
     if (mapStage) {
@@ -1376,6 +1421,7 @@
     updateZoomReadout();
   });
 
+  // Поиск по названию или координатам
   const search = document.querySelector('#coordinate-search');
   if (search) {
     search.addEventListener('keydown', (event) => {
@@ -1435,6 +1481,7 @@
   // Swipe Comparison Tool (Split Screen: Multi-Layer Selector)
   // =========================================================================
 
+  // Контроллер инструмента сравнения «Шторка»
   function initSwipeController() {
     const swipeContainer = document.querySelector('#swipe-container');
     const swipeDivider = document.querySelector('#swipe-divider');
@@ -1465,11 +1512,13 @@
       ctx: 'dot-ctx',
     };
 
+    // Индикатор цвета выбранного слоя
     function updateDot(dotEl, key) {
       if (!dotEl) return;
       dotEl.className = 'swipe-badge__dot ' + (dotClasses[key] || 'dot-color');
     }
 
+    // Создание тайлового слоя для шторки
     function createSwipeTileLayer(key) {
       if (key === 'color') {
         return nasaTiles('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', {
@@ -1511,6 +1560,7 @@
       return null;
     }
 
+    // Обрезка слоев по положению разделителя
     function updateClip(x) {
       if (!isSwipeActive) return;
 
@@ -1546,6 +1596,7 @@
       }
     }
 
+    // Установка левого слоя сравнения
     function setLeftLayer(key) {
       leftKey = key;
       if (selectLeft && selectLeft.value !== key) selectLeft.value = key;
@@ -1570,6 +1621,7 @@
       updateClip();
     }
 
+    // Установка правого слоя сравнения
     function setRightLayer(key) {
       rightKey = key;
       if (selectRight && selectRight.value !== key) selectRight.value = key;
@@ -1594,6 +1646,7 @@
       updateClip();
     }
 
+    // Включение режима шторки
     function enableSwipe() {
       if (isSwipeActive) return;
       isSwipeActive = true;
@@ -1619,6 +1672,7 @@
       updateClip(initialX);
     }
 
+    // Выключение режима шторки
     function disableSwipe() {
       if (!isSwipeActive) return;
       isSwipeActive = false;
@@ -1653,6 +1707,7 @@
       if (map.dragging) map.dragging.enable();
     }
 
+    // Переключение режима шторки
     function toggleSwipe() {
       if (isSwipeActive) disableSwipe();
       else enableSwipe();
@@ -1687,6 +1742,7 @@
       });
     }
 
+    // Расчет горизонтальной координаты указателя
     function getPointerX(e) {
       let clientX = e.clientX;
       if (e.touches && e.touches.length > 0) {
@@ -1698,6 +1754,7 @@
       return clientX - rect.left;
     }
 
+    // Начало перетаскивания шторки
     function onPointerDown(e) {
       if (!isSwipeActive) return;
       isDragging = true;
@@ -1708,6 +1765,7 @@
       if (e.cancelable) e.preventDefault();
     }
 
+    // Перемещение разделителя шторки
     function onPointerMove(e) {
       if (!isDragging || !isSwipeActive) return;
       const x = getPointerX(e);
@@ -1716,6 +1774,7 @@
       if (e.cancelable) e.preventDefault();
     }
 
+    // Окончание перетаскивания шторки
     function onPointerUp() {
       if (isDragging) {
         isDragging = false;
@@ -1783,6 +1842,7 @@
   // Official NASA / IAU Planetary Constants & Physics Engine
   // =========================================================================
 
+  // Физические константы Марса
   const MARS_CONSTANTS = {
     R_MEAN_KM: 3389.50,            // IAU mean volumetric radius
     R_EQUATOR_KM: 3396.19,         // IAU equatorial radius (a)
@@ -1810,6 +1870,7 @@
 
   const MARS_RADIUS_KM = MARS_CONSTANTS.R_MEAN_KM;
 
+  // Расчет локальной гравитации
   function calcLocalGravity(latDeg, elevMeters) {
     const phi = (latDeg * Math.PI) / 180;
     const gLat = MARS_CONSTANTS.G_MARS_EQ + (MARS_CONSTANTS.G_MARS_POLAR - MARS_CONSTANTS.G_MARS_EQ) * (Math.sin(phi) ** 2);
@@ -1817,22 +1878,26 @@
     return gLat + MARS_CONSTANTS.FREE_AIR_GRADIENT * elevKm;
   }
 
+  // Расчет плотности атмосферы
   function calcAirDensity(pPa, tempC) {
     const tempK = tempC + 273.15;
     return (pPa / (MARS_CONSTANTS.R_SPEC * tempK)) * 1000.0; // g/m^3
   }
 
+  // Расчет скорости звука
   function calcSpeedOfSound(tempC) {
     const tempK = tempC + 273.15;
     return Math.sqrt(MARS_CONSTANTS.GAMMA_CO2 * MARS_CONSTANTS.R_SPEC * tempK); // m/s
   }
 
+  // Расчет точки кипения воды
   function calcWaterBoilingPoint(pPa) {
     if (pPa < 611.65) return null; // Sublimation regime (< 6.12 hPa triple point)
     const lnP = Math.log(pPa / 611.65);
     return (237.3 * lnP) / (17.27 - lnP); // deg C
   }
 
+  // Расчет начального азимута
   function calcInitialBearing(p1, p2) {
     const toRad = Math.PI / 180;
     const lat1 = p1[0] * toRad, lat2 = p2[0] * toRad;
@@ -1843,13 +1908,14 @@
     return (bRad * (180 / Math.PI) + 360) % 360;
   }
 
+  // Форматирование азимута по сторонам света
   function formatBearingCompass(deg) {
     const cardinals = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
     const idx = Math.round(deg / 22.5) % 16;
     return `${deg.toFixed(1)}° (${cardinals[idx]})`;
   }
 
-  // Topographic elevation model anchor points across Mars (MOLA Datum)
+  // Опорные высотные точки рельефа (MOLA)
   const ELEV_CONTROL_POINTS = [
     [18.65, -133.8, 21229],   // Olympus Mons summit
     [-9.0, -120.5, 16000],    // Arsia Mons
@@ -1873,6 +1939,7 @@
     [40.75, -9.46, -2100],    // Cydonia
   ];
 
+  // Оценка высоты рельефа (интерполяция)
   function estimateElevation(lat, lon) {
     let baseElev = lat < 0 ? 1500.0 : -3800.0;
     if (Math.abs(lat) < 15.0) {
@@ -1900,6 +1967,7 @@
   }
 
 
+  // Расчет расстояния на сфере Марса
   function haversineMars(p1, p2) {
     const toRad = Math.PI / 180;
     const dLat = (p2[0] - p1[0]) * toRad;
@@ -1910,6 +1978,7 @@
     return MARS_RADIUS_KM * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
+  // Упрощенное форматирование координат
   function formatCoordSimple(coord, isLat) {
     const val = Math.abs(coord).toFixed(2);
     if (isLat) return `${val}° ${coord >= 0 ? 'N' : 'S'}`;
@@ -1917,7 +1986,7 @@
     return `${Math.abs(normalized).toFixed(2)}° ${normalized >= 0 ? 'E' : 'W'}`;
   }
 
-  // Geological hazards on Mars: impassable chasms, volcanic scarps, and polar ice
+  // Каталог опасных геологических зон рельефа
   const martianHazards = [
     {
       id: 'valles-marineris',
@@ -2013,6 +2082,7 @@
     },
   ];
 
+  // Проверка попадания точки в полигон (Ray casting)
   function pointInPolygon(pt, poly) {
     let inside = false;
     for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
@@ -2026,6 +2096,7 @@
     return inside;
   }
 
+  // Оценка штрафа за пересечение зон риска
   function getHazardCost(pt) {
     let totalPenalty = 0;
     let hitHazards = [];
@@ -2072,7 +2143,7 @@
     return { penalty: totalPenalty, hitHazards };
   }
 
-  // Binary Min-Heap for fast A* pathfinding
+  // Очередь с приоритетом для алгоритма A*
   class PriorityQueue {
     constructor() {
       this.heap = [];
@@ -2119,14 +2190,17 @@
     }
   }
 
+  // Разность долгот с учетом знака
   function diffLon(lon1, lon2) {
     return ((lon2 - lon1 + 540) % 360) - 180;
   }
 
+  // Нормализация долготы [-180, 180]
   function normLon(lon) {
     return ((lon + 180) % 360 + 360) % 360 - 180;
   }
 
+  // Разделение полилинии по антимеридиану
   function splitPolylineAtAntimeridian(coords) {
     if (coords.length <= 1) return [coords];
     const segments = [];
@@ -2151,6 +2225,7 @@
     return segments;
   }
 
+  // Интерполяция дуги большого круга
   function interpolateGreatCircle(p1, p2, steps = 30) {
     const points = [];
     const toRad = Math.PI / 180;
@@ -2179,6 +2254,7 @@
     return points;
   }
 
+  // Сглаживание траектории (алгоритм Чайкина)
   function smoothPath(points, iters = 2) {
     if (points.length <= 2) return points;
     let curr = points;
@@ -2197,6 +2273,7 @@
     return curr;
   }
 
+  // Поиск безопасного маршрута SafeNav (алгоритм A*)
   function findSafeRoverPath(start, goal) {
     const directPoints = interpolateGreatCircle(start, goal, 35);
     const hazardsDirectHits = new Set();
@@ -2356,7 +2433,7 @@
     };
   }
 
-  // Route State
+  // Состояние навигационной подсистемы
   routeState = {
     modeActive: false,
     pointA: null, // [lat, lon]
@@ -2372,6 +2449,7 @@
   };
 
   const hazardMarkers = [];
+  // Шаблон всплывающего окна опасной зоны
   function hazardPopupContent(h) {
     return `
       <div class="popup-box">
@@ -2382,7 +2460,7 @@
     `;
   }
 
-  // Render Geological Hazards Overlay
+  // Отрисовка зон риска на карте
   function initHazardZones() {
     martianHazards.forEach((h) => {
       let shape;
@@ -2415,7 +2493,7 @@
   }
   initHazardZones();
 
-  // Custom Icon Makers
+  // DOM-иконка маркера точки маршрута
   function createRouteMarkerIcon(letter, type) {
     return L.divIcon({
       className: 'route-map-marker-container',
@@ -2425,6 +2503,7 @@
     });
   }
 
+  // Обновление интерфейса точек маршрута
   function updateRoutePointsUI() {
     const labelA = document.querySelector('#point-a-coords');
     if (labelA) {
@@ -2449,6 +2528,7 @@
     }
   }
 
+  // Установка точки старта (A)
   function setPointA(coords, name = null) {
     routeState.pointA = coords;
     routeState.pointAName = name;
@@ -2481,6 +2561,7 @@
     checkCalcButtonState();
   }
 
+  // Установка точки финиша (B)
   function setPointB(coords, name = null) {
     routeState.pointB = coords;
     routeState.pointBName = name;
@@ -2513,6 +2594,7 @@
     checkCalcButtonState();
   }
 
+  // Проверка готовности к расчету пути
   function checkCalcButtonState() {
     const calcBtn = document.querySelector('#btn-calc-route');
     if (calcBtn) {
@@ -2522,6 +2604,7 @@
 
   let lastRouteResult = null;
 
+  // Расчет и вывод телеметрии перехода
   function renderRouteMetrics(result) {
     if (!result) return;
     lastRouteResult = result;
@@ -2728,6 +2811,7 @@
     }
   }
 
+  // Построение и отрисовка маршрута
   function calculateAndDrawRoute() {
     if (!routeState.pointA || !routeState.pointB) return;
 
@@ -2796,7 +2880,7 @@
     updateTopClearRouteButton(true);
   }
 
-  // Route Mode UI Controller
+  // Элементы управления режимом выбора точек
   const routeModeBtn = document.querySelector('#btn-toggle-route-mode');
   const routePrompt = document.querySelector('#map-route-prompt');
   const routePromptText = document.querySelector('#route-prompt-text');
@@ -2807,6 +2891,7 @@
     L.DomEvent.disableScrollPropagation(routePrompt);
   }
 
+  // Переключение режима выбора точек на карте
   function setRouteMode(active) {
     routeState.modeActive = active;
     if (routeModeBtn) {
@@ -2831,6 +2916,7 @@
     }
   }
 
+  // Обновление текста подсказки на карте
   function updatePromptBanner() {
     if (!routePromptText) return;
     if (!routeState.pointA) {
@@ -2861,6 +2947,7 @@
     });
   }
 
+  // Обработка горячих клавиш (F, F11, Esc)
   window.addEventListener('keydown', (e) => {
     const tag = document.activeElement ? document.activeElement.tagName : '';
     const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
@@ -2892,7 +2979,7 @@
     }
   });
 
-  // Magnetic waypoint selection & snapping handlers
+  // Обработка выбора точки маршрута
   function handleRoutePointSelection(coords, name = null) {
     if (!routeState) return;
 
@@ -2923,6 +3010,7 @@
     }
   }
 
+  // Визуальный отклик примагничивания к объекту
   function showSnapFeedback(name, coords) {
     if (!map || !coords) return;
     const snapPulse = L.circleMarker(coords, {
@@ -2955,6 +3043,7 @@
     }
   }
 
+  // Поиск ближайшего объекта для привязки
   function findNearestMarkedPoint(latlng, maxPixelDist = 35) {
     if (!map || !latlng) return null;
     let clickPt;
@@ -3010,6 +3099,7 @@
     return bestPoint;
   }
 
+  // Клик по карте в режиме маршрута
   map.on('click', (e) => {
     if (!routeState || !routeState.modeActive) return;
 
@@ -3026,6 +3116,7 @@
     }
   });
 
+  // Изменение курсора при наведении на объекты
   map.on('mousemove', (e) => {
     if (routeState && routeState.modeActive) {
       const snapped = findNearestMarkedPoint(e.latlng, 35);
@@ -3033,12 +3124,13 @@
     }
   });
 
-  // Calculate & Clear Buttons
+  // Кнопка запуска расчета маршрута
   const calcRouteBtn = document.querySelector('#btn-calc-route');
   if (calcRouteBtn) {
     calcRouteBtn.addEventListener('click', calculateAndDrawRoute);
   }
 
+  // Видимость верхней кнопки удаления маршрута
   function updateTopClearRouteButton(visible) {
     const btn = document.querySelector('#btn-top-clear-route');
     if (btn) {
@@ -3046,6 +3138,7 @@
     }
   }
 
+  // Очистка и сброс текущего маршрута
   function clearRoute() {
     if (!routeState) return;
 
@@ -3102,7 +3195,7 @@
     clearRouteBtn.addEventListener('click', clearRoute);
   }
 
-  // Swap Points
+  // Кнопка обмена точек старта и финиша
   const swapBtn = document.querySelector('#btn-swap-points');
   if (swapBtn) {
     swapBtn.addEventListener('click', () => {
@@ -3115,7 +3208,7 @@
     });
   }
 
-  // Preset Scenario Buttons
+  // Пресеты готовых сценариев маршрутов
   const presetsData = {
     perseverance: { name: { en: 'Perseverance (Jezero)', ru: 'Perseverance (Езеро)' }, coords: jezero },
     curiosity: { name: { en: 'Curiosity (Gale)', ru: 'Curiosity (Гейл)' }, coords: [-4.5895, 137.4417] },
@@ -3125,6 +3218,7 @@
     hellas: { name: { en: 'Hellas Planitia Basin Floor', ru: 'Равнина Эллада (Hellas Planitia)' }, coords: [-42.4, 70.5] },
   };
 
+  // Обработчики кликов по готовым сценариям
   document.querySelectorAll('.preset-chip').forEach((chip) => {
     chip.addEventListener('click', () => {
       const startKey = chip.getAttribute('data-start');
@@ -3141,7 +3235,7 @@
     });
   });
 
-  // Toggles for hazard zones and direct comparison path
+  // Переключатели зон риска и прямого пути
   const toggleHazards = document.querySelector('#toggle-hazards');
   if (toggleHazards) {
     toggleHazards.addEventListener('change', (e) => {
@@ -3162,6 +3256,7 @@
   // Meteorological Data & Weather Station Controller
   // =========================================================================
 
+  // База данных метеорологических станций
   const weatherData = {
     perseverance: {
       name: { en: 'Jezero Crater', ru: 'Jezero Crater (Езеро)' },
@@ -3661,8 +3756,10 @@
     },
   };
 
+  // Активная метеостанция
   let activeWeatherKey = 'perseverance';
 
+  // Отображение погоды выбранной локации
   function updateWeatherView(key) {
     if (key && weatherData[key]) {
       activeWeatherKey = key;
@@ -3718,6 +3815,7 @@
 
   let includeSpacesuit = false;
 
+  // Калькулятор гравитации и прыжка на Марсе
   function calculateGravity() {
     const input = document.querySelector('#earth-weight-input');
     const unitBadge = document.querySelector('#earth-weight-unit');
@@ -3790,7 +3888,7 @@
     }
   }
 
-  // Gravity Calculator
+  // Слушатели ввода параметров калькулятора
   const earthWeightInput = document.querySelector('#earth-weight-input');
   if (earthWeightInput) {
     earthWeightInput.addEventListener('input', calculateGravity);
@@ -3800,7 +3898,7 @@
     toggleSpacesuit.addEventListener('change', calculateGravity);
   }
 
-  // Info Rail Tabs Logic
+  // Переключение вкладок правой инфопанели
   const tabMission = document.querySelector('#tab-mission');
   const tabWeather = document.querySelector('#tab-weather');
   const tabRoute = document.querySelector('#tab-route');
@@ -3809,6 +3907,7 @@
   const telemetryView = document.querySelector('#route-telemetry-view');
   const railHeading = document.querySelector('#rail-heading');
 
+  // Переключение на вкладку объекта
   function showMissionTab() {
     if (tabMission) tabMission.classList.add('active');
     if (tabWeather) tabWeather.classList.remove('active');
@@ -3819,6 +3918,7 @@
     if (railHeading) railHeading.textContent = i18n[currentLang].rail_heading_mission;
   }
 
+  // Переключение на вкладку погоды
   function showWeatherTab() {
     if (tabMission) tabMission.classList.remove('active');
     if (tabWeather) tabWeather.classList.add('active');
@@ -3830,6 +3930,7 @@
     updateWeatherView();
   }
 
+  // Переключение на вкладку телеметрии
   function showRouteTab() {
     if (tabMission) tabMission.classList.remove('active');
     if (tabWeather) tabWeather.classList.remove('active');
@@ -3856,7 +3957,7 @@
 
   let prevLang = null;
 
-  // Language Switcher Function
+  // Переключение языка интерфейса (RU / EN)
   function setLanguage(lang) {
     if (lang !== 'en' && lang !== 'ru') lang = 'en';
     currentLang = lang;
@@ -3998,6 +4099,7 @@
     updateWeatherView();
   }
 
+  // Кнопки переключения языка
   const langBtnEn = document.querySelector('#lang-en');
   const langBtnRu = document.querySelector('#lang-ru');
   if (langBtnEn) {
@@ -4007,7 +4109,7 @@
     langBtnRu.addEventListener('click', () => setLanguage('ru'));
   }
 
-  // Initial call with saved or default language
+  // Первичная инициализация приложения
   setLanguage(currentLang);
   updateMissionUIForActiveLayer();
 })();

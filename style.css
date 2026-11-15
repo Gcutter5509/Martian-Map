@@ -1,3 +1,4 @@
+/* Переменные темы оформления */
 :root {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -14,10 +15,12 @@
   --orange-dim: #76503d;
 }
 
+/* Сброс и базовая модель */
 * {
   box-sizing: border-box;
 }
 
+/* Базовые стили документа */
 body {
   margin: 0;
   min-width: 320px;
@@ -36,6 +39,7 @@ button, input {
   color: inherit;
 }
 
+/* Утилитарные классы */
 .hidden {
   display: none !important;
 }
@@ -44,6 +48,7 @@ button, input {
    Header / Topbar
    ========================================================================== */
 
+/* Верхняя панель навигации */
 .topbar {
   height: 64px;
   display: flex;
@@ -54,6 +59,7 @@ button, input {
   background: #131517;
 }
 
+/* Логотип и название */
 .brand {
   display: flex;
   align-items: center;
@@ -96,6 +102,7 @@ button, input {
   color: var(--text-muted);
 }
 
+/* Центральный заголовок */
 .topbar__center {
   font-size: 12px;
   color: var(--text-muted);
@@ -107,6 +114,7 @@ button, input {
   gap: 16px;
 }
 
+/* Переключатель языка */
 .lang-switch {
   display: inline-flex;
   align-items: center;
@@ -168,6 +176,7 @@ button, input {
   min-height: 560px;
 }
 
+/* Боковые панели интерфейса */
 .sidebar,
 .info-rail {
   background: var(--panel);
@@ -178,6 +187,7 @@ button, input {
    Sidebar (Left)
    ========================================================================== */
 
+/* Левая панель управления */
 .sidebar {
   padding: 24px 20px 0;
   border-right: 1px solid var(--line);
@@ -204,6 +214,7 @@ button, input {
   margin: 0;
 }
 
+/* Поле поиска объектов */
 .searchbox {
   height: 38px;
   border: 1px solid var(--line);
@@ -250,6 +261,7 @@ button, input {
   border: 1px solid var(--line);
 }
 
+/* Секции бокового меню */
 .panel-section {
   border-top: 1px solid var(--line);
   padding-top: 16px;
@@ -269,6 +281,7 @@ button, input {
   margin: 0;
 }
 
+/* Радиокнопки выбора слоев */
 .layer-option {
   min-height: 44px;
   display: flex;
@@ -286,6 +299,7 @@ button, input {
   background: var(--panel-alt);
 }
 
+/* Кнопки посадочных площадок */
 .mission-option {
   width: calc(100% + 16px);
   background: transparent;
@@ -451,6 +465,7 @@ button, input {
    Map Stage (Center)
    ========================================================================== */
 
+/* Контейнер интерактивной карты */
 .map-stage {
   position: relative;
   min-width: 0;
@@ -549,6 +564,7 @@ button, input {
 .map-label,
 .map-coordinates,
 .map-attribution,
+/* Индикатор загрузки тайлов */
 .loading-indicator {
   position: absolute;
   z-index: 400;
@@ -581,6 +597,7 @@ button, input {
   color: var(--text);
 }
 
+/* Кнопки зума и режимов */
 .map-controls {
   position: absolute;
   z-index: 500;
@@ -619,6 +636,7 @@ button, input {
   box-shadow: 0 0 10px rgba(216, 138, 98, 0.45);
 }
 
+/* Координаты центра карты */
 .map-coordinates {
   bottom: 18px;
   left: 20px;
@@ -675,6 +693,7 @@ button, input {
    Info Rail (Right)
    ========================================================================== */
 
+/* Правая информационная панель */
 .info-rail {
   border-left: 1px solid var(--line);
   padding: 0 20px;
@@ -694,6 +713,7 @@ button, input {
   color: var(--text-muted);
 }
 
+/* Карточка выбранного объекта */
 .selected-card {
   padding: 18px 0;
 }
@@ -932,6 +952,7 @@ button, input {
    Safe Rover Routing (SafeNav)
    ========================================================================== */
 
+/* Панель построения маршрута */
 .route-section {
   display: flex;
   flex-direction: column;
@@ -1052,6 +1073,7 @@ button, input {
   color: #fff;
 }
 
+/* Точки старта и финиша */
 .route-points {
   display: flex;
   flex-direction: column;
@@ -1139,6 +1161,7 @@ button, input {
   border-color: var(--orange);
 }
 
+/* Быстрые сценарии экспедиций */
 .route-presets {
   display: flex;
   flex-direction: column;
@@ -1203,6 +1226,7 @@ button, input {
   gap: 8px;
 }
 
+/* Сводная карточка безопасности */
 .route-summary-card {
   margin-top: 4px;
   padding: 12px;
@@ -1484,6 +1508,7 @@ button, input {
   margin: 0 0 16px;
 }
 
+/* Сетка метеопоказателей */
 .weather-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1603,6 +1628,7 @@ button, input {
   letter-spacing: 0.03em;
 }
 
+/* Состав атмосферы Марса */
 .atmos-bars {
   display: flex;
   flex-direction: column;
@@ -1666,6 +1692,7 @@ button, input {
   color: var(--text);
 }
 
+/* Калькулятор марсианской гравитации */
 .gravity-calc-card {
   padding: 10px;
   background: var(--panel-alt);
@@ -1833,6 +1860,7 @@ button, input {
   margin: 0 0 16px;
 }
 
+/* Метрики телеметрии перехода */
 .telemetry-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1925,6 +1953,7 @@ button, input {
   margin-bottom: 8px;
 }
 
+/* Список опасных зон */
 .hazards-avoided-list {
   display: flex;
   flex-direction: column;
@@ -1960,6 +1989,7 @@ button, input {
   padding: 10px 0;
 }
 
+/* Контрольные навигационные точки */
 .waypoints-timeline {
   display: flex;
   flex-direction: column;
@@ -2354,6 +2384,7 @@ button, input {
   justify-content: space-between;
 }
 
+/* Кнопки геологических ориентиров */
 .landmark-option {
   width: calc(100% + 16px);
   background: transparent;

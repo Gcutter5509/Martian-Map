@@ -17,6 +17,7 @@
     <script src="script.js" defer></script>
   </head>
   <body>
+    <!-- Верхняя панель навигации -->
     <header class="topbar">
       <a class="brand" href="./" aria-label="Martian Map — Home">
         <span class="brand__mark" aria-hidden="true">M</span>
@@ -27,6 +28,7 @@
       </a>
       <div class="topbar__center" data-i18n="topbar_center">NASA Planetary Missions Dataset</div>
       <div class="topbar__actions">
+        <!-- Переключатель языка интерфейса -->
         <div class="lang-switch" role="group" aria-label="Language selection">
           <button type="button" class="lang-btn active" id="lang-en" data-lang="en">EN</button>
           <button type="button" class="lang-btn" id="lang-ru" data-lang="ru">RU</button>
@@ -36,18 +38,21 @@
     </header>
 
     <main class="workspace">
+      <!-- Боковая панель управления -->
       <aside class="sidebar" aria-label="Map Controls">
         <div class="sidebar__intro">
           <h1 data-i18n="sidebar_h1">Mars Atlas</h1>
           <p class="sidebar__copy" data-i18n="sidebar_copy">Explore Martian topography, visible optical mosaics, thermal infrared layers, landing sites, and in-situ weather telemetry.</p>
         </div>
 
+        <!-- Поиск объектов и координат -->
         <div class="searchbox">
           <span class="searchbox__icon" aria-hidden="true">⌕</span>
           <input id="coordinate-search" type="search" placeholder="Search crater, landmark or coordinates" aria-label="Search coordinates or landing site" data-i18n-placeholder="search_placeholder">
           <kbd>↵</kbd>
         </div>
 
+        <!-- Выбор картографических слоев -->
         <section class="panel-section">
           <div class="section-heading">
             <h2 data-i18n="layers_heading">Map Layers</h2>
@@ -98,6 +103,7 @@
           </button>
         </section>
 
+        <!-- Список посадочных площадок миссий -->
         <section class="panel-section missions-section">
           <div class="section-heading">
             <h2 data-i18n="missions_heading">Landing Sites</h2>
@@ -167,6 +173,7 @@
           </button>
         </section>
 
+        <!-- Список геологических ориентиров -->
         <section class="panel-section landmarks-section">
           <div class="section-heading landmarks-heading">
             <h2 data-i18n="landmarks_heading">Geological Landmarks</h2>
@@ -222,6 +229,7 @@
           </button>
         </section>
 
+        <!-- Блок автономной навигации SafeNav -->
         <section class="panel-section route-section">
           <div class="section-heading route-heading">
             <h2 data-i18n="route_heading">SafeNav Pathfinding</h2>
@@ -237,6 +245,7 @@
             </button>
           </div>
 
+          <!-- Точки маршрута (Старт / Финиш) -->
           <div class="route-points">
             <div class="route-point" id="point-a-container">
               <span class="point-badge point-badge--a">A</span>
@@ -257,6 +266,7 @@
             </div>
           </div>
 
+          <!-- Быстрые сценарии экспедиций -->
           <div class="route-presets">
             <span class="presets-label" data-i18n="presets_label">Quick scenarios:</span>
             <div class="presets-list">
@@ -267,6 +277,7 @@
             </div>
           </div>
 
+          <!-- Опции отображения маршрута -->
           <div class="route-options">
             <label class="route-checkbox-label">
               <input type="checkbox" id="toggle-hazards" checked>
@@ -278,6 +289,7 @@
             </label>
           </div>
 
+          <!-- Кнопки расчета и сброса -->
           <div class="route-actions">
             <button type="button" class="route-btn route-btn--accent" id="btn-calc-route" disabled data-i18n="btn_calc_route">
               Calculate Safe Route
@@ -287,6 +299,7 @@
             </button>
           </div>
 
+          <!-- Сводная карточка безопасности маршрута -->
           <div class="route-summary-card hidden" id="route-summary-card">
             <div class="route-summary-header">
               <span class="summary-tag" data-i18n="summary_tag">Trajectory calculated</span>
@@ -318,17 +331,19 @@
         </div>
       </aside>
 
+      <!-- Интерактивная карта и оверлеи -->
       <section class="map-stage" aria-label="Interactive Mars Map">
         <div id="map" role="application" aria-label="Mars Map. Drag to navigate and use scroll wheel to zoom."></div>
         <div class="map-label map-label--upper">
           <span data-i18n="map_upper_label">Coordinate System</span>
           <b data-i18n="map_upper_val">Areocentric (0° E)</b>
         </div>
-        <!-- Top Map Clear Route Button (visible when route is built) -->
+        <!-- Кнопка быстрой очистки маршрута -->
         <button type="button" class="map-clear-route-btn hidden" id="btn-top-clear-route" title="Delete current route" aria-label="Delete current route">
           <span class="clear-route-icon">✕</span>
           <span data-i18n="btn_clear_route_top">Delete Route</span>
         </button>
+        <!-- Элементы управления масштабом и режимами -->
         <div class="map-controls" aria-label="Scale and layer controls">
           <button id="btn-toggle-fullscreen" aria-label="Fullscreen mode" title="Fullscreen mode (F or F11)">⛶</button>
           <button id="btn-toggle-swipe" aria-label="Swipe comparison slider" title="Swipe comparison slider: Optical / MOLA Relief">◧</button>
@@ -336,6 +351,7 @@
           <button id="zoom-out" aria-label="Zoom out">−</button>
           <button id="reset-view" aria-label="Reset view" title="Reset view">◎</button>
         </div>
+        <!-- Инструмент сравнения слоев (Шторка) -->
         <div class="swipe-container hidden" id="swipe-container">
           <div class="swipe-divider" id="swipe-divider">
             <div class="swipe-handle" id="swipe-handle" role="slider" aria-label="Layer comparison slider" tabindex="0">
@@ -367,14 +383,17 @@
             <button type="button" class="swipe-close-btn" id="btn-close-swipe" title="Close swipe comparison view" aria-label="Close swipe comparison view">✕</button>
           </div>
         </div>
+        <!-- Индикатор слоя высокого разрешения HiRISE -->
         <div class="hirise-badge hidden" id="hirise-active-badge" aria-live="polite">
           <span class="hirise-badge__dot" aria-hidden="true"></span>
           <span id="hirise-badge-text">HiRISE 25 cm/px</span>
         </div>
+        <!-- Координаты центра карты -->
         <div class="map-coordinates" id="map-coordinates">
           <span data-i18n="map_center_label">Map Center</span>
           <b>18.44° N, 77.45° E</b>
         </div>
+        <!-- Подсказка при выборе точек на карте -->
         <div class="map-route-prompt hidden" id="map-route-prompt">
           <span class="route-prompt-dot"></span>
           <span id="route-prompt-text" data-i18n="route_prompt_text_a">Click map to set Point A (Start)</span>
@@ -384,15 +403,18 @@
         <div class="loading-indicator hidden" id="loading-indicator" data-i18n="loading_indicator">Loading layer...</div>
       </section>
 
+      <!-- Правая информационная панель -->
       <aside class="info-rail" aria-label="Object Details">
         <div class="rail-top">
           <span id="rail-heading" data-i18n="rail_heading">Object Information</span>
+          <!-- Вкладки информационной панели -->
           <div class="rail-tabs" id="rail-tabs">
             <button type="button" class="rail-tab-btn active" id="tab-mission" data-i18n="tab_mission">Object</button>
             <button type="button" class="rail-tab-btn" id="tab-weather" data-i18n="tab_weather">Weather</button>
             <button type="button" class="rail-tab-btn" id="tab-route" data-i18n="tab_route">Route</button>
           </div>
         </div>
+        <!-- Вкладка: Информация об объекте -->
         <div class="selected-card" id="mission-card">
           <div class="selected-card__image">
             <span class="image-caption">Jezero Crater (Mars 2020)</span>
@@ -432,7 +454,7 @@
           </a>
         </div>
 
-        <!-- Weather & Climate View -->
+        <!-- Вкладка: Метеосводка и физика атмосферы -->
         <div class="weather-view hidden" id="weather-view">
           <div class="weather-badge-row">
             <span class="weather-badge" id="weather-station-badge">NASA MEDA • Mars 2020</span>
@@ -441,6 +463,7 @@
           <h2 class="weather-title" id="weather-location-name">Jezero Crater</h2>
           <p class="weather-subtitle" id="weather-coords-sub">18.44° N, 77.45° E • Elevation -2,575 m</p>
 
+          <!-- Метеорологические показатели -->
           <div class="weather-grid">
             <div class="weather-stat weather-stat--temp">
               <div class="weather-stat__header">
@@ -510,6 +533,7 @@
 
           <div class="card-divider"></div>
 
+          <!-- Состав атмосферы Марса -->
           <div class="weather-section-title" data-i18n="weather_atmos_title">Martian Atmospheric Composition:</div>
           <div class="atmos-bars">
             <div class="atmos-bar-row">
@@ -546,6 +570,7 @@
 
           <div class="card-divider"></div>
 
+          <!-- Микроклиматические особенности локации -->
           <div class="weather-section-title" data-i18n="weather_micro_title">Local Microclimate Features:</div>
           <div class="microclimate-box" id="weather-microclimate">
             Diurnal convective dust devils up to 3,280 ft (1 km) high. The MEDA instrument suite detects microbaric waves and seasonal pressure oscillations as CO₂ freezes out at polar caps.
@@ -553,6 +578,7 @@
 
           <div class="card-divider"></div>
 
+          <!-- Калькулятор марсианской гравитации и прыжка -->
           <div class="weather-section-title" data-i18n="weather_gravity_title">Martian Gravity Calculator (0.38 g):</div>
           <div class="gravity-calc-card">
             <div class="gravity-input-row">
@@ -603,6 +629,7 @@
           </div>
         </div>
 
+        <!-- Вкладка: Телеметрия перехода SafeNav -->
         <div class="route-telemetry-view hidden" id="route-telemetry-view">
           <div class="telemetry-badge-row">
             <span class="telemetry-badge">SafeNav Telemetry</span>
@@ -611,6 +638,7 @@
           <h2 class="telemetry-title" id="telemetry-title" data-i18n="telemetry_title">Rover Trajectory</h2>
           <p class="telemetry-subtitle" id="telemetry-subtitle" data-i18n="telemetry_subtitle">Select waypoints on map or activate a scenario to calculate safe geodesic path.</p>
 
+          <!-- Метрики телеметрии перехода -->
           <div class="telemetry-grid">
             <div class="telemetry-stat telemetry-stat--dist">
               <div class="telemetry-stat__header">
@@ -672,6 +700,7 @@
 
           <div class="card-divider"></div>
 
+          <!-- Анализ опасных зон рельефа -->
           <div class="telemetry-section-title" data-i18n="telemetry_hazards_title">Geological Trajectory Analysis:</div>
           <div class="hazards-avoided-list" id="hazards-avoided-list">
             <div class="telemetry-empty" data-i18n="telemetry_no_route">No route calculated yet</div>
@@ -679,14 +708,16 @@
 
           <div class="card-divider"></div>
 
+          <!-- Контрольные навигационные станции -->
           <div class="telemetry-section-title" data-i18n="telemetry_waypoints_title">Navigation Waypoints:</div>
           <div class="waypoints-timeline" id="waypoints-timeline">
-            <!-- Dynamically populated waypoints -->
+            <!-- Список навигационных контрольных точек -->
           </div>
         </div>
         <div class="rail-note">
           <p><b data-i18n="rail_note_title">Map Navigation</b><br><span data-i18n="rail_note_text">Switch layers, inspect landing sites, or drag swipe handle for multispectral comparative analysis.</span></p>
         </div>
+        <!-- Индикатор масштаба карты -->
         <div class="scale-readout">
           <span data-i18n="zoom_label">Scale</span>
           <b id="zoom-readout">Global View</b>
