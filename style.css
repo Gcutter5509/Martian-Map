@@ -1,26 +1,67 @@
-/* Переменные темы оформления */
+/* ==========================================================================
+   Дизайн-токены: единая палитра, скругления, типографика
+   ========================================================================== */
+
 :root {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --bg: #111315;
-  --panel: #16181b;
-  --panel-alt: #1d2023;
-  --line: #282b2e;
-  --line-focus: #44484d;
-  --text: #edeae4;
-  --text-muted: #95938e;
-  --text-dim: #6d6b67;
+
+  /* Поверхности */
+  --bg: #101214;
+  --panel: #15171a;
+  --panel-alt: #1b1e21;
+  --panel-raised: #23262a;
+  --line: #272a2e;
+  --line-focus: #3d4146;
+
+  /* Текст */
+  --text: #ece9e3;
+  --text-strong: #faf8f5;
+  --text-muted: #98958f;
+  --text-dim: #6b6965;
+
+  /* Акцент (марсианский оранжевый) */
   --orange: #d88a62;
   --orange-hover: #e69971;
   --orange-dim: #76503d;
+  --orange-soft: rgba(216, 138, 98, 0.12);
+  --orange-line: rgba(216, 138, 98, 0.38);
+  --on-accent: #14110f;
+
+  /* Семантика: только маршрут и опасность */
+  --safe: #6fd3b3;
+  --safe-soft: rgba(111, 211, 179, 0.1);
+  --danger: #e0705f;
+  --danger-soft: rgba(224, 112, 95, 0.1);
+
+  /* Категории ориентиров (приглушённые, в тон карте) */
+  --cat-violet: #a99bc9;
+  --cat-rose: #cf8380;
+  --cat-blue: #87a9b2;
+  --cat-sand: #d6c083;
+  --cat-ice: #a3c9cf;
+
+  /* Форма */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 8px;
+
+  /* Плавающие элементы поверх карты */
+  --glass: rgba(18, 20, 23, 0.88);
+  --glass-blur: blur(10px);
+  --shadow-float: 0 6px 20px rgba(0, 0, 0, 0.45);
+
+  --ease: 0.15s ease;
 }
 
-/* Сброс и базовая модель */
+/* ==========================================================================
+   База
+   ========================================================================== */
+
 * {
   box-sizing: border-box;
 }
 
-/* Базовые стили документа */
 body {
   margin: 0;
   min-width: 320px;
@@ -34,21 +75,272 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-button, input {
+button, input, select {
   font-family: inherit;
   color: inherit;
 }
 
-/* Утилитарные классы */
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--orange-dim);
+  color: var(--text-strong);
+}
+
+/* Тонкие тёмные полосы прокрутки */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-focus) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-focus);
+  border-radius: 4px;
+  border: 2px solid var(--panel);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .hidden {
   display: none !important;
 }
 
+/* Единый стиль подписей-рубрик (верхний регистр) */
+.section-heading h2,
+.rail-top,
+.selected-card .kicker,
+.weather-section-title,
+.telemetry-section-title,
+.popup-label,
+.presets-label,
+.point-label,
+.swipe-badge__label,
+.telemetry-badge,
+.weather-badge,
+.route-badge,
+.rail-tab-btn {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+/* Единый стиль заголовков */
+.sidebar h1,
+.selected-card h2,
+.weather-title,
+.telemetry-title {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--text-strong);
+}
+
 /* ==========================================================================
-   Header / Topbar
+   Компоненты: кнопки
    ========================================================================== */
 
-/* Верхняя панель навигации */
+.route-btn,
+.swipe-mode-trigger,
+.btn-goto-weather,
+.switch-layer-btn,
+.btn-hirise-inspect,
+.preset-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel-alt);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  transition: background var(--ease), border-color var(--ease), color var(--ease);
+}
+
+.route-btn:hover:not(:disabled),
+.swipe-mode-trigger:hover,
+.btn-goto-weather:hover,
+.preset-chip:hover {
+  background: var(--panel-raised);
+  border-color: var(--line-focus);
+  color: var(--text-strong);
+}
+
+.route-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.route-btn,
+.swipe-mode-trigger,
+.btn-goto-weather {
+  width: 100%;
+}
+
+/* Активное (включённое) состояние — везде одинаковое */
+.route-btn--primary.active,
+.swipe-mode-trigger.active,
+.map-controls button.active,
+.lang-btn.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--on-accent);
+}
+
+/* Главное действие */
+.route-btn--accent {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+.route-btn--accent:hover:not(:disabled) {
+  background: var(--orange-hover);
+  border-color: var(--orange-hover);
+  color: var(--on-accent);
+}
+
+/* Второстепенное действие */
+.route-btn--ghost,
+.route-btn--telemetry {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.route-btn--telemetry {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+
+/* Малые акцентные кнопки внутри текста карточки */
+.switch-layer-btn,
+.btn-hirise-inspect {
+  margin-top: 10px;
+  padding: 6px 12px;
+  font-size: 11px;
+  background: var(--orange-soft);
+  border-color: var(--orange-line);
+  color: var(--orange);
+}
+
+.switch-layer-btn:hover,
+.btn-hirise-inspect:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--on-accent);
+}
+
+/* ==========================================================================
+   Компоненты: карточки-плитки
+   ========================================================================== */
+
+.coordinate-grid div,
+.weather-stat,
+.telemetry-stat,
+.waypoint-row,
+.atmos-bars,
+.gravity-calc-card,
+.microclimate-box,
+.route-points,
+.route-summary-card {
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+/* Вложенные плитки (внутри карточки) */
+.summary-metric,
+.gravity-stat {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.coordinate-grid div,
+.weather-stat,
+.telemetry-stat,
+.summary-metric,
+.gravity-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  min-width: 0;
+}
+
+/* Подпись плитки */
+.coordinate-grid span,
+.detail-row > span,
+.summary-metric span,
+.weather-stat__label,
+.telemetry-stat span,
+.gravity-stat span {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+/* Значение плитки */
+.coordinate-grid b,
+.summary-metric b,
+.weather-stat__val,
+.telemetry-stat b,
+.gravity-stat b {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.coordinate-grid,
+.weather-grid,
+.telemetry-grid,
+.summary-metrics,
+.gravity-result-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Выноски-предупреждения */
+.coverage-alert,
+.popup-warning,
+.hazard-item {
+  padding: 8px 10px;
+  border-left: 2px solid var(--orange);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: var(--orange-soft);
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   Верхняя панель
+   ========================================================================== */
+
 .topbar {
   height: 64px;
   display: flex;
@@ -56,10 +348,9 @@ button, input {
   justify-content: space-between;
   padding: 0 24px;
   border-bottom: 1px solid var(--line);
-  background: #131517;
+  background: var(--panel);
 }
 
-/* Логотип и название */
 .brand {
   display: flex;
   align-items: center;
@@ -71,14 +362,14 @@ button, input {
 .brand__mark {
   width: 32px;
   height: 32px;
-  border: 1px solid #7c4c36;
+  border: 1px solid var(--orange-line);
   border-radius: 50%;
   display: grid;
   place-items: center;
   color: var(--orange);
   font-size: 15px;
   font-weight: 700;
-  background: #231915;
+  background: var(--orange-soft);
 }
 
 .brand__text {
@@ -90,11 +381,12 @@ button, input {
   font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
+  color: var(--text-strong);
 }
 
 .brand__light {
   font-weight: 400;
-  color: #b5b2ac;
+  color: var(--text-muted);
 }
 
 .brand__subtitle {
@@ -102,7 +394,6 @@ button, input {
   color: var(--text-muted);
 }
 
-/* Центральный заголовок */
 .topbar__center {
   font-size: 12px;
   color: var(--text-muted);
@@ -114,46 +405,49 @@ button, input {
   gap: 16px;
 }
 
-/* Переключатель языка */
-.lang-switch {
+/* Сегментированные переключатели (язык, вкладки) */
+.lang-switch,
+.rail-tabs {
   display: inline-flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 2px;
   gap: 2px;
+  padding: 2px;
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.lang-btn,
+.rail-tab-btn {
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: 5px 8px;
+  line-height: 1;
+  transition: background var(--ease), color var(--ease);
 }
 
 .lang-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-family: inherit;
   font-size: 11px;
   font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  line-height: 1;
+  color: var(--text-muted);
 }
 
-.lang-btn:hover {
+.lang-btn:hover:not(.active),
+.rail-tab-btn:hover:not(.active) {
   color: var(--text);
 }
 
-.lang-btn.active {
-  background: var(--orange);
-  color: #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+.rail-tab-btn.active {
+  background: var(--panel-raised);
+  color: var(--text-strong);
 }
 
 .source-link {
   text-decoration: none;
   font-size: 12px;
   color: var(--text-muted);
-  transition: color 0.15s;
+  transition: color var(--ease);
 }
 
 .source-link:hover {
@@ -166,7 +460,7 @@ button, input {
 }
 
 /* ==========================================================================
-   Workspace Layout
+   Раскладка
    ========================================================================== */
 
 .workspace {
@@ -176,7 +470,6 @@ button, input {
   min-height: 560px;
 }
 
-/* Боковые панели интерфейса */
 .sidebar,
 .info-rail {
   background: var(--panel);
@@ -184,10 +477,9 @@ button, input {
 }
 
 /* ==========================================================================
-   Sidebar (Left)
+   Левая панель
    ========================================================================== */
 
-/* Левая панель управления */
 .sidebar {
   padding: 24px 20px 0;
   border-right: 1px solid var(--line);
@@ -201,10 +493,7 @@ button, input {
 
 .sidebar h1 {
   font-size: 20px;
-  font-weight: 600;
   margin: 0 0 8px;
-  letter-spacing: -0.01em;
-  color: #faf8f5;
 }
 
 .sidebar__copy {
@@ -214,18 +503,19 @@ button, input {
   margin: 0;
 }
 
-/* Поле поиска объектов */
+/* Поиск */
 .searchbox {
   height: 38px;
+  flex: none;
   border: 1px solid var(--line);
   background: var(--panel-alt);
-  border-radius: 4px;
+  border-radius: var(--r-sm);
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 0 10px;
   margin-bottom: 22px;
-  transition: border-color 0.15s;
+  transition: border-color var(--ease);
 }
 
 .searchbox:focus-within {
@@ -251,17 +541,21 @@ button, input {
   color: var(--text-dim);
 }
 
+.searchbox input::-webkit-search-cancel-button {
+  filter: grayscale(1) brightness(1.6);
+}
+
 .searchbox kbd {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--text-dim);
-  background: #25282b;
+  background: var(--panel-raised);
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   border: 1px solid var(--line);
 }
 
-/* Секции бокового меню */
+/* Секции */
 .panel-section {
   border-top: 1px solid var(--line);
   padding-top: 16px;
@@ -273,90 +567,69 @@ button, input {
 }
 
 .section-heading h2 {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
   margin: 0;
 }
 
-/* Радиокнопки выбора слоев */
-.layer-option {
+/* Строки списков: слои, площадки, ориентиры */
+.layer-option,
+.mission-option,
+.landmark-option {
+  width: calc(100% + 16px);
   min-height: 44px;
   display: flex;
   align-items: center;
   gap: 12px;
   position: relative;
-  cursor: pointer;
   padding: 6px 8px;
   margin: 0 -8px 2px;
-  border-radius: 4px;
-  transition: background 0.15s;
-}
-
-.layer-option:hover {
-  background: var(--panel-alt);
-}
-
-/* Кнопки посадочных площадок */
-.mission-option {
-  width: calc(100% + 16px);
-  background: transparent;
   border: 0;
-  border-left: 3px solid transparent;
-  text-align: left;
-  font-family: inherit;
+  border-radius: var(--r-sm);
+  background: transparent;
   color: inherit;
-  box-sizing: border-box;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: relative;
+  text-align: left;
   cursor: pointer;
-  padding: 6px 10px;
-  margin: 0 -8px 3px;
-  border-radius: 6px;
-  transition: all 0.15s ease;
+  transition: background var(--ease);
 }
 
+.layer-option:hover,
 .mission-option:hover,
-.mission-option:focus-visible {
+.landmark-option:hover {
   background: var(--panel-alt);
-  border-left-color: var(--line-focus);
-  outline: none;
 }
 
-.mission-option.active {
-  background: rgba(216, 138, 98, 0.14);
-  border-left-color: var(--orange);
+.mission-option.active,
+.landmark-option.active,
+.layer-option:has(input:checked) {
+  background: var(--orange-soft);
 }
 
-.mission-option.active b {
-  color: #ffffff;
+.mission-option.active b,
+.landmark-option.active b,
+.layer-option:has(input:checked) b {
+  color: var(--text-strong);
 }
 
-.mission-option::after {
+.mission-option::after,
+.landmark-option::after {
   content: '↗';
   font-size: 11px;
   color: var(--text-dim);
   opacity: 0;
-  transform: translateX(-4px);
-  transition: all 0.15s ease;
   margin-left: auto;
+  transition: opacity var(--ease), color var(--ease);
 }
 
 .mission-option:hover::after,
-.mission-option:focus-visible::after {
-  opacity: 0.65;
-  transform: translateX(0);
+.landmark-option:hover::after,
+.mission-option:focus-visible::after,
+.landmark-option:focus-visible::after {
+  opacity: 1;
 }
 
-.mission-option.active::after {
+.mission-option.active::after,
+.landmark-option.active::after {
   opacity: 1;
   color: var(--orange);
-  transform: translateX(0);
 }
 
 .layer-option input {
@@ -366,32 +639,43 @@ button, input {
   height: 1px;
 }
 
+.layer-option:has(input:focus-visible) {
+  outline: 2px solid var(--orange);
+  outline-offset: -2px;
+}
+
 .layer-option__text,
-.mission-option__name {
+.mission-option__name,
+.landmark-option__name {
   display: flex;
   flex-direction: column;
   gap: 2px;
   flex: 1;
+  min-width: 0;
 }
 
 .layer-option b,
-.mission-option b {
+.mission-option b,
+.landmark-option b {
   font-size: 12px;
   font-weight: 500;
   color: var(--text);
 }
 
 .layer-option small,
-.mission-option small {
+.mission-option small,
+.landmark-option small {
   font-size: 11px;
+  line-height: 1.35;
   color: var(--text-muted);
 }
 
+/* Образцы слоёв */
 .layer-swatch {
   width: 24px;
   height: 24px;
-  border: 1px solid #3c3833;
-  border-radius: 4px;
+  border: 1px solid var(--line-focus);
+  border-radius: var(--r-sm);
   flex: none;
 }
 
@@ -416,35 +700,80 @@ button, input {
 }
 
 .layer-option input:checked + .layer-swatch {
-  outline: 2px solid var(--orange);
-  outline-offset: 1px;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 1px var(--orange);
+}
+
+.swipe-mode-trigger {
+  margin-top: 10px;
+  font-size: 11px;
 }
 
 .missions-section {
-  padding-top: 16px;
   margin-bottom: auto;
 }
 
+/* Метки площадок и ориентиров: одинаковая колонка 18px */
 .mission-dot {
-  width: 9px;
-  height: 9px;
-  display: inline-block;
-  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
   flex: none;
 }
 
-.dot-perseverance { background: #d98a61; }
-.dot-curiosity { background: #d6c083; }
-.dot-insight { background: #87a9b2; }
-.dot-phoenix { background: #bd8da1; }
-.dot-opportunity { background: #81b29a; }
-.dot-spirit { background: #f4a261; }
-.dot-viking1 { background: #e07a5f; }
-.dot-pathfinder { background: #f2cc8f; }
-.dot-zhurong { background: #e76f51; }
+.mission-dot::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--c, var(--orange));
+}
+
+.dot-perseverance { --c: #dd9168; }
+.dot-curiosity { --c: #d6c083; }
+.dot-insight { --c: #87a9b2; }
+.dot-phoenix { --c: #bd8da1; }
+.dot-opportunity { --c: #81b29a; }
+.dot-spirit { --c: #f4a261; }
+.dot-viking1 { --c: #e07a5f; }
+.dot-pathfinder { --c: #f2cc8f; }
+.dot-zhurong { --c: #e76f51; }
+
+.landmark-dot {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  border-radius: var(--r-sm);
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+}
+
+.dot-volcano { --c: var(--cat-violet); }
+.dot-canyon { --c: var(--cat-rose); }
+.dot-basin { --c: var(--cat-blue); }
+.dot-crater { --c: var(--cat-sand); }
+.dot-ice { --c: var(--cat-ice); }
+
+.mission-status-out {
+  display: inline-block;
+  color: var(--orange);
+  font-size: 10px;
+  background: var(--orange-soft);
+  padding: 1px 4px;
+  border-radius: var(--r-sm);
+  margin-top: 2px;
+}
 
 .sidebar__bottom {
   height: 48px;
+  flex: none;
   border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
@@ -462,15 +791,258 @@ button, input {
 }
 
 /* ==========================================================================
-   Map Stage (Center)
+   SafeNav: построение маршрута
    ========================================================================== */
 
-/* Контейнер интерактивной карты */
+.route-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.route-section .section-heading {
+  margin-bottom: 0;
+}
+
+.route-heading,
+.landmarks-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.route-badge {
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel-alt);
+}
+
+.route-section__hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.btn-icon,
+.trigger-icon {
+  font-size: 13px;
+  line-height: 1;
+  color: var(--orange);
+}
+
+.active > .btn-icon,
+.active > .trigger-icon {
+  color: inherit;
+}
+
+/* Точки старта и финиша */
+.route-points {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 10px;
+}
+
+.route-point {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.point-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  flex-shrink: 0;
+  color: var(--c);
+  border: 1px solid var(--c);
+  background: color-mix(in srgb, var(--c) 14%, transparent);
+}
+
+.point-badge--a { --c: var(--safe); }
+.point-badge--b { --c: var(--orange); }
+.point-badge--via { --c: var(--text-muted); }
+
+.point-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Кнопки строки: переместить / удалить */
+.point-actions {
+  display: flex;
+  gap: 2px;
+  flex: none;
+}
+
+.point-action-btn {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 11px;
+  line-height: 1;
+  transition: color var(--ease), background var(--ease);
+}
+
+.point-action-btn:hover:not(:disabled) {
+  color: var(--text-strong);
+  background: var(--panel-raised);
+}
+
+.point-action-btn[data-act="remove"]:hover {
+  color: var(--danger);
+}
+
+.point-action-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.route-tools {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 8px;
+}
+
+.route-tools .route-btn {
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+.point-coords {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* Быстрые сценарии */
+.route-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.presets-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.preset-chip {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.route-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.route-checkbox-label,
+.gravity-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.route-checkbox-label input,
+.gravity-checkbox-label input {
+  accent-color: var(--orange);
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  flex: none;
+  cursor: pointer;
+}
+
+.route-actions {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 8px;
+}
+
+/* Сводка маршрута */
+.route-summary-card {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.route-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.summary-score {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--safe);
+}
+
+.summary-avoided {
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--text-muted);
+}
+
+.summary-avoided b {
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Карта
+   ========================================================================== */
+
 .map-stage {
   position: relative;
   min-width: 0;
   overflow: hidden;
-  background: #0f1112;
+  background: var(--bg);
 }
 
 .map-stage.is-fullscreen,
@@ -488,16 +1060,12 @@ button, input {
 #map {
   position: absolute;
   inset: 0;
-  background: #121416;
+  background: var(--bg);
 }
 
 .leaflet-container {
-  background: #121416;
+  background: var(--bg);
   font-family: var(--font-sans);
-}
-
-.leaflet-tile {
-  /* Natural map rendering */
 }
 
 .themis-layer .leaflet-tile {
@@ -513,13 +1081,17 @@ button, input {
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
 }
 
+/* Всплывающие окна и подсказки Leaflet */
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background: #1c1e21;
+  background: var(--panel-alt);
   color: var(--text);
   border: 1px solid var(--line);
-  border-radius: 6px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-float);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--r-md);
 }
 
 .leaflet-popup-content {
@@ -529,23 +1101,40 @@ button, input {
   min-width: 220px;
 }
 
+.leaflet-container a.leaflet-popup-close-button {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: var(--text-strong);
+}
+
+.leaflet-tooltip {
+  background: var(--panel-alt);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-float);
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+.leaflet-tooltip-top::before { border-top-color: var(--line); }
+.leaflet-tooltip-bottom::before { border-bottom-color: var(--line); }
+.leaflet-tooltip-left::before { border-left-color: var(--line); }
+.leaflet-tooltip-right::before { border-right-color: var(--line); }
+
 .popup-box {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.popup-label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
 .popup-title {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-strong);
   margin-top: 2px;
 }
 
@@ -561,27 +1150,62 @@ button, input {
   margin-top: 4px;
 }
 
+.popup-warning {
+  margin-top: 6px;
+}
+
+.popup-box .detail-row {
+  min-height: 0;
+}
+
+.coverage-alert {
+  display: block;
+}
+
+/* Плавающие плашки поверх карты — один стиль */
+.map-label--upper,
+.map-coordinates,
+.map-attribution,
+.loading-indicator,
+.hirise-badge,
+.swipe-badge,
+.map-route-prompt,
+.map-clear-route-btn,
+.map-controls button {
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-float);
+  color: var(--text);
+}
+
 .map-label,
 .map-coordinates,
 .map-attribution,
-/* Индикатор загрузки тайлов */
-.loading-indicator {
+.loading-indicator,
+.hirise-badge {
   position: absolute;
   z-index: 400;
   pointer-events: none;
 }
 
-.map-label--upper {
-  top: 18px;
+.map-label--upper,
+.map-coordinates {
   left: 20px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  background: rgba(19, 21, 23, 0.85);
-  backdrop-filter: blur(8px);
+  gap: 2px;
   padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
+}
+
+.map-label--upper {
+  top: 18px;
+}
+
+.map-coordinates {
+  bottom: 18px;
 }
 
 .map-label span,
@@ -597,7 +1221,35 @@ button, input {
   color: var(--text);
 }
 
-/* Кнопки зума и режимов */
+.map-coordinates b {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.map-attribution {
+  bottom: 18px;
+  right: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 6px 10px;
+}
+
+.loading-indicator {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  padding: 10px 16px;
+  transition: opacity 0.2s;
+}
+
+.loading-indicator.hidden {
+  opacity: 0;
+}
+
+/* Кнопки управления картой */
 .map-controls {
   position: absolute;
   z-index: 500;
@@ -611,89 +1263,349 @@ button, input {
 .map-controls button {
   width: 32px;
   height: 32px;
-  border: 1px solid var(--line);
-  background: rgba(22, 24, 27, 0.9);
-  color: var(--text);
-  border-radius: 4px;
-  cursor: pointer;
+  padding: 0;
   font-size: 15px;
-  font-family: var(--font-sans);
   display: grid;
   place-items: center;
-  backdrop-filter: blur(8px);
-  transition: all 0.15s;
+  transition: background var(--ease), border-color var(--ease), color var(--ease);
 }
 
-.map-controls button:hover {
+.map-controls button:hover:not(.active) {
   border-color: var(--orange);
   color: var(--orange);
 }
 
-.map-controls button.active {
-  background: var(--orange);
-  color: #111315;
-  border-color: var(--orange);
-  box-shadow: 0 0 10px rgba(216, 138, 98, 0.45);
+/* Индикатор HiRISE */
+.hirise-transition-layer {
+  transition: opacity 0.35s ease-in-out;
 }
 
-/* Координаты центра карты */
-.map-coordinates {
-  bottom: 18px;
+.hirise-badge {
+  bottom: 74px;
   left: 20px;
   display: flex;
-  flex-direction: column;
-  gap: 3px;
-  background: rgba(19, 21, 23, 0.85);
-  backdrop-filter: blur(8px);
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
-}
-
-.map-coordinates b {
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
-  color: var(--text);
 }
 
-.map-attribution {
-  bottom: 18px;
-  right: 20px;
-  font-size: 11px;
-  color: var(--text-muted);
-  background: rgba(19, 21, 23, 0.85);
-  backdrop-filter: blur(8px);
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
+.hirise-badge__dot,
+.route-prompt-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--orange);
+  animation: pulse-dot 1.6s infinite ease-in-out;
 }
 
-.loading-indicator {
-  top: 50%;
+.route-prompt-dot {
+  background: var(--safe);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* Подсказка выбора точек и кнопка удаления маршрута */
+.map-route-prompt,
+.map-clear-route-btn {
+  position: absolute;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
   font-size: 12px;
-  color: var(--text);
-  background: rgba(22, 24, 27, 0.92);
-  padding: 10px 16px;
-  border-radius: 6px;
-  border: 1px solid var(--line);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  transition: opacity 0.2s;
+  font-weight: 500;
+  user-select: none;
 }
 
-.loading-indicator.hidden {
-  opacity: 0;
+.map-route-prompt {
+  bottom: 24px;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.map-route-prompt button,
+.swipe-close-btn {
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1;
+  padding: 4px 5px;
+  transition: color var(--ease), background var(--ease);
+}
+
+.map-route-prompt button:hover,
+.swipe-close-btn:hover {
+  color: var(--text-strong);
+  background: var(--panel-raised);
+}
+
+.map-clear-route-btn {
+  top: 18px;
+  z-index: 500;
+  gap: 8px;
+  transition: border-color var(--ease), color var(--ease);
+}
+
+.map-clear-route-btn:hover {
+  border-color: var(--danger);
+  color: var(--text-strong);
+}
+
+.map-clear-route-btn .clear-route-icon {
+  font-size: 11px;
+  line-height: 1;
+  color: var(--danger);
+}
+
+/* Маркеры площадок */
+.mission-marker,
+.landmark-marker {
+  background: transparent;
+  border: 0;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer !important;
+}
+
+.mission-marker::before,
+.landmark-marker::before,
+.route-map-marker-container::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+}
+
+.mission-marker__dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--marker);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1.5px var(--marker);
+  transition: transform var(--ease), box-shadow var(--ease);
   pointer-events: none;
 }
 
+.mission-marker:hover .mission-marker__dot {
+  transform: scale(1.3);
+  box-shadow: 0 0 0 2px var(--text-strong);
+}
+
+.mission-marker__dot--out-of-bounds {
+  opacity: 0.45;
+  outline: 2px dashed var(--orange);
+  outline-offset: 2px;
+}
+
+/* Маркеры ориентиров */
+.landmark-marker__icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  line-height: 1;
+  background: var(--panel);
+  border: 1.5px solid var(--lm-color, var(--cat-violet));
+  color: var(--lm-color, var(--cat-violet));
+  transition: transform var(--ease);
+  pointer-events: none;
+}
+
+.landmark-marker:hover .landmark-marker__icon {
+  transform: scale(1.25);
+}
+
+/* Маркеры маршрута A / B */
+.route-map-marker-container {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: grab !important;
+}
+
+.route-map-marker {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--on-accent);
+  border: 2px solid var(--text-strong);
+  transition: transform var(--ease);
+  pointer-events: none;
+}
+
+.route-map-marker-container:hover .route-map-marker {
+  transform: scale(1.2);
+}
+
+.route-map-marker--a { background: var(--safe); }
+.route-map-marker--b { background: var(--orange); }
+.route-map-marker--via { background: var(--text); }
+
+/* Импульс примагничивания к объекту */
+.snap-pulse-marker {
+  pointer-events: none;
+  animation: snap-pulse-anim 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes snap-pulse-anim {
+  0% { stroke-width: 3px; opacity: 1; }
+  100% { stroke-width: 1px; opacity: 0; }
+}
+
 /* ==========================================================================
-   Info Rail (Right)
+   Шторка сравнения слоёв
    ========================================================================== */
 
-/* Правая информационная панель */
+.swipe-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 460;
+  overflow: hidden;
+}
+
+.swipe-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: var(--text);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+  pointer-events: auto;
+  cursor: ew-resize;
+  transform: translateX(-50%);
+  user-select: none;
+  touch-action: none;
+  z-index: 560;
+}
+
+.swipe-divider::before {
+  content: '';
+  position: absolute;
+  top: 60px;
+  bottom: 60px;
+  left: -20px;
+  right: -20px;
+  cursor: ew-resize;
+  pointer-events: auto;
+}
+
+.swipe-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--text);
+  box-shadow: var(--shadow-float);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: ew-resize;
+  transition: border-color var(--ease);
+  pointer-events: auto;
+  z-index: 570;
+}
+
+.swipe-handle:active,
+.swipe-handle:focus-visible {
+  border-color: var(--orange);
+  outline: none;
+}
+
+.swipe-arrow {
+  font-size: 9px;
+  line-height: 1;
+  color: var(--orange);
+  pointer-events: none;
+}
+
+.swipe-badge {
+  position: absolute;
+  top: 18px;
+  z-index: 580;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  user-select: none;
+}
+
+.swipe-badge--left {
+  left: 175px;
+}
+
+.swipe-badge--right {
+  right: 75px;
+}
+
+.swipe-select {
+  background: transparent;
+  color: var(--text);
+  border: 0;
+  outline: none;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 3px 2px;
+  transition: color var(--ease);
+}
+
+.swipe-select:hover {
+  color: var(--orange);
+}
+
+.swipe-select option {
+  background: var(--panel-alt);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.swipe-badge__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-color { background: #a86442; }
+.dot-relief { background: #b28d4f; }
+.dot-thermal { background: #54716e; }
+.dot-night { background: #4f596b; }
+.dot-ctx { background: #8e9099; }
+
+/* ==========================================================================
+   Правая панель
+   ========================================================================== */
+
 .info-rail {
   border-left: 1px solid var(--line);
   padding: 0 20px;
@@ -703,90 +1615,63 @@ button, input {
 
 .rail-top {
   height: 52px;
+  flex: none;
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
+  justify-content: space-between;
+  gap: 8px;
 }
 
-/* Карточка выбранного объекта */
-.selected-card {
+/* Три вкладки — общий каркас */
+.selected-card,
+.weather-view,
+.route-telemetry-view {
   padding: 18px 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .selected-card__image {
   height: 100px;
+  flex: none;
   position: relative;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: var(--r-md);
   border: 1px solid var(--line);
   background: linear-gradient(135deg, #2b1f1a, #1f1d1c);
+  background-size: cover;
+  background-position: center;
   display: flex;
   align-items: flex-end;
   padding: 10px;
 }
 
 .image-caption {
-  color: #ddd;
+  color: var(--text);
   font-size: 11px;
   font-weight: 500;
 }
 
 .selected-card .kicker {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   color: var(--orange);
   margin: 14px 0 6px;
 }
 
-.selected-card h2 {
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0 0 8px;
-  color: #faf8f5;
+.selected-card h2,
+.weather-title,
+.telemetry-title {
+  font-size: 18px;
+  margin: 0 0 6px;
 }
 
-.selected-card__desc {
+.selected-card__desc,
+.weather-subtitle,
+.telemetry-subtitle {
   font-size: 12px;
   line-height: 1.55;
   color: var(--text-muted);
   margin: 0 0 16px;
-}
-
-.coordinate-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.coordinate-grid div {
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  background: var(--panel-alt);
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.coordinate-grid span,
-.detail-row > span {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.coordinate-grid b {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text);
 }
 
 .card-divider {
@@ -794,18 +1679,36 @@ button, input {
   margin: 16px 0 4px;
 }
 
+.weather-view .card-divider,
+.route-telemetry-view .card-divider {
+  margin: 16px 0 12px;
+}
+
 .detail-row {
-  height: 34px;
+  min-height: 34px;
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .detail-row > b {
   font-size: 11px;
   font-weight: 500;
   color: var(--text);
+  text-align: right;
+}
+
+.btn-goto-weather {
+  margin-top: 14px;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.btn-goto-weather b {
+  font-weight: 500;
+  color: var(--orange);
 }
 
 .external-card-link {
@@ -817,7 +1720,7 @@ button, input {
   font-size: 12px;
   font-weight: 500;
   padding-top: 14px;
-  transition: color 0.15s;
+  transition: color var(--ease);
 }
 
 .external-card-link:hover {
@@ -845,6 +1748,7 @@ button, input {
 
 .scale-readout {
   height: 48px;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -856,665 +1760,29 @@ button, input {
   color: var(--text);
 }
 
-/* Marker dots */
-.mission-marker {
-  background: transparent;
-  border: 0;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer !important;
-}
-
-.mission-marker::before {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.mission-marker__dot {
-  display: block;
-  width: 14px;
-  height: 14px;
-  margin: 0;
-  border-radius: 50%;
-  background: var(--marker);
-  border: 2px solid #141618;
-  box-shadow: 0 0 0 1.5px var(--marker), 0 0 8px var(--marker);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-  pointer-events: none;
-}
-
-.mission-marker:hover .mission-marker__dot {
-  transform: scale(1.4);
-  box-shadow: 0 0 0 2px #ffffff, 0 0 16px var(--marker);
-}
-
-.mission-marker__dot--out-of-bounds {
-  opacity: 0.45;
-  outline: 2px dashed #d88a62;
-  outline-offset: 2px;
-}
-
-.mission-status-out {
-  display: inline-block;
-  color: #e4916c;
-  font-size: 10px;
-  background: rgba(216, 138, 98, 0.12);
-  padding: 1px 4px;
-  border-radius: 2px;
-  margin-top: 2px;
-}
-
-.popup-warning {
-  margin-top: 6px;
-  padding: 6px 8px;
-  background: rgba(216, 138, 98, 0.12);
-  border-left: 2px solid var(--orange);
-  color: #e4916c;
-  font-size: 11px;
-  line-height: 1.4;
-}
-
-.coverage-alert {
-  display: block;
-  padding: 8px 10px;
-  background: rgba(216, 138, 98, 0.12);
-  border-left: 3px solid var(--orange);
-  color: #e4916c;
-  font-size: 11px;
-  line-height: 1.45;
-  border-radius: 0 4px 4px 0;
-}
-
-.switch-layer-btn {
-  display: inline-block;
-  margin-top: 8px;
-  background: #25282b;
-  border: 1px solid var(--orange);
-  color: var(--orange);
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.switch-layer-btn:hover {
-  background: var(--orange);
-  color: #111315;
-}
-
-/* ==========================================================================
-   Safe Rover Routing (SafeNav)
-   ========================================================================== */
-
-/* Панель построения маршрута */
-.route-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.route-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.route-badge {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  color: #38d9a9;
-  background: rgba(56, 217, 169, 0.12);
-  border: 1px solid rgba(56, 217, 169, 0.3);
-  padding: 2px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
-}
-
-.route-section__hint {
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.45;
-  margin: 0;
-}
-
-.route-mode-bar {
-  margin-top: 2px;
-}
-
-.route-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
-  background: var(--panel-alt);
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.18s ease;
-}
-
-.route-btn:hover:not(:disabled) {
-  border-color: var(--orange);
-  color: #fff;
-  background: #25282c;
-}
-
-.route-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.route-btn--primary {
-  border-color: #38d9a9;
-  color: #38d9a9;
-  background: rgba(56, 217, 169, 0.08);
-}
-
-.route-btn--primary:hover:not(:disabled) {
-  background: rgba(56, 217, 169, 0.18);
-  border-color: #38d9a9;
-  color: #fff;
-}
-
-.route-btn--primary.active {
-  background: #38d9a9;
-  color: #111315;
-  border-color: #38d9a9;
-  box-shadow: 0 0 12px rgba(56, 217, 169, 0.4);
-}
-
-.route-btn--accent {
-  background: var(--orange);
-  border-color: var(--orange);
-  color: #111315;
-  font-weight: 600;
-}
-
-.route-btn--accent:hover:not(:disabled) {
-  background: var(--orange-hover);
-  border-color: var(--orange-hover);
-  color: #111315;
-  box-shadow: 0 2px 10px rgba(216, 138, 98, 0.35);
-}
-
-.route-btn--ghost {
-  background: transparent;
-  border-color: var(--line);
-  color: var(--text-muted);
-}
-
-.route-btn--ghost:hover:not(:disabled) {
-  color: var(--text);
-  border-color: var(--line-focus);
-}
-
-.route-btn--telemetry {
-  background: rgba(56, 217, 169, 0.09);
-  border-color: rgba(56, 217, 169, 0.3);
-  color: #38d9a9;
-  font-size: 11px;
-  padding: 6px 10px;
-}
-
-.route-btn--telemetry:hover {
-  background: rgba(56, 217, 169, 0.18);
-  color: #fff;
-}
-
-/* Точки старта и финиша */
-.route-points {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: #141618;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 6px 10px;
-}
-
-.route-point {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 4px 0;
-}
-
-.point-badge {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 11px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.point-badge--a {
-  background: rgba(56, 217, 169, 0.15);
-  color: #38d9a9;
-  border: 1px solid #38d9a9;
-}
-
-.point-badge--b {
-  background: rgba(255, 146, 43, 0.15);
-  color: #ff922b;
-  border: 1px solid #ff922b;
-}
-
-.point-details {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.point-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  letter-spacing: 0.03em;
-}
-
-.point-coords {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.route-swap-row {
-  display: flex;
-  justify-content: flex-end;
-  margin: -6px 4px -6px 0;
-}
-
-.btn-swap-points {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
-  background: var(--panel);
-  color: var(--text-muted);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  font-size: 13px;
-  transition: all 0.15s;
-}
-
-.btn-swap-points:hover {
-  color: var(--orange);
-  border-color: var(--orange);
-}
-
-/* Быстрые сценарии экспедиций */
-.route-presets {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.presets-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  letter-spacing: 0.03em;
-}
-
-.presets-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.preset-chip {
-  padding: 4px 8px;
-  background: var(--panel-alt);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  color: var(--text-muted);
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.preset-chip:hover {
-  color: var(--text);
-  border-color: var(--line-focus);
-  background: #25282c;
-}
-
-.route-options {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 6px 0;
-}
-
-.route-checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--text-muted);
-  cursor: pointer;
-  user-select: none;
-}
-
-.route-checkbox-label input {
-  accent-color: var(--orange);
-  cursor: pointer;
-}
-
-.route-actions {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 8px;
-}
-
-/* Сводная карточка безопасности */
-.route-summary-card {
-  margin-top: 4px;
-  padding: 12px;
-  background: #14171a;
-  border: 1px solid rgba(56, 217, 169, 0.3);
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.route-summary-header {
+/* --- Вкладка «Погода» и «Маршрут»: шапка --- */
+.weather-badge-row,
+.telemetry-badge-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.summary-tag {
-  font-size: 11px;
-  font-weight: 600;
-  color: #38d9a9;
-}
-
-.summary-score {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: #38d9a9;
-}
-
-.summary-metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 8px;
-}
-
-.summary-metric {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  padding: 6px 8px;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.summary-metric span {
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-.summary-metric b {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text);
-}
-
-.summary-avoided {
-  font-size: 11px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  color: var(--text-muted);
-}
-
-.summary-avoided b {
-  color: #ff922b;
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-/* Map Interactive Route Prompt */
-.map-route-prompt {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(18, 20, 23, 0.95);
-  border: 1px solid #38d9a9;
-  border-radius: 24px;
-  padding: 8px 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 15px rgba(56, 217, 169, 0.3);
-  backdrop-filter: blur(10px);
-  font-size: 12px;
-  color: #edeae4;
-  pointer-events: auto;
-  user-select: none;
-}
-
-.route-prompt-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #38d9a9;
-  box-shadow: 0 0 8px #38d9a9;
-  animation: pulse-dot 1.4s infinite ease-in-out;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.3); }
-}
-
-.map-route-prompt button {
-  background: transparent;
-  border: 0;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 13px;
-  line-height: 1;
-  padding: 2px;
-  margin-left: 4px;
-}
-
-.map-route-prompt button:hover {
-  color: #fff;
-}
-
-/* Top Map Clear Route Button */
-.map-clear-route-btn {
-  position: absolute;
-  top: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(22, 24, 27, 0.94);
-  border: 1px solid rgba(255, 107, 107, 0.6);
-  color: #ff8787;
-  border-radius: 20px;
-  padding: 8px 18px;
-  font-size: 12px;
-  font-weight: 600;
-  font-family: var(--font-sans);
-  letter-spacing: 0.3px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 107, 107, 0.25);
-  backdrop-filter: blur(10px);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
-}
-
-.map-clear-route-btn:hover {
-  background: rgba(255, 107, 107, 0.18);
-  border-color: #ff6b6b;
-  color: #fff;
-  transform: translateX(-50%) scale(1.04);
-  box-shadow: 0 6px 24px rgba(255, 107, 107, 0.45);
-}
-
-.map-clear-route-btn:active {
-  transform: translateX(-50%) scale(0.97);
-}
-
-.map-clear-route-btn .clear-route-icon {
-  font-size: 11px;
-  font-weight: 700;
-  color: #ff6b6b;
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(255, 107, 107, 0.2);
-  transition: all 0.2s ease;
-}
-
-.map-clear-route-btn:hover .clear-route-icon {
-  background: #ff6b6b;
-  color: #111315;
-}
-
-.map-clear-route-btn.hidden {
-  display: none !important;
-}
-
-/* Snap Pulse Animation for Magnetic Waypoints */
-.snap-pulse-marker {
-  pointer-events: none;
-  animation: snap-pulse-anim 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-@keyframes snap-pulse-anim {
-  0% {
-    stroke-width: 3px;
-    opacity: 1;
-  }
-  100% {
-    stroke-width: 1px;
-    opacity: 0;
-  }
-}
-
-/* Info Rail Tabs */
-.rail-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.rail-tabs {
-  display: flex;
-  gap: 4px;
-  background: var(--panel-alt);
-  padding: 3px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
-}
-
-.rail-tab-btn {
-  background: transparent;
-  border: 0;
-  color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 4px 8px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.rail-tab-btn.active {
-  background: var(--line);
-  color: var(--text);
-}
-
-/* Weather & Climate View */
-.weather-view {
-  padding: 18px 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.weather-badge-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 8px;
 }
 
-.weather-badge {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 3px 8px;
-  border-radius: 12px;
-  background: rgba(56, 189, 248, 0.14);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.35);
+.weather-badge,
+.telemetry-badge {
+  color: var(--orange);
 }
 
-.weather-sol {
+.weather-sol,
+.telemetry-status {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-muted);
 }
 
-.weather-title {
-  font-size: 18px;
-  line-height: 1.25;
-  font-weight: 600;
-  margin: 0 0 4px;
-  color: #faf8f5;
-}
-
-.weather-subtitle {
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.4;
-  margin: 0 0 16px;
-}
-
-/* Сетка метеопоказателей */
-.weather-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
+/* --- Плитки показателей --- */
 .weather-stat__header,
 .telemetry-stat__header,
 .gravity-stat__header {
@@ -1523,127 +1791,33 @@ button, input {
   gap: 6px;
 }
 
-.stat-icon {
-  font-size: 13px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
-  flex-shrink: 0;
-}
-
-.weather-stat {
-  padding: 8px 10px;
-  background: var(--panel-alt);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--line);
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  transition: all 0.2s ease;
-}
-
-.weather-stat:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
-
-.weather-stat--temp {
-  border-left-color: #38bdf8;
-  background: rgba(56, 189, 248, 0.05);
-}
-.weather-stat--temp .weather-stat__val { color: #67e8f9; }
-
-.weather-stat--press {
-  border-left-color: #fbbf24;
-  background: rgba(251, 191, 36, 0.05);
-}
-.weather-stat--press .weather-stat__val { color: #fde047; }
-
-.weather-stat--wind {
-  border-left-color: #2dd4bf;
-  background: rgba(45, 212, 191, 0.05);
-}
-.weather-stat--wind .weather-stat__val { color: #5eead4; }
-
-.weather-stat--dust {
-  border-left-color: #fb923c;
-  background: rgba(251, 146, 60, 0.05);
-}
-.weather-stat--dust .weather-stat__val { color: #fdba74; }
-
-.weather-stat--density {
-  border-left-color: #c084fc;
-  background: rgba(192, 132, 252, 0.05);
-}
-.weather-stat--density .weather-stat__val { color: #d8b4fe; }
-
-.weather-stat--sound {
-  border-left-color: #4ade80;
-  background: rgba(74, 222, 128, 0.05);
-}
-.weather-stat--sound .weather-stat__val { color: #86efac; }
-
-.weather-stat--boil {
-  border-left-color: #f43f5e;
-  background: rgba(244, 63, 94, 0.05);
-}
-.weather-stat--boil .weather-stat__val { color: #fda4af; }
-
-.weather-stat--radiation {
-  border-left-color: #facc15;
-  background: rgba(250, 204, 21, 0.05);
-}
-.weather-stat--radiation .weather-stat__val { color: #fef08a; }
-
-.weather-stat__label {
-  font-size: 10px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.weather-stat__val {
-  font-family: var(--font-mono);
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--text);
-  margin-top: 1px;
-}
-
 .weather-stat__sub {
   font-size: 10px;
   color: var(--text-dim);
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
-.weather-section-title {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
+.telemetry-stat--safety b {
+  color: var(--safe);
+}
+
+.weather-section-title,
+.telemetry-section-title {
   margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
 }
 
-/* Состав атмосферы Марса */
+/* --- Состав атмосферы --- */
 .atmos-bars {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: var(--panel-alt);
   padding: 10px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
 }
 
 .atmos-bar-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
 }
 
 .atmos-gas {
@@ -1655,49 +1829,36 @@ button, input {
 
 .atmos-progress {
   flex: 1;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 3px;
+  height: 4px;
+  background: var(--panel-raised);
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .atmos-fill {
   height: 100%;
-  border-radius: 3px;
+  border-radius: 2px;
+  background: var(--orange);
 }
 
-.atmos-co2 { background: #d88a62; }
-.atmos-n2  { background: #38bdf8; }
-.atmos-ar  { background: #a78bfa; }
-.atmos-o2  { background: #34d399; }
-.atmos-co  { background: #fbbf24; }
-.atmos-h2o { background: #67e8f9; }
-
 .atmos-pct {
-  width: 36px;
+  width: 40px;
   text-align: right;
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--text);
-  font-weight: 500;
 }
 
 .microclimate-box {
   padding: 10px;
-  background: var(--panel-alt);
-  border-left: 3px solid #38bdf8;
-  border-radius: 0 4px 4px 0;
   font-size: 11px;
-  line-height: 1.5;
-  color: var(--text);
+  line-height: 1.55;
+  color: var(--text-muted);
 }
 
-/* Калькулятор марсианской гравитации */
+/* --- Калькулятор гравитации --- */
 .gravity-calc-card {
   padding: 10px;
-  background: var(--panel-alt);
-  border: 1px solid var(--line);
-  border-radius: 4px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1715,245 +1876,34 @@ button, input {
 .gravity-options-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--text-muted);
-  padding: 2px 0;
-}
-
-.gravity-checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.gravity-checkbox-label input[type="checkbox"] {
-  accent-color: var(--orange);
-  cursor: pointer;
-  width: 14px;
-  height: 14px;
 }
 
 .gravity-input-wrap {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .gravity-input-wrap input {
-  width: 60px;
-  background: #121416;
-  border: 1px solid var(--line-focus);
+  width: 64px;
+  background: var(--panel);
+  border: 1px solid var(--line);
   color: var(--text);
   font-family: var(--font-mono);
   font-size: 12px;
   padding: 4px 6px;
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   text-align: right;
+  color-scheme: dark;
+  transition: border-color var(--ease);
 }
 
-.gravity-result-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--line);
+.gravity-input-wrap input:focus {
+  outline: none;
+  border-color: var(--orange);
 }
 
-.gravity-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 6px 8px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--line);
-  border-left: 3px solid #38bdf8;
-  transition: all 0.2s ease;
-}
-
-.gravity-stat--weight { border-left-color: #38bdf8; }
-.gravity-stat--weight b { color: #7dd3fc; }
-
-.gravity-stat--grav { border-left-color: #c084fc; }
-.gravity-stat--grav b { color: #d8b4fe; }
-
-.gravity-stat--jump { border-left-color: #34d399; }
-.gravity-stat--jump b { color: #6ee7b7; }
-
-.gravity-stat--hang { border-left-color: #fbbf24; }
-.gravity-stat--hang b { color: #fde047; }
-
-.gravity-stat span {
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-.gravity-stat b {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: #38d9a9;
-}
-
-.btn-goto-weather {
-  margin-top: 12px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: rgba(56, 189, 248, 0.08);
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  color: #38bdf8;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 11px;
-  transition: all 0.15s ease;
-}
-
-.btn-goto-weather:hover {
-  background: rgba(56, 189, 248, 0.18);
-  border-color: #38bdf8;
-  color: #fff;
-}
-
-/* Route Telemetry View */
-.route-telemetry-view {
-  padding: 18px 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.telemetry-badge-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.telemetry-badge {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: #38d9a9;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.telemetry-status {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.telemetry-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 6px;
-  color: #faf8f5;
-}
-
-.telemetry-subtitle {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.5;
-  margin: 0 0 16px;
-}
-
-/* Метрики телеметрии перехода */
-.telemetry-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.telemetry-stat {
-  padding: 8px 10px;
-  background: var(--panel-alt);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--line);
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  transition: all 0.2s ease;
-}
-
-.telemetry-stat:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
-
-.telemetry-stat--dist {
-  border-left-color: #38bdf8;
-  background: rgba(56, 189, 248, 0.05);
-}
-.telemetry-stat--dist b { color: #7dd3fc; }
-
-.telemetry-stat--time {
-  border-left-color: #c084fc;
-  background: rgba(192, 132, 252, 0.05);
-}
-.telemetry-stat--time b { color: #d8b4fe; }
-
-.telemetry-stat--direct {
-  border-left-color: #fbbf24;
-  background: rgba(251, 191, 36, 0.05);
-}
-.telemetry-stat--direct b { color: #fde047; }
-
-.telemetry-stat--safety {
-  border-left-color: #34d399;
-  background: rgba(52, 211, 153, 0.05);
-}
-.telemetry-stat--safety b { color: #6ee7b7; }
-
-.telemetry-stat--bearing {
-  border-left-color: #fb923c;
-  background: rgba(251, 146, 60, 0.05);
-}
-.telemetry-stat--bearing b { color: #fdba74; }
-
-.telemetry-stat--energy {
-  border-left-color: #facc15;
-  background: rgba(250, 204, 21, 0.05);
-}
-.telemetry-stat--energy b { color: #fef08a; }
-
-.telemetry-stat--latency {
-  border-left-color: #fb7185;
-  background: rgba(251, 113, 133, 0.05);
-}
-.telemetry-stat--latency b { color: #fecdd3; }
-
-.telemetry-stat--crew {
-  border-left-color: #2dd4bf;
-  background: rgba(45, 212, 191, 0.05);
-}
-.telemetry-stat--crew b { color: #5eead4; }
-
-.telemetry-stat span {
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-.telemetry-stat b {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text);
-  margin-top: 1px;
-}
-
-.telemetry-section-title {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-}
-
-/* Список опасных зон */
+/* --- Анализ опасных зон --- */
 .hazards-avoided-list {
   display: flex;
   flex-direction: column;
@@ -1964,32 +1914,89 @@ button, input {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 8px 10px;
-  background: rgba(255, 107, 107, 0.08);
-  border-left: 3px solid #ff6b6b;
-  border-radius: 0 4px 4px 0;
+  border-left-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.hazard-item--avoided {
+  border-left-color: var(--orange);
+  background: var(--orange-soft);
+}
+
+.hazard-item--safe {
+  border-left-color: var(--safe);
+  background: var(--safe-soft);
 }
 
 .hazard-item__name {
   font-size: 12px;
   font-weight: 600;
-  color: #ff8787;
+  color: var(--text);
 }
 
 .hazard-item__desc {
   font-size: 11px;
   color: var(--text-muted);
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .telemetry-empty {
   font-size: 12px;
   color: var(--text-dim);
-  font-style: italic;
-  padding: 10px 0;
+  padding: 4px 0;
 }
 
-/* Контрольные навигационные точки */
+/* --- Профиль высот --- */
+.elev-profile {
+  padding: 10px;
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.elev-profile svg {
+  display: block;
+  width: 100%;
+  height: 64px;
+}
+
+.elev-profile__area {
+  fill: var(--orange-soft);
+}
+
+.elev-profile__line {
+  fill: none;
+  stroke: var(--orange);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.elev-profile__stop {
+  stroke: var(--line-focus);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.elev-profile__meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 8px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.elev-profile__meta b {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* --- Навигационные точки --- */
 .waypoints-timeline {
   display: flex;
   flex-direction: column;
@@ -2001,18 +2008,28 @@ button, input {
 
 .waypoint-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 8px;
-  background: var(--panel-alt);
-  border: 1px solid var(--line);
-  border-radius: 4px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
   font-size: 11px;
+}
+
+.waypoint-row__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
 }
 
 .waypoint-row__name {
   color: var(--text);
   font-weight: 500;
+}
+
+.waypoint-row__elev {
+  flex: none;
+  font-family: var(--font-mono);
+  color: var(--text);
 }
 
 .waypoint-row__coords {
@@ -2021,529 +2038,8 @@ button, input {
   font-size: 10px;
 }
 
-/* Leaflet Custom Route Markers & Haz Layers */
-.route-map-marker-container {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  cursor: grab !important;
-}
-
-.route-map-marker-container::before {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  cursor: grab;
-}
-
-.route-map-marker {
-  width: 26px;
-  height: 26px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 11px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
-  cursor: grab;
-  transition: transform 0.18s ease;
-  pointer-events: none;
-}
-
-.route-map-marker-container:hover .route-map-marker {
-  transform: scale(1.25);
-}
-
-.route-map-marker--a {
-  background: #38d9a9;
-  color: #111315;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 14px rgba(56, 217, 169, 0.8);
-}
-
-.route-map-marker--b {
-  background: #ff922b;
-  color: #111315;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 14px rgba(255, 146, 43, 0.8);
-}
-
 /* ==========================================================================
-   Swipe Comparison Tool (Split Screen)
-   ========================================================================== */
-
-.swipe-mode-trigger {
-  margin-top: 10px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: rgba(178, 141, 79, 0.1);
-  border: 1px solid rgba(178, 141, 79, 0.35);
-  color: #d6c083;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.swipe-mode-trigger:hover {
-  background: rgba(178, 141, 79, 0.2);
-  border-color: #d6c083;
-  color: #fff;
-}
-
-.swipe-mode-trigger.active {
-  background: #b28d4f;
-  color: #111315;
-  border-color: #b28d4f;
-  box-shadow: 0 0 12px rgba(178, 141, 79, 0.4);
-}
-
-#btn-toggle-swipe.active {
-  background: #b28d4f;
-  color: #111315;
-  border-color: #b28d4f;
-  box-shadow: 0 0 10px rgba(178, 141, 79, 0.45);
-}
-
-.swipe-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 460;
-  overflow: hidden;
-}
-
-.swipe-container.hidden {
-  display: none !important;
-}
-
-.swipe-divider {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 2px;
-  background: #edeae4;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 255, 255, 0.7);
-  pointer-events: auto;
-  cursor: ew-resize;
-  transform: translateX(-50%);
-  user-select: none;
-  touch-action: none;
-  z-index: 560;
-}
-
-.swipe-divider::before {
-  content: '';
-  position: absolute;
-  top: 60px;
-  bottom: 60px;
-  left: -20px;
-  right: -20px;
-  cursor: ew-resize;
-  pointer-events: auto;
-}
-
-.swipe-handle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #16181b;
-  border: 2px solid #edeae4;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: #edeae4;
-  font-size: 10px;
-  cursor: ew-resize;
-  outline: none;
-  transition: transform 0.1s, box-shadow 0.15s;
-  pointer-events: auto;
-  z-index: 570;
-}
-
-.swipe-handle:active {
-  cursor: ew-resize;
-  transform: translate(-50%, -50%) scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.9), 0 0 16px rgba(216, 138, 98, 0.7);
-  border-color: var(--orange);
-}
-
-.swipe-arrow {
-  font-size: 9px;
-  line-height: 1;
-  color: var(--orange);
-  pointer-events: none;
-}
-
-.swipe-badge {
-  position: absolute;
-  top: 18px;
-  z-index: 580;
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(19, 21, 23, 0.94);
-  backdrop-filter: blur(10px);
-  padding: 4px 10px;
-  border-radius: 20px;
-  border: 1px solid var(--line);
-  font-size: 11px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
-  user-select: none;
-}
-
-.swipe-badge--left {
-  left: 175px;
-}
-
-.swipe-badge--right {
-  right: 75px;
-}
-
-.swipe-badge__label {
-  font-size: 10px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-  font-weight: 600;
-}
-
-.swipe-select {
-  background: transparent;
-  color: var(--text);
-  border: 0;
-  outline: none;
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 3px 2px;
-  transition: color 0.15s;
-}
-
-.swipe-select:hover {
-  color: var(--orange);
-}
-
-.swipe-select option {
-  background: #181b1e;
-  color: #edeae4;
-  font-size: 12px;
-}
-
-.swipe-close-btn {
-  background: transparent;
-  border: 0;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 11px;
-  line-height: 1;
-  padding: 3px 5px;
-  margin-left: 2px;
-  border-radius: 3px;
-  transition: all 0.15s ease;
-}
-
-.swipe-close-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.swipe-badge__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.dot-color {
-  background: #a86442;
-  box-shadow: 0 0 6px #a86442;
-}
-
-.dot-relief {
-  background: #b28d4f;
-  box-shadow: 0 0 6px #b28d4f;
-}
-
-.dot-thermal {
-  background: #54716e;
-  box-shadow: 0 0 6px #54716e;
-}
-
-.dot-night {
-  background: #4f596b;
-  box-shadow: 0 0 6px #4f596b;
-}
-
-.dot-ctx {
-  background: #9ca3af;
-  box-shadow: 0 0 6px #9ca3af;
-}
-
-/* ==========================================================================
-   HiRISE Ultra-Resolution Overlay & Transition Styles
-   ========================================================================== */
-
-.hirise-transition-layer {
-  transition: opacity 0.35s ease-in-out;
-}
-
-.hirise-badge {
-  position: absolute;
-  bottom: 74px;
-  left: 20px;
-  z-index: 400;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(15, 23, 42, 0.90);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 6px 11px;
-  border-radius: 4px;
-  border: 1px solid rgba(56, 189, 248, 0.45);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 10px rgba(56, 189, 248, 0.2);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: #38bdf8;
-  font-weight: 500;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.hirise-badge.hidden {
-  display: none !important;
-}
-
-.hirise-badge__dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #38bdf8;
-  box-shadow: 0 0 8px #38bdf8;
-  animation: pulse-hirise 2s infinite ease-in-out;
-}
-
-@keyframes pulse-hirise {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.8); }
-}
-
-.btn-hirise-inspect {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 10px;
-  padding: 6px 12px;
-  background: rgba(34, 211, 238, 0.12);
-  border: 1px solid rgba(34, 211, 238, 0.35);
-  border-radius: 4px;
-  color: #67e8f9;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
-}
-
-.btn-hirise-inspect:hover {
-  background: rgba(34, 211, 238, 0.22);
-  border-color: #67e8f9;
-  box-shadow: 0 0 10px rgba(103, 232, 249, 0.25);
-}
-
-/* ==========================================================================
-   Landmarks Catalog
-   ========================================================================== */
-
-.landmarks-section {
-  padding-top: 16px;
-}
-
-.landmarks-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* Кнопки геологических ориентиров */
-.landmark-option {
-  width: calc(100% + 16px);
-  background: transparent;
-  border: 0;
-  border-left: 3px solid transparent;
-  text-align: left;
-  font-family: inherit;
-  color: inherit;
-  box-sizing: border-box;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: relative;
-  cursor: pointer;
-  padding: 6px 10px;
-  margin: 0 -8px 3px;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-}
-
-.landmark-option:hover,
-.landmark-option:focus-visible {
-  background: var(--panel-alt);
-  border-left-color: var(--line-focus);
-  outline: none;
-}
-
-.landmark-option.active {
-  background: rgba(192, 132, 252, 0.14);
-  border-left-color: #c084fc;
-}
-
-.landmark-option.active b {
-  color: #ffffff;
-}
-
-.landmark-option::after {
-  content: '↗';
-  font-size: 11px;
-  color: var(--text-dim);
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: all 0.15s ease;
-  margin-left: auto;
-}
-
-.landmark-option:hover::after,
-.landmark-option:focus-visible::after {
-  opacity: 0.65;
-  transform: translateX(0);
-}
-
-.landmark-option.active::after {
-  opacity: 1;
-  color: #c084fc;
-  transform: translateX(0);
-}
-
-.landmark-option__name {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-}
-
-.landmark-option__name b {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-.landmark-option__name small {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.landmark-dot {
-  width: 18px;
-  height: 18px;
-  display: grid;
-  place-items: center;
-  font-size: 9px;
-  border-radius: 4px;
-  flex: none;
-  font-weight: 700;
-}
-
-.dot-volcano {
-  background: rgba(192, 132, 252, 0.15);
-  color: #c084fc;
-  border: 1px solid rgba(192, 132, 252, 0.4);
-}
-
-.dot-canyon {
-  background: rgba(244, 63, 94, 0.15);
-  color: #f43f5e;
-  border: 1px solid rgba(244, 63, 94, 0.4);
-}
-
-.dot-basin {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.4);
-}
-
-.dot-crater {
-  background: rgba(234, 179, 8, 0.15);
-  color: #eab308;
-  border: 1px solid rgba(234, 179, 8, 0.4);
-}
-
-.dot-ice {
-  background: rgba(103, 232, 249, 0.15);
-  color: #67e8f9;
-  border: 1px solid rgba(103, 232, 249, 0.4);
-}
-
-/* Landmark Leaflet Pin */
-.landmark-marker {
-  background: transparent;
-  border: 0;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer !important;
-}
-
-.landmark-marker::before {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.landmark-marker__icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 10px;
-  background: #181b1e;
-  border: 1.5px solid var(--lm-color, #c084fc);
-  color: var(--lm-color, #c084fc);
-  box-shadow: 0 0 10px var(--lm-color, #c084fc), 0 2px 8px rgba(0, 0, 0, 0.7);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-  cursor: pointer;
-  pointer-events: none;
-}
-
-.landmark-marker:hover .landmark-marker__icon {
-  transform: scale(1.35);
-  box-shadow: 0 0 20px var(--lm-color, #c084fc), 0 4px 12px rgba(0, 0, 0, 0.95);
-}
-
-/* ==========================================================================
-   Responsive Adaptations
+   Адаптивность
    ========================================================================== */
 
 @media (max-width: 1100px) {
@@ -2582,11 +2078,12 @@ button, input {
     width: min(280px, calc(100vw - 20px));
     max-height: calc(100vh - 80px);
     border: 1px solid var(--line);
-    background: rgba(22, 24, 27, 0.95);
-    backdrop-filter: blur(12px);
+    background: var(--glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     padding: 16px 16px 0;
-    border-radius: 6px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-float);
   }
   .map-label--upper {
     top: auto;

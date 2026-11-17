@@ -61,6 +61,11 @@ All planetary map layers, physical constants, coordinates, and meteorological te
   - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`
   - Direct Preview: [Live Sample Tile (z=1, y=0, x=0 — 200 OK)](https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/1/0/0.jpg)
 
+  *MOLA MEGDR Elevation Grid* (`MEGT90N000CB.IMG`, data set `MGS-M-MOLA-5-MEGDR-L3-V1.0`): the numeric elevation model behind routing, elevation profiles, and the map-centre elevation readout. Global median topography at 4 pixels/degree (1440 × 720 samples, ~14.8 km/pixel at the equator), in metres above the GMM3 areoid, produced by the MGS MOLA Team at NASA Goddard Space Flight Center.
+  - Source: [NASA PDS Geosciences Node](https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg004/megt90n000cb.img) ([label](https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg004/megt90n000cb.lbl))
+  - Shipped as `mola-megdr-4ppd.js`: the original file embedded byte for byte as base64 (SHA-256 `25f16fb7aaf857898dcf98bc4f841341a24f8b9f7e98453ca083bc45d897ca2c`), so the atlas also works when opened straight from disk.
+  - Resolution note: at ~15 km per sample the grid captures regional relief (volcanoes, basins, canyon systems), not rover-scale obstacles.
+
 - **Thermal Infrared (Daytime Emission):**
   *THEMIS Day IR Controlled Mosaic* (`Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly`): 100 m/pixel day thermal emission imagery from 2001 Mars Odyssey, spanning global latitudes ($90^\circ\text{S} - 90^\circ\text{N}$). Produced by the [Arizona State University (ASU) Mars Space Flight Facility](https://themis.asu.edu/).
   - WMTS Template: `https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/default/default028mm/{z}/{y}/{x}.png`
@@ -137,11 +142,12 @@ A hardware-accelerated split-screen swipe tool enabling comparative exploration 
 An autonomous planetary trajectory planner enabling human explorers to plan safe Marswalks and rover traverses:
 - **Great-Circle Geodesics:** True spherical distance calculations ($R = 3,389.50\text{ km}$) and initial azimuth heading bearing ($0^\circ - 360^\circ$ and 16-point cardinal compass).
 - **Multi-Class Traversal & Marswalk EVA Planning:** Traversal durations calculated for Autonomous Robotic Exploration Rovers (Perseverance AutoNav class nominal $0.35\text{ km/sol}$), Pressurized Crew Rovers (NASA Space Exploration Vehicle nominal $25\text{ km/sol}$), and Suited Astronaut Marswalks (nominal $12\text{ km}$ per 6-hour EVA sortie).
-- **In-Traverse Science Conduct:** Generates tactical science stations directly on the route (Regolith & mineralogy sampling, geological outcrop spectroscopy, and subsurface volatile/ice coring) to fulfill the mission mandate of conducting new science along the way.
-- **Energy & Communications Telemetry:** Calculates total traction energy consumption in $\text{kWh}$ and $\text{MJ}$ ($E = m \cdot g_{\text{local}} \cdot C_{rr} \cdot d / \eta$) and one-way / round-trip Deep Space Network (DSN) radio latencies.
-- **Topographic Elevation Profile & Waypoints:** Evaluates elevation changes along the route via calibrated MOLA datum control points and renders tactical waypoints with leg distances, elevations, and headings.
-- **Geological Barrier Avoidance:** Prevents explorers and rovers from entering fatal Martian chasms and vertical scarps (Valles Marineris rift walls, Olympus Mons basal scarps, Tharsis Montes calderas, and polar ice sheets) with dynamic clearance-based safety scores.
-- **Interactive Drag & Presets:** Click anywhere on the map or launch preset traverses (Jezero → Gale, InSight → Jezero, Gale → Valles Marineris, Olympus → Hellas) with real-time waypoint dragging and full route telemetry.
+- **Multi-Stop Expeditions:** Routes pass through up to 8 stops (landing sites, landmarks, or any map point), so science targets can be chained into one traverse. Stops can be reordered, removed, reversed, inserted by clicking the route line, auto-ordered for the shortest traverse, or closed into a round trip.
+- **Energy & Communications Telemetry:** Calculates total traction energy consumption in $\text{kWh}$ and $\text{MJ}$ ($E = m \cdot g \cdot (C_{rr} \cdot d + h_{\text{ascent}}) / \eta$, where $h_{\text{ascent}}$ is the cumulative climb along the route from MOLA) and one-way / round-trip Deep Space Network (DSN) radio latencies.
+- **Topographic Elevation Profile & Stops:** Draws the elevation profile along the route from the NASA MOLA MEGDR grid (bilinear interpolation of the 4 pixels/degree product) with minimum, maximum, total ascent/descent, and maximum along-track grade, and lists every stop with its elevation, leg distance, and cumulative distance.
+- **Geological Barrier Avoidance:** Prevents explorers and rovers from entering fatal Martian chasms and vertical scarps (Valles Marineris rift walls, Olympus Mons basal scarps, Tharsis Montes calderas, and polar ice sheets) using A* over a cost grid that combines named hazard zones with real MOLA terrain steepness (regional slope on a ~30 km baseline) and along-track climb, with geodesic path straightening. The safety index is derived from the share of the route inside hazard zones and buffer belts plus the minimum clearance.
+- **Interactive Drag & Presets:** Click anywhere on the map or launch preset traverses (Jezero → Gale, InSight → Jezero, Gale → Valles Marineris, Olympus → Hellas, plus multi-stop rover tours) with real-time waypoint dragging and full route telemetry.
+- **Shareable Routes:** The stop list is stored in the page URL (`#route=lat,lon;lat,lon`), so a planned traverse can be bookmarked or sent as a link.
 
 ### 3. Astronaut Meteorological & Climate Terminal (`Weather` Tab)
 A dedicated survival console providing 8 in-depth atmospheric and physical indicators for landing sites and landmarks:
@@ -189,6 +195,7 @@ MartianMap/
 ├── index.html       # Semantic HTML5 with 3-pane layout, bilingual tags, and accessible widgets
 ├── style.css        # Responsive dark UI, Inter font stack, Leaflet controls, and CSS variables
 ├── script.js        # Leaflet EPSG:4326 engine, A* geodesic router, MCD weather model, i18n
+├── mola-megdr-4ppd.js # NASA MOLA MEGDR elevation grid (original PDS file, base64-embedded)
 └── README.md        # Complete setup documentation and NASA resource citations
 ```
 

@@ -42,9 +42,9 @@
       landmark_alba_sub: 'Volcano spanning over 620 miles diameter',
       route_heading: 'SafeNav Pathfinding',
       route_badge: 'Marswalk & Rover',
-      route_hint: 'Autonomous Marswalk and rover pathfinding: geodesic routing bypassing hazardous chasms while mapping tactical science stations along the traverse.',
-      route_mode_btn: 'Select points on map',
-      route_mode_active: 'Click map to place points',
+      route_hint: 'Multi-stop rover and Marswalk pathfinding: up to 8 stops, each leg routed around hazardous chasms and steep slopes.',
+      route_mode_btn: 'Add stops on map',
+      route_mode_active: 'Click map to add stops',
       point_a_label: 'Start (A)',
       point_b_label: 'Target (B)',
       point_unset: 'Not set (click map)',
@@ -58,10 +58,16 @@
       summary_score: '99.2% safety rating',
       summary_avoided_label: 'Hazard zones bypassed:',
       btn_telemetry: 'Open route telemetry →',
+      btn_reverse: 'Reverse',
+      btn_optimize: 'Optimize order',
+      btn_copy_link: 'Copy route link',
+      roundtrip_toggle_label: 'Round trip (return to start)',
+      route_edit_hint: 'Click the route line to insert a stop. Drag a marker to reroute, right-click it to remove.',
+      telemetry_elev_title: 'Elevation Profile (NASA MOLA MEGDR):',
       data_status_label: 'NASA Mars Trek WMTS',
       map_upper_label: 'Coordinate System',
       map_upper_val: 'Areocentric (0° E)',
-      map_center_label: 'Map Center',
+      map_center_label: 'Map Center · MOLA Elevation',
       swipe_label_left: 'Left:',
       swipe_label_right: 'Right:',
       route_prompt_text_a: 'Click map to set Point A (Start)',
@@ -123,7 +129,7 @@
       telemetry_stat_latency: 'DSN Radio Latency',
       telemetry_stat_manned_time: 'Crew & Marswalk Time',
       telemetry_hazards_title: 'Geological Trajectory Analysis:',
-      telemetry_waypoints_title: 'Navigation Waypoints:',
+      telemetry_waypoints_title: 'Route Stops & Legs:',
       telemetry_no_route: 'No route calculated yet',
       rail_note_title: 'Map Navigation',
       rail_note_text: 'Switch layers, inspect landing sites, or drag swipe handle for multispectral comparative analysis.',
@@ -177,9 +183,9 @@
       landmark_alba_sub: 'Вулкан диаметром свыше 1 000 км',
       route_heading: 'Безопасный маршрут',
       route_badge: 'Marswalk & Rover',
-      route_hint: 'Автономная навигация для марсоходов и пеших выходов (Marswalk EVA): обход опасных каньонов с картированием научных станций.',
-      route_mode_btn: 'Выбрать точки на карте',
-      route_mode_active: 'Кликните на карту для выбора точек',
+      route_hint: 'Маршрут для марсоходов и пеших выходов через несколько точек (до 8): каждый участок обходит опасные каньоны и крутые склоны.',
+      route_mode_btn: 'Добавить точки на карте',
+      route_mode_active: 'Кликайте по карте — добавляйте точки',
       point_a_label: 'Старт',
       point_b_label: 'Финиш',
       point_unset: 'Не задано (кликните на карту)',
@@ -193,10 +199,16 @@
       summary_score: '99.2% безопасность',
       summary_avoided_label: 'Обойдено зон риска:',
       btn_telemetry: 'Открыть телеметрию маршрута →',
+      btn_reverse: 'Развернуть',
+      btn_optimize: 'Оптимизировать порядок',
+      btn_copy_link: 'Скопировать ссылку на маршрут',
+      roundtrip_toggle_label: 'Кольцевой маршрут (возврат к старту)',
+      route_edit_hint: 'Кликните по линии маршрута, чтобы вставить точку. Перетащите маркер, чтобы изменить путь; правый клик — удалить.',
+      telemetry_elev_title: 'Профиль высот (NASA MOLA MEGDR):',
       data_status_label: 'Данные NASA Mars Trek',
       map_upper_label: 'Система координат',
       map_upper_val: 'Ареоцентрическая (0° E)',
-      map_center_label: 'Центр карты',
+      map_center_label: 'Центр карты · высота MOLA',
       swipe_label_left: 'Слева:',
       swipe_label_right: 'Справа:',
       route_prompt_text_a: 'Кликните на карту, чтобы установить Точку А (Старт)',
@@ -258,7 +270,7 @@
       telemetry_stat_latency: 'Задержка радиосвязи (DSN)',
       telemetry_stat_manned_time: 'Экипаж / Marswalk EVA',
       telemetry_hazards_title: 'Геологический анализ траектории:',
-      telemetry_waypoints_title: 'Контрольные точки (Waypoints):',
+      telemetry_waypoints_title: 'Точки и участки маршрута:',
       telemetry_no_route: 'Маршрут еще не построен',
       rail_note_title: 'Навигация по карте',
       rail_note_text: 'Переключайте слои и выбирайте посадочные площадки для детального просмотра параметров рельефа.',
@@ -284,6 +296,86 @@
     if (!val) return '';
     if (typeof val === 'object') return val[currentLang] || val.en || '';
     return val;
+  }
+
+  // =========================================================================
+  // Цифровая модель рельефа NASA MGS MOLA MEGDR (4 пикс/°) — mola-megdr-4ppd.js
+  // =========================================================================
+
+  // Декодирование исходного файла MEGT90N000CB.IMG (16-бит, старший байт первым)
+  const molaDem = (() => {
+    const src = window.MOLA_MEGDR;
+    if (!src || typeof src.b64 !== 'string') return null;
+    try {
+      const bin = atob(src.b64);
+      const count = src.width * src.height;
+      if (bin.length !== count * 2) return null;
+      const data = new Int16Array(count);
+      for (let i = 0, j = 0; i < count; i++, j += 2) {
+        // Int16Array сам приводит 0..65535 к знаковому значению
+        data[i] = (bin.charCodeAt(j) << 8) | bin.charCodeAt(j + 1);
+      }
+      return { data, width: src.width, height: src.height, ppd: src.ppd };
+    } catch {
+      return null;
+    }
+  })();
+  const hasMola = molaDem !== null;
+  const MOLA_KM_PER_DEG = (Math.PI * 3389.5) / 180;
+
+  // Высота над ареоидом в метрах (билинейная интерполяция по центрам пикселей).
+  // Строка 1 — 89.875° с.ш., столбец 1 — 0.125° в.д.; долгота замыкается по кругу.
+  function molaElevation(lat, lon) {
+    if (!molaDem) return 0;
+    const { data, width, height, ppd } = molaDem;
+    const x = (((lon % 360) + 360) % 360) * ppd - 0.5;
+    const y = (90 - lat) * ppd - 0.5;
+    const x0 = Math.floor(x);
+    const y0 = Math.floor(y);
+    const fx = x - x0;
+    const fy = y - y0;
+    const col0 = ((x0 % width) + width) % width;
+    const col1 = (col0 + 1) % width;
+    const row0 = Math.max(0, Math.min(height - 1, y0)) * width;
+    const row1 = Math.max(0, Math.min(height - 1, y0 + 1)) * width;
+    const top = data[row0 + col0] * (1 - fx) + data[row0 + col1] * fx;
+    const bottom = data[row1 + col0] * (1 - fx) + data[row1 + col1] * fx;
+    return top * (1 - fy) + bottom * fy;
+  }
+
+  // Региональный уклон в градусах: градиент высоты на базе ±0.25° (~30 км).
+  // Это уклон рельефа в масштабе сетки MOLA, а не локальный уклон под колесами.
+  function molaSlopeDeg(lat, lon) {
+    if (!molaDem) return 0;
+    const d = 0.25;
+    const cosLat = Math.max(0.05, Math.cos((lat * Math.PI) / 180));
+    const dLon = Math.min(5, d / cosLat);
+    const latN = Math.min(89.9, lat + d);
+    const latS = Math.max(-89.9, lat - d);
+    const dzdy = (molaElevation(latN, lon) - molaElevation(latS, lon)) / ((latN - latS) * MOLA_KM_PER_DEG * 1000);
+    const dzdx = (molaElevation(lat, lon + dLon) - molaElevation(lat, lon - dLon)) / (2 * dLon * MOLA_KM_PER_DEG * cosLat * 1000);
+    return (Math.atan(Math.hypot(dzdx, dzdy)) * 180) / Math.PI;
+  }
+
+  // Наибольший региональный уклон в окрестности точки (центр + 4 смещения на r градусов)
+  function molaAreaSlopeDeg(pt, r) {
+    const cosLat = Math.max(0.05, Math.cos((pt[0] * Math.PI) / 180));
+    const rLon = Math.min(5, r / cosLat);
+    return Math.max(
+      molaSlopeDeg(pt[0], pt[1]),
+      molaSlopeDeg(Math.min(89, pt[0] + r), pt[1]),
+      molaSlopeDeg(Math.max(-89, pt[0] - r), pt[1]),
+      molaSlopeDeg(pt[0], pt[1] + rLon),
+      molaSlopeDeg(pt[0], pt[1] - rLon),
+    );
+  }
+
+  // Форматирование высоты (м для RU, футы для EN)
+  function formatElev(m, isRu) {
+    if (!hasMola) return '—';
+    return isRu
+      ? `${m >= 0 ? '+' : ''}${Math.round(m).toLocaleString('ru-RU')} м`
+      : `${m >= 0 ? '+' : ''}${Math.round(m * 3.28084).toLocaleString('en-US')} ft`;
   }
   // Элементы статуса и загрузки
   const status = document.querySelector('#data-status');
@@ -819,7 +911,7 @@
         <span class="popup-coords">${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}, ${formatLongitude(lon)}</span>
         <div class="detail-row" style="margin-top:6px; height:auto; padding:4px 0; border-top:1px solid var(--line); border-bottom:0;">
           <span style="font-size:10px; color:var(--text-muted)">${currentLang === 'ru' ? 'Высота:' : 'Elevation:'}</span>
-          <b style="font-size:11px; color:#d6c083">${t(info.elevation)}</b>
+          <b style="font-size:11px; color:var(--text)">${t(info.elevation)}</b>
         </div>
         ${coverageWarning}
       </div>
@@ -830,7 +922,11 @@
   function mapCoordinates(coords) {
     const coordEl = document.querySelector('#map-coordinates b');
     if (coordEl) {
-      coordEl.textContent = `${Math.abs(coords[0]).toFixed(2)}° ${coords[0] >= 0 ? 'N' : 'S'}, ${formatLongitude(coords[1])}`;
+      const coordsText = `${Math.abs(coords[0]).toFixed(2)}° ${coords[0] >= 0 ? 'N' : 'S'}, ${formatLongitude(coords[1])}`;
+      // Высота центра карты по MOLA MEGDR
+      coordEl.textContent = hasMola
+        ? `${coordsText} · ${formatElev(molaElevation(coords[0], coords[1]), currentLang === 'ru')}`
+        : coordsText;
     }
   }
 
@@ -1039,7 +1135,7 @@
       coords: [18.65, -133.8],
       elevation: { en: '+69,649 ft (+13.19 mi above datum)', ru: '+21 229 м (над нулевым уровнем)' },
       dimensions: { en: 'Diameter 373 mi, caldera 50 mi', ru: 'Диаметр 600 км, кальдера 80 км' },
-      color: '#c084fc',
+      color: '#a99bc9',
       iconText: '▲',
       desc: {
         en: 'Highest volcanic peak in the Solar System. Its colossal base is surrounded by sheer basal scarps up to 26,000 ft (5 miles) high.',
@@ -1055,7 +1151,7 @@
       coords: [-13.9, -59.2],
       elevation: { en: '-23,620 ft (-4.47 mi canyon floor)', ru: '-7 200 м (дно каньона Мелас)' },
       dimensions: { en: 'Length 2,500 mi, depth up to 32,800 ft (6.2 mi)', ru: 'Длина 4 000 км, глубина до 10 км' },
-      color: '#f43f5e',
+      color: '#cf8380',
       iconText: '▼',
       desc: {
         en: 'Gigantic canyon network spanning 2,500 miles (one-quarter of Mars). Ten times longer and five times deeper than Earth Grand Canyon.',
@@ -1071,7 +1167,7 @@
       coords: [-7.0, -102.2],
       elevation: { en: '+10,500 ft / -11,500 ft', ru: '+3 200 м / -3 500 м' },
       dimensions: { en: 'Span approx 750 miles', ru: 'Протяженность около 1 200 км' },
-      color: '#fb923c',
+      color: '#cf8380',
       iconText: '❖',
       desc: {
         en: 'Vast maze-like system of deep, steep-walled valleys formed by volcano-tectonic rifting between Tharsis and Valles Marineris.',
@@ -1087,7 +1183,7 @@
       coords: [-42.4, 70.5],
       elevation: { en: '-23,465 ft (-4.44 mi below datum)', ru: '-7 152 м (самая глубокая точка Марса)' },
       dimensions: { en: 'Basin diameter 1,430 miles', ru: 'Диаметр чаши 2 300 км' },
-      color: '#38bdf8',
+      color: '#87a9b2',
       iconText: '◌',
       desc: {
         en: 'Oldest and deepest surviving impact basin on Mars plunging 4.4 miles deep. Elevated atmospheric pressure frequently fosters morning frost and seasonal fogs.',
@@ -1103,7 +1199,7 @@
       coords: [40.75, -9.46],
       elevation: { en: '-6,890 ft (mesa base)', ru: '-2 100 м (у подножия холмов)' },
       dimensions: { en: 'Mesa region approx 500 miles', ru: 'Область столовых гор ~800 км' },
-      color: '#eab308',
+      color: '#d6c083',
       iconText: '◈',
       desc: {
         en: 'Prominent transition zone between southern highlands and northern plains, celebrated for the historical 1976 Viking 1 optical illusion.',
@@ -1119,7 +1215,7 @@
       coords: [73.0, 164.5],
       elevation: { en: '-12,467 ft (ice dome summit)', ru: '-3 800 м (вершина ледяного купола)' },
       dimensions: { en: 'Diameter 50.6 mi, ice thickness 5,900 ft (1.1 mi)', ru: 'Диаметр 81,4 км, толщина льда 1,8 км' },
-      color: '#67e8f9',
+      color: '#a3c9cf',
       iconText: '❄',
       desc: {
         en: 'High-latitude polar impact crater filled by an eternal 5,900 ft (1.1 mi) thick reservoir of 528 cubic miles (2,200 km³) of pristine water ice.',
@@ -1135,7 +1231,7 @@
       coords: [40.5, -109.9],
       elevation: { en: '+22,310 ft (+4.23 mi caldera)', ru: '+6 800 м (кальдера)' },
       dimensions: { en: 'Diameter over 620 miles', ru: 'Диаметр свыше 1 000 км' },
-      color: '#e879f9',
+      color: '#a99bc9',
       iconText: '▲',
       desc: {
         en: 'Unique low-relief shield volcano with a diameter exceeding 620 miles, having the largest surface area footprint of any volcanic edifice in the Solar System.',
@@ -1155,11 +1251,11 @@
         <span class="popup-coords">${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}, ${formatLongitude(lon)}</span>
         <div class="detail-row" style="margin-top:6px; height:auto; padding:4px 0; border-top:1px solid var(--line); border-bottom:0;">
           <span style="font-size:10px; color:var(--text-muted)">${currentLang === 'ru' ? 'Высота:' : 'Elevation:'}</span>
-          <b style="font-size:11px; color:#d6c083">${t(info.elevation)}</b>
+          <b style="font-size:11px; color:var(--text)">${t(info.elevation)}</b>
         </div>
         <div class="detail-row" style="height:auto; padding:2px 0 4px 0; border-bottom:0;">
           <span style="font-size:10px; color:var(--text-muted)">${currentLang === 'ru' ? 'Размеры:' : 'Dimensions:'}</span>
-          <b style="font-size:11px; color:#a5b4fc">${t(info.dimensions)}</b>
+          <b style="font-size:11px; color:var(--text)">${t(info.dimensions)}</b>
         </div>
       </div>
     `;
@@ -1915,58 +2011,6 @@
     return `${deg.toFixed(1)}° (${cardinals[idx]})`;
   }
 
-  // Опорные высотные точки рельефа (MOLA)
-  const ELEV_CONTROL_POINTS = [
-    [18.65, -133.8, 21229],   // Olympus Mons summit
-    [-9.0, -120.5, 16000],    // Arsia Mons
-    [0.8, -113.0, 14000],     // Pavonis Mons
-    [11.8, -104.5, 18000],    // Ascraeus Mons
-    [25.0, 147.2, 14000],     // Elysium Mons
-    [40.5, -109.9, 6800],     // Alba Mons
-    [-13.9, -59.2, -7200],    // Valles Marineris (Melas Chasma)
-    [-42.4, 70.5, -7152],     // Hellas Planitia
-    [18.4447, 77.4508, -2575],// Jezero
-    [-4.5895, 137.4417, -4450],// Gale
-    [4.5024, 135.6234, -2600],// InSight
-    [68.2188, -125.7518, -4100],// Phoenix
-    [-1.9483, -5.5266, -1440],// Opportunity
-    [-14.5684, 175.4726, -1910],// Spirit
-    [25.066, 109.925, -4099], // Zhurong
-    [22.2692, -47.9493, -3627],// Viking 1
-    [19.3274, -33.5502, -3655],// Pathfinder
-    [73.0, 164.5, -3800],     // Korolev
-    [-7.0, -102.2, 1000],     // Noctis Labyrinthus
-    [40.75, -9.46, -2100],    // Cydonia
-  ];
-
-  // Оценка высоты рельефа (интерполяция)
-  function estimateElevation(lat, lon) {
-    let baseElev = lat < 0 ? 1500.0 : -3800.0;
-    if (Math.abs(lat) < 15.0) {
-      const t = (lat + 15.0) / 30.0;
-      baseElev = 1500.0 * (1 - t) + (-3800.0) * t;
-    }
-    let weightSum = 0.0;
-    let elevSum = 0.0;
-    for (const [pLat, pLon, pElev] of ELEV_CONTROL_POINTS) {
-      const dLat = lat - pLat;
-      const dLon = ((lon - pLon + 540) % 360) - 180;
-      const distDeg = Math.hypot(dLat, dLon);
-      if (distDeg < 0.15) return pElev;
-      if (distDeg < 25.0) {
-        const w = 1.0 / (distDeg ** 2.2);
-        weightSum += w;
-        elevSum += w * pElev;
-      }
-    }
-    if (weightSum > 0) {
-      const blend = Math.min(1.0, weightSum * 0.4);
-      return Math.round(baseElev * (1.0 - blend) + (elevSum / weightSum) * blend);
-    }
-    return Math.round(baseElev);
-  }
-
-
   // Расчет расстояния на сфере Марса
   function haversineMars(p1, p2) {
     const toRad = Math.PI / 180;
@@ -2096,51 +2140,70 @@
     return inside;
   }
 
+  // Названия полярных зон (общие ссылки, чтобы корректно работала дедупликация)
+  const POLAR_NORTH_HAZARD = { en: 'North Polar Ice Cap (Extreme cold)', ru: 'Северная полярная ледяная шапка (критические температуры)' };
+  const POLAR_SOUTH_HAZARD = { en: 'South Polar Cap (Dry ice CO₂)', ru: 'Южная полярная шапка (сухой углекислотный лед)' };
+  const POLAR_NORTH_LIMIT = 78;
+  const POLAR_SOUTH_LIMIT = -76;
+  const KM_PER_DEG = (Math.PI * MARS_RADIUS_KM) / 180;
+
+  // Расстояние от точки до отрезка a-b в км (локальная равнопромежуточная проекция)
+  function distToSegmentKm(pt, a, b) {
+    const cosLat = Math.cos((pt[0] * Math.PI) / 180);
+    const ax = (((a[1] - pt[1] + 540) % 360) - 180) * cosLat * KM_PER_DEG;
+    const ay = (a[0] - pt[0]) * KM_PER_DEG;
+    const bx = (((b[1] - pt[1] + 540) % 360) - 180) * cosLat * KM_PER_DEG;
+    const by = (b[0] - pt[0]) * KM_PER_DEG;
+    const dx = bx - ax;
+    const dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+    const k = len2 > 0 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2)) : 0;
+    return Math.hypot(ax + k * dx, ay + k * dy);
+  }
+
+  // Запас до границы зоны риска в км (отрицательный — точка внутри зоны)
+  function hazardClearanceKm(pt, h) {
+    if (h.type === 'circle') {
+      return haversineMars(pt, h.center) - h.radiusDeg * KM_PER_DEG;
+    }
+    let minDist = Infinity;
+    for (let i = 0, j = h.polygon.length - 1; i < h.polygon.length; j = i++) {
+      const d = distToSegmentKm(pt, h.polygon[j], h.polygon[i]);
+      if (d < minDist) minDist = d;
+    }
+    return pointInPolygon(pt, h.polygon) ? -minDist : minDist;
+  }
+
   // Оценка штрафа за пересечение зон риска
   function getHazardCost(pt) {
-    let totalPenalty = 0;
-    let hitHazards = [];
+    let penalty = 0;
+    let clearanceKm = Infinity;
+    const hitHazards = [];
 
-    // Polar caps boundary penalty
-    if (pt[0] > 78) {
-      totalPenalty += 80000;
-      hitHazards.push({ en: 'North Polar Ice Cap (Extreme cold)', ru: 'Северная полярная ледяная шапка (критические температуры)' });
-    } else if (pt[0] < -76) {
-      totalPenalty += 80000;
-      hitHazards.push({ en: 'South Polar Cap (Dry ice CO₂)', ru: 'Южная полярная шапка (сухой углекислотный лед)' });
+    // Полярные шапки
+    const northClearance = (POLAR_NORTH_LIMIT - pt[0]) * KM_PER_DEG;
+    const southClearance = (pt[0] - POLAR_SOUTH_LIMIT) * KM_PER_DEG;
+    clearanceKm = Math.min(northClearance, southClearance);
+    if (northClearance < 0) {
+      penalty += 80000;
+      hitHazards.push(POLAR_NORTH_HAZARD);
+    } else if (southClearance < 0) {
+      penalty += 80000;
+      hitHazards.push(POLAR_SOUTH_HAZARD);
     }
 
     for (const h of martianHazards) {
-      if (h.type === 'circle') {
-        const d = haversineMars(pt, h.center);
-        const coreDist = (h.radiusDeg * Math.PI * MARS_RADIUS_KM) / 180;
-        if (d <= coreDist) {
-          totalPenalty += 100000;
-          hitHazards.push(h.name);
-        } else if (d < coreDist + h.bufferKm) {
-          const ratio = (coreDist + h.bufferKm - d) / h.bufferKm;
-          totalPenalty += ratio * 450;
-        }
-      } else if (h.type === 'polygon') {
-        if (pointInPolygon(pt, h.polygon)) {
-          totalPenalty += 100000;
-          hitHazards.push(h.name);
-        } else {
-          // Check proximity to polygon boundary points
-          let minPolyDist = Infinity;
-          for (let i = 0; i < h.polygon.length; i++) {
-            const d = haversineMars(pt, h.polygon[i]);
-            if (d < minPolyDist) minPolyDist = d;
-          }
-          if (minPolyDist < h.bufferKm) {
-            const ratio = (h.bufferKm - minPolyDist) / h.bufferKm;
-            totalPenalty += ratio * 450;
-          }
-        }
+      const c = hazardClearanceKm(pt, h);
+      if (c < clearanceKm) clearanceKm = c;
+      if (c <= 0) {
+        penalty += 100000;
+        hitHazards.push(h.name);
+      } else if (c < h.bufferKm) {
+        penalty += (1 - c / h.bufferKm) * 450;
       }
     }
 
-    return { penalty: totalPenalty, hitHazards };
+    return { penalty, hitHazards, clearanceKm };
   }
 
   // Очередь с приоритетом для алгоритма A*
@@ -2273,13 +2336,64 @@
     return curr;
   }
 
-  // Поиск безопасного маршрута SafeNav (алгоритм A*)
+  // Рельеф MOLA в стоимости пути. Региональный уклон (база ~30 км): медиана по планете
+  // ~0.3°, 95-й процентиль ~2°, 99-й ~4°; стены Долин Маринер — 9–12°.
+  const STEEP_SLOPE_DEG = 4;
+  const terrainCostFactor = (slopeDeg) => Math.min(8, (slopeDeg / 2.5) ** 2);
+
+  // Проверка, что дуга большого круга a-b не заходит в зоны риска и на крутой рельеф
+  function isArcClear(a, b, allowPenalty) {
+    const km = haversineMars(a, b);
+    const samples = interpolateGreatCircle(a, b, Math.max(2, Math.min(80, Math.ceil(km / 30))));
+    // Спрямление не должно срезать путь через рельеф круче, чем на концах отрезка
+    const slopeLimit = Math.max(STEEP_SLOPE_DEG, molaSlopeDeg(a[0], a[1]), molaSlopeDeg(b[0], b[1]));
+    for (const p of samples) {
+      if (molaSlopeDeg(p[0], p[1]) > slopeLimit) return false;
+      if (getHazardCost(p).penalty > allowPenalty) return false;
+    }
+    return true;
+  }
+
+  // Спрямление сеточного пути: убирает «лесенку», оставляя только нужные повороты
+  function pullPath(points) {
+    if (points.length <= 2) return points;
+    const LOOKAHEAD = 40;
+    const ALLOW_PENALTY = 60;
+    const out = [points[0]];
+    let i = 0;
+    while (i < points.length - 1) {
+      let next = i + 1;
+      for (let j = Math.min(points.length - 1, i + LOOKAHEAD); j > i + 1; j--) {
+        if (isArcClear(points[i], points[j], ALLOW_PENALTY)) {
+          next = j;
+          break;
+        }
+      }
+      out.push(points[next]);
+      i = next;
+    }
+    return out;
+  }
+
+  // Уплотнение пути точками вдоль дуг большого круга
+  function densifyPath(points, spacingKm = 80) {
+    if (points.length <= 1) return points;
+    const out = [points[0]];
+    for (let i = 0; i < points.length - 1; i++) {
+      const km = haversineMars(points[i], points[i + 1]);
+      const arc = interpolateGreatCircle(points[i], points[i + 1], Math.max(1, Math.ceil(km / spacingKm)));
+      for (let k = 1; k < arc.length; k++) out.push(arc[k]);
+    }
+    return out;
+  }
+
+  // Поиск безопасного участка маршрута SafeNav (алгоритм A* по сетке + спрямление)
   function findSafeRoverPath(start, goal) {
-    const directPoints = interpolateGreatCircle(start, goal, 35);
+    const directKm = haversineMars(start, goal);
+    const directPoints = interpolateGreatCircle(start, goal, Math.max(35, Math.ceil(directKm / 60)));
     const hazardsDirectHits = new Set();
     for (const pt of directPoints) {
-      const check = getHazardCost(pt);
-      check.hitHazards.forEach((h) => hazardsDirectHits.add(h));
+      getHazardCost(pt).hitHazards.forEach((h) => hazardsDirectHits.add(h));
     }
 
     const dLonUnwrapped = diffLon(start[1], goal[1]);
@@ -2291,157 +2405,225 @@
     const padLat = Math.max(16, latSpan * 0.45);
     const padLon = Math.max(18, lonSpan * 0.45);
 
-    const minLat = Math.max(-76, Math.min(start[0], goal[0]) - padLat);
-    const maxLat = Math.min(78, Math.max(start[0], goal[0]) + padLat);
+    const minLat = Math.max(POLAR_SOUTH_LIMIT, Math.min(start[0], goal[0]) - padLat);
+    const maxLat = Math.min(POLAR_NORTH_LIMIT, Math.max(start[0], goal[0]) + padLat);
     const minLon = Math.min(start[1], goalLonCont) - padLon;
     const maxLon = Math.max(start[1], goalLonCont) + padLon;
 
     const maxSpan = Math.max(maxLat - minLat, maxLon - minLon);
     const step = Math.max(0.7, Math.min(1.8, maxSpan / 36));
 
-    const rows = Math.round((maxLat - minLat) / step);
-    const cols = Math.round((maxLon - minLon) / step);
+    const rows = Math.max(1, Math.round((maxLat - minLat) / step));
+    const cols = Math.max(1, Math.round((maxLon - minLon) / step));
+    const width = cols + 1;
+    const size = (rows + 1) * width;
 
-    const getCoord = (r, c) => [minLat + r * step, normLon(minLon + c * step)];
-    const getCell = (pt, isGoal) => {
-      const targetLon = isGoal ? goalLonCont : pt[1];
-      return [
-        Math.max(0, Math.min(rows, Math.round((pt[0] - minLat) / step))),
-        Math.max(0, Math.min(cols, Math.round((targetLon - minLon) / step))),
-      ];
+    const getCoord = (idx) => [
+      minLat + Math.floor(idx / width) * step,
+      normLon(minLon + (idx % width) * step),
+    ];
+    const getCell = (lat, lonCont) => {
+      const r = Math.max(0, Math.min(rows, Math.round((lat - minLat) / step)));
+      const c = Math.max(0, Math.min(cols, Math.round((lonCont - minLon) / step)));
+      return r * width + c;
     };
 
-    const startCell = getCell(start, false);
-    const goalCell = getCell(goal, true);
+    const startIdx = getCell(start[0], start[1]);
+    const goalIdx = getCell(goal[0], goalLonCont);
 
-    const key = (r, c) => `${r},${c}`;
+    const gScore = new Float64Array(size).fill(Infinity);
+    const cameFrom = new Int32Array(size).fill(-1);
+    const closed = new Uint8Array(size);
+    const penaltyCache = new Float32Array(size).fill(-1);
+    const elevCache = new Float32Array(size).fill(NaN);
+
+    const cellPenalty = (idx, pt) => {
+      if (penaltyCache[idx] < 0) penaltyCache[idx] = getHazardCost(pt).penalty;
+      return penaltyCache[idx];
+    };
+    const terrainCache = new Float32Array(size).fill(-1);
+    const cellElev = (idx, pt) => {
+      if (Number.isNaN(elevCache[idx])) elevCache[idx] = molaElevation(pt[0], pt[1]);
+      return elevCache[idx];
+    };
+    // Крутизна рельефа MOLA в пределах ячейки сетки
+    const cellTerrain = (idx, pt) => {
+      if (terrainCache[idx] < 0) terrainCache[idx] = terrainCostFactor(molaAreaSlopeDeg(pt, step / 3));
+      return terrainCache[idx];
+    };
+
     const openSet = new PriorityQueue();
-    const gScore = new Map();
-    const cameFrom = new Map();
-
-    const startKey = key(startCell[0], startCell[1]);
-    gScore.set(startKey, 0);
-    openSet.push({
-      r: startCell[0],
-      c: startCell[1],
-      f: haversineMars(getCoord(startCell[0], startCell[1]), goal),
-    });
+    gScore[startIdx] = 0;
+    openSet.push({ idx: startIdx, f: haversineMars(getCoord(startIdx), goal) });
 
     const dirs = [
       [-1, 0], [1, 0], [0, -1], [0, 1],
       [-1, -1], [-1, 1], [1, -1], [1, 1],
     ];
 
-    let targetReached = false;
-    let endNode = null;
-    let closestNode = null;
+    let reached = false;
+    let closestIdx = startIdx;
     let closestDist = Infinity;
-    let iterations = 0;
-    const maxIterations = 5500;
 
-    while (!openSet.isEmpty() && iterations++ < maxIterations) {
+    while (!openSet.isEmpty()) {
       const current = openSet.pop();
-      const currKey = key(current.r, current.c);
-      const currPt = getCoord(current.r, current.c);
-      const distToGoal = haversineMars(currPt, goal);
+      const idx = current.idx;
+      if (closed[idx]) continue;
+      closed[idx] = 1;
 
+      const pt = getCoord(idx);
+      const distToGoal = haversineMars(pt, goal);
       if (distToGoal < closestDist) {
         closestDist = distToGoal;
-        closestNode = current;
+        closestIdx = idx;
       }
-
-      if (current.r === goalCell[0] && current.c === goalCell[1]) {
-        targetReached = true;
-        endNode = current;
+      if (idx === goalIdx) {
+        reached = true;
         break;
       }
 
-      const currG = gScore.get(currKey) ?? Infinity;
+      const r = Math.floor(idx / width);
+      const c = idx % width;
+      const currG = gScore[idx];
+      const currElev = cellElev(idx, pt);
 
       for (const [dr, dc] of dirs) {
-        const nr = current.r + dr;
-        const nc = current.c + dc;
+        const nr = r + dr;
+        const nc = c + dc;
         if (nr < 0 || nr > rows || nc < 0 || nc > cols) continue;
+        const nIdx = nr * width + nc;
+        if (closed[nIdx]) continue;
 
-        const neighborPt = getCoord(nr, nc);
-        const { penalty } = getHazardCost(neighborPt);
+        const nPt = getCoord(nIdx);
+        const dist = haversineMars(pt, nPt);
+        if (dist < 1e-6) continue;
 
-        const dist = haversineMars(currPt, neighborPt);
-        const tentG = currG + dist * (1 + penalty / 50);
-        const neighborKey = key(nr, nc);
+        // Стоимость: длина × (зоны риска + крутизна рельефа MOLA + перепад высот по ходу)
+        const grade = Math.abs(cellElev(nIdx, nPt) - currElev) / (dist * 1000);
+        const tentG = currG + dist * (1 + cellPenalty(nIdx, nPt) / 50 + cellTerrain(nIdx, nPt) + Math.min(2, grade * 20));
 
-        if (tentG < (gScore.get(neighborKey) ?? Infinity)) {
-          gScore.set(neighborKey, tentG);
-          cameFrom.set(neighborKey, current);
-          const h = haversineMars(neighborPt, goal);
-          openSet.push({ r: nr, c: nc, f: tentG + h });
+        if (tentG < gScore[nIdx]) {
+          gScore[nIdx] = tentG;
+          cameFrom[nIdx] = idx;
+          openSet.push({ idx: nIdx, f: tentG + haversineMars(nPt, goal) });
         }
       }
     }
 
-    const pathCoords = [];
-    const targetNode = endNode || closestNode;
-    if (targetNode) {
-      let curr = targetNode;
-      while (curr) {
-        pathCoords.push(getCoord(curr.r, curr.c));
-        curr = cameFrom.get(key(curr.r, curr.c));
-      }
-      pathCoords.reverse();
+    // Восстановление пути по сетке
+    const cells = [];
+    for (let cur = reached ? goalIdx : closestIdx; cur !== -1; cur = cameFrom[cur]) {
+      cells.push(getCoord(cur));
     }
+    cells.reverse();
 
-    if (pathCoords.length === 0) {
-      pathCoords.push(...directPoints);
-    } else {
-      pathCoords.unshift(start);
-      pathCoords.push(goal);
-    }
+    // Крайние ячейки заменяются точными координатами старта и финиша
+    const inner = reached ? cells.slice(1, -1) : cells.slice(1);
+    const rawPath = [start, ...inner, goal];
 
-    const smoothedPath = smoothPath(pathCoords, 2);
+    const smoothedPath = smoothPath(densifyPath(pullPath(rawPath), 80), 2);
 
+    // Итоговая статистика вдоль траектории
     let totalSafeKm = 0;
-    for (let i = 0; i < smoothedPath.length - 1; i++) {
-      totalSafeKm += haversineMars(smoothedPath[i], smoothedPath[i + 1]);
-    }
-    const directKm = haversineMars(start, goal);
-
-    // Compute minimum clearance to hazard boundaries along trajectory
+    let coreKm = 0;
+    let bufferKm = 0;
     let minHazardClearance = Infinity;
-    smoothedPath.forEach((pt) => {
-      martianHazards.forEach((h) => {
-        if (h.type === 'circle') {
-          const d = haversineMars(pt, h.center);
-          const coreDist = (h.radiusDeg * Math.PI * MARS_RADIUS_KM) / 180;
-          const clearance = d - coreDist;
-          if (clearance < minHazardClearance) minHazardClearance = clearance;
-        } else if (h.type === 'polygon') {
-          h.polygon.forEach((polyPt) => {
-            const d = haversineMars(pt, polyPt);
-            if (d < minHazardClearance) minHazardClearance = d;
-          });
-        }
-      });
-    });
+    const hazardsCrossed = new Set();
+    for (let i = 0; i < smoothedPath.length - 1; i++) {
+      const a = smoothedPath[i];
+      const b = smoothedPath[i + 1];
+      const seg = haversineMars(a, b);
+      totalSafeKm += seg;
+      const mid = [(a[0] + b[0]) / 2, normLon(a[1] + diffLon(a[1], b[1]) / 2)];
+      const cost = getHazardCost(mid);
+      if (cost.hitHazards.length > 0) {
+        coreKm += seg;
+        cost.hitHazards.forEach((h) => hazardsCrossed.add(h));
+      } else if (cost.penalty > 0) {
+        bufferKm += seg;
+      }
+      if (cost.clearanceKm < minHazardClearance) minHazardClearance = cost.clearanceKm;
+    }
 
     return {
       safePath: smoothedPath,
       directPath: directPoints,
       safeDistanceKm: totalSafeKm,
       directDistanceKm: directKm,
-      hazardsAvoided: Array.from(hazardsDirectHits),
+      hazardsAvoided: Array.from(hazardsDirectHits).filter((h) => !hazardsCrossed.has(h)),
+      hazardsCrossed: Array.from(hazardsCrossed),
       minHazardClearanceKm: Math.max(0, Math.round(minHazardClearance)),
+      coreKm,
+      bufferKm,
+    };
+  }
+
+  // Кэш рассчитанных участков: перетаскивание одной точки не пересчитывает остальные
+  const routeLegCache = new Map();
+  function routeLeg(a, b) {
+    const cacheKey = `${a[0].toFixed(5)},${a[1].toFixed(5)}|${b[0].toFixed(5)},${b[1].toFixed(5)}`;
+    let leg = routeLegCache.get(cacheKey);
+    if (!leg) {
+      if (routeLegCache.size > 80) routeLegCache.clear();
+      leg = findSafeRoverPath(a, b);
+      routeLegCache.set(cacheKey, leg);
+    }
+    return leg;
+  }
+
+  // Расчет маршрута через несколько точек: участки считаются независимо и склеиваются
+  function planRoute(points) {
+    const legs = [];
+    for (let i = 0; i < points.length - 1; i++) {
+      legs.push(routeLeg(points[i], points[i + 1]));
+    }
+
+    const safePath = [];
+    const directPath = [];
+    const avoided = new Set();
+    const crossed = new Set();
+    let safeDistanceKm = 0;
+    let directDistanceKm = 0;
+    let coreKm = 0;
+    let bufferKm = 0;
+    let minClearance = Infinity;
+
+    legs.forEach((leg, i) => {
+      safePath.push(...(i === 0 ? leg.safePath : leg.safePath.slice(1)));
+      directPath.push(...(i === 0 ? leg.directPath : leg.directPath.slice(1)));
+      leg.hazardsAvoided.forEach((h) => avoided.add(h));
+      leg.hazardsCrossed.forEach((h) => crossed.add(h));
+      safeDistanceKm += leg.safeDistanceKm;
+      directDistanceKm += leg.directDistanceKm;
+      coreKm += leg.coreKm;
+      bufferKm += leg.bufferKm;
+      if (leg.minHazardClearanceKm < minClearance) minClearance = leg.minHazardClearanceKm;
+    });
+
+    return {
+      legs,
+      points,
+      safePath,
+      directPath,
+      safeDistanceKm,
+      directDistanceKm,
+      hazardsAvoided: Array.from(avoided).filter((h) => !crossed.has(h)),
+      hazardsCrossed: Array.from(crossed),
+      minHazardClearanceKm: minClearance,
+      coreKm,
+      bufferKm,
     };
   }
 
   // Состояние навигационной подсистемы
+  const MAX_ROUTE_STOPS = 8;
+  const STOP_LETTERS = 'ABCDEFGH';
+  const CUSTOM_STOP_NAME = { en: 'Custom Waypoint', ru: 'Выбранная точка' };
+
   routeState = {
     modeActive: false,
-    pointA: null, // [lat, lon]
-    pointB: null, // [lat, lon]
-    pointAName: null,
-    pointBName: null,
-    markerA: null,
-    markerB: null,
+    stops: [], // [{ coords: [lat, lon], name, marker }]
+    roundTrip: false,
     routeLayer: L.layerGroup().addTo(map),
     directLayer: L.layerGroup().addTo(map),
     hazardLayer: L.layerGroup().addTo(map),
@@ -2453,9 +2635,9 @@
   function hazardPopupContent(h) {
     return `
       <div class="popup-box">
-        <span class="popup-label" style="color:#ff6b6b">${currentLang === 'ru' ? 'Зона геологического риска' : 'Geological Hazard Zone'}</span>
+        <span class="popup-label" style="color:var(--danger)">${currentLang === 'ru' ? 'Зона геологического риска' : 'Geological Hazard Zone'}</span>
         <b class="popup-title">${t(h.name)}</b>
-        <span class="popup-coords" style="color:#e4916c">${t(h.desc)}</span>
+        <span class="popup-coords" style="color:var(--text-muted)">${t(h.desc)}</span>
       </div>
     `;
   }
@@ -2468,18 +2650,18 @@
         const radiusMeters = ((h.radiusDeg * Math.PI * MARS_RADIUS_KM) / 180) * 1000;
         shape = L.circle(h.center, {
           radius: radiusMeters,
-          color: '#ff6b6b',
+          color: '#e0705f',
           weight: 1.5,
           dashArray: '4, 5',
-          fillColor: '#fa5252',
+          fillColor: '#e0705f',
           fillOpacity: 0.12,
         }).bindPopup(hazardPopupContent(h));
       } else if (h.type === 'polygon') {
         shape = L.polygon(h.polygon, {
-          color: '#ff6b6b',
+          color: '#e0705f',
           weight: 1.5,
           dashArray: '4, 5',
-          fillColor: '#fa5252',
+          fillColor: '#e0705f',
           fillOpacity: 0.12,
         }).bindPopup(hazardPopupContent(h));
       }
@@ -2503,106 +2685,333 @@
     });
   }
 
-  // Обновление интерфейса точек маршрута
+  const samePoint = (a, b) => Math.abs(a[0] - b[0]) < 0.0001 && Math.abs(a[1] - b[1]) < 0.0001;
+  const stopName = (stop) => (stop && stop.name ? t(stop.name) : '');
+  const formatStopCoords = (coords) => `${formatCoordSimple(coords[0], true)}, ${formatCoordSimple(coords[1], false)}`;
+
+  // Роль точки в маршруте: старт (a), финиш (b) или промежуточная (via)
+  function stopRole(index, total) {
+    if (index === 0) return 'a';
+    if (index === total - 1 || total < 2) return 'b';
+    return 'via';
+  }
+
+  function stopRoleLabel(role, index) {
+    const isRu = currentLang === 'ru';
+    if (role === 'a') return isRu ? 'Старт' : 'Start';
+    if (role === 'b') return isRu ? 'Финиш' : 'Finish';
+    return isRu ? `Остановка ${index}` : `Stop ${index}`;
+  }
+
+  // Точки маршрута с учетом возврата к старту (кольцевой маршрут)
+  function getRoutePoints() {
+    const pts = routeState.stops.map((s) => s.coords);
+    if (routeState.roundTrip && pts.length >= 2) pts.push(pts[0]);
+    return pts;
+  }
+
+  // Строка списка точек маршрута
+  function buildStopRow(index, stop, total) {
+    const isRu = currentLang === 'ru';
+    const role = stopRole(index, Math.max(total, 2));
+    const row = document.createElement('div');
+    row.className = 'route-point';
+
+    const badge = document.createElement('span');
+    badge.className = `point-badge point-badge--${role}`;
+    badge.textContent = STOP_LETTERS[index];
+    row.appendChild(badge);
+
+    const details = document.createElement('div');
+    details.className = 'point-details';
+    const label = document.createElement('span');
+    label.className = 'point-label';
+    label.textContent = stopRoleLabel(role, index);
+    const coords = document.createElement('span');
+    coords.className = 'point-coords';
+    if (stop) {
+      const name = stopName(stop);
+      const coordsStr = formatStopCoords(stop.coords);
+      coords.textContent = name ? `${name} (${coordsStr})` : coordsStr;
+      coords.title = coords.textContent;
+    } else {
+      coords.textContent = i18n[currentLang].point_unset;
+    }
+    details.append(label, coords);
+    row.appendChild(details);
+
+    if (stop) {
+      const actions = document.createElement('div');
+      actions.className = 'point-actions';
+      const mkBtn = (act, glyph, title, disabled) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'point-action-btn';
+        btn.dataset.act = act;
+        btn.dataset.idx = String(index);
+        btn.textContent = glyph;
+        btn.title = title;
+        btn.setAttribute('aria-label', title);
+        btn.disabled = disabled;
+        return btn;
+      };
+      actions.append(
+        mkBtn('up', '↑', isRu ? 'Переместить выше' : 'Move up', index === 0),
+        mkBtn('down', '↓', isRu ? 'Переместить ниже' : 'Move down', index === total - 1),
+        mkBtn('remove', '✕', isRu ? 'Удалить точку' : 'Remove stop', false),
+      );
+      row.appendChild(actions);
+    }
+    return row;
+  }
+
+  // Обновление интерфейса точек маршрута (список + маркеры на карте)
   function updateRoutePointsUI() {
-    const labelA = document.querySelector('#point-a-coords');
-    if (labelA) {
-      if (routeState.pointA) {
-        const nameA = t(routeState.pointAName);
-        const coordsStr = `${formatCoordSimple(routeState.pointA[0], true)}, ${formatCoordSimple(routeState.pointA[1], false)}`;
-        labelA.textContent = nameA ? `${nameA} (${coordsStr})` : coordsStr;
-      } else {
-        labelA.textContent = i18n[currentLang].point_unset;
-      }
+    const stops = routeState.stops;
+    const list = document.querySelector('#route-stops-list');
+    if (list) {
+      list.textContent = '';
+      stops.forEach((stop, i) => list.appendChild(buildStopRow(i, stop, stops.length)));
+      for (let i = stops.length; i < 2; i++) list.appendChild(buildStopRow(i, null, stops.length));
     }
 
-    const labelB = document.querySelector('#point-b-coords');
-    if (labelB) {
-      if (routeState.pointB) {
-        const nameB = t(routeState.pointBName);
-        const coordsStr = `${formatCoordSimple(routeState.pointB[0], true)}, ${formatCoordSimple(routeState.pointB[1], false)}`;
-        labelB.textContent = nameB ? `${nameB} (${coordsStr})` : coordsStr;
-      } else {
-        labelB.textContent = i18n[currentLang].point_unset;
-      }
-    }
-  }
-
-  // Установка точки старта (A)
-  function setPointA(coords, name = null) {
-    routeState.pointA = coords;
-    routeState.pointAName = name;
-    updateRoutePointsUI();
-
-    if (!routeState.markerA) {
-      routeState.markerA = L.marker(coords, {
-        icon: createRouteMarkerIcon('A', 'a'),
-        draggable: true,
-      })
-        .addTo(map)
-        .bindTooltip(currentLang === 'ru' ? 'Точка А (Старт экспедиции)' : 'Point A (Expedition Start)', { direction: 'top' });
-
-      routeState.markerA.on('dragend', (e) => {
-        const newPos = e.target.getLatLng();
-        const snapped = findNearestMarkedPoint(newPos, 35);
-        if (snapped) {
-          setPointA(snapped.coords, snapped.name);
-          showSnapFeedback(snapped.name, snapped.coords);
-        } else {
-          setPointA([newPos.lat, newPos.lng], { en: 'Custom Waypoint', ru: 'Выбранная точка' });
-        }
-        if (routeState.pointB) calculateAndDrawRoute();
-      });
-    } else {
-      routeState.markerA.setLatLng(coords);
-      routeState.markerA.setTooltipContent(currentLang === 'ru' ? 'Точка А (Старт экспедиции)' : 'Point A (Expedition Start)');
-    }
+    stops.forEach((stop, i) => {
+      if (!stop.marker) return;
+      const role = stopRole(i, stops.length);
+      const name = stopName(stop);
+      stop.marker.setIcon(createRouteMarkerIcon(STOP_LETTERS[i], role));
+      stop.marker.setTooltipContent(`${STOP_LETTERS[i]} · ${stopRoleLabel(role, i)}${name ? ` — ${name}` : ''}`);
+    });
 
     checkCalcButtonState();
   }
 
-  // Установка точки финиша (B)
-  function setPointB(coords, name = null) {
-    routeState.pointB = coords;
-    routeState.pointBName = name;
+  // Добавление точки маршрута. Возвращает 'ok' | 'max' | 'duplicate'
+  function addStop(coords, name = null, index = routeState.stops.length) {
+    const stops = routeState.stops;
+    if (stops.length >= MAX_ROUTE_STOPS) return 'max';
+    const prev = stops[index - 1];
+    const next = stops[index];
+    if ((prev && samePoint(prev.coords, coords)) || (next && samePoint(next.coords, coords))) return 'duplicate';
+
+    const stop = { coords, name: name || CUSTOM_STOP_NAME, marker: null };
+    stop.marker = L.marker(coords, {
+      icon: createRouteMarkerIcon('', 'via'),
+      draggable: true,
+      zIndexOffset: 500,
+    })
+      .addTo(map)
+      .bindTooltip('', { direction: 'top' });
+
+    stop.marker.on('dragend', (e) => {
+      const newPos = e.target.getLatLng();
+      const snapped = findNearestMarkedPoint(newPos, 35);
+      if (snapped) {
+        stop.coords = snapped.coords;
+        stop.name = snapped.name;
+        showSnapFeedback(snapped.name, snapped.coords);
+      } else {
+        stop.coords = [newPos.lat, normLon(newPos.lng)];
+        stop.name = CUSTOM_STOP_NAME;
+      }
+      stop.marker.setLatLng(stop.coords);
+      updateRoutePointsUI();
+      refreshRoute(false);
+    });
+
+    // Правый клик по маркеру удаляет точку
+    stop.marker.on('contextmenu', () => {
+      const i = routeState.stops.indexOf(stop);
+      if (i >= 0) removeStop(i);
+    });
+
+    stops.splice(index, 0, stop);
     updateRoutePointsUI();
+    return 'ok';
+  }
 
-    if (!routeState.markerB) {
-      routeState.markerB = L.marker(coords, {
-        icon: createRouteMarkerIcon('B', 'b'),
-        draggable: true,
-      })
-        .addTo(map)
-        .bindTooltip(currentLang === 'ru' ? 'Точка B (Цель экспедиции)' : 'Point B (Destination Base)', { direction: 'top' });
+  // Удаление точки маршрута
+  function removeStop(index) {
+    const [stop] = routeState.stops.splice(index, 1);
+    if (stop && stop.marker) map.removeLayer(stop.marker);
+    updateRoutePointsUI();
+    updatePromptBanner();
+    refreshRoute(false);
+  }
 
-      routeState.markerB.on('dragend', (e) => {
-        const newPos = e.target.getLatLng();
-        const snapped = findNearestMarkedPoint(newPos, 35);
-        if (snapped) {
-          setPointB(snapped.coords, snapped.name);
-          showSnapFeedback(snapped.name, snapped.coords);
-        } else {
-          setPointB([newPos.lat, newPos.lng], { en: 'Custom Waypoint', ru: 'Выбранная точка' });
+  // Перестановка точки в списке (dir: -1 вверх, +1 вниз)
+  function moveStop(index, dir) {
+    const stops = routeState.stops;
+    const target = index + dir;
+    if (target < 0 || target >= stops.length) return;
+    [stops[index], stops[target]] = [stops[target], stops[index]];
+    updateRoutePointsUI();
+    refreshRoute(false);
+  }
+
+  // Оптимизация порядка промежуточных точек (перебор; старт и финиш закреплены)
+  function optimizeStopOrder() {
+    const stops = routeState.stops;
+    const n = stops.length;
+    if (n < 4) return false;
+
+    const fixedEnd = !routeState.roundTrip;
+    const mids = [];
+    for (let i = 1; i < (fixedEnd ? n - 1 : n); i++) mids.push(i);
+
+    const dist = stops.map((a) => stops.map((b) => haversineMars(a.coords, b.coords)));
+    const tail = (last) => (fixedEnd ? dist[last][n - 1] : dist[last][0]);
+
+    let bestOrder = mids.slice();
+    let bestCost = Infinity;
+    const used = new Array(n).fill(false);
+    const order = [];
+
+    const search = (last, cost) => {
+      if (cost >= bestCost) return;
+      if (order.length === mids.length) {
+        const total = cost + tail(last);
+        if (total < bestCost - 1e-6) {
+          bestCost = total;
+          bestOrder = order.slice();
         }
-        if (routeState.pointA) calculateAndDrawRoute();
-      });
-    } else {
-      routeState.markerB.setLatLng(coords);
-      routeState.markerB.setTooltipContent(currentLang === 'ru' ? 'Точка B (Цель экспедиции)' : 'Point B (Destination Base)');
-    }
+        return;
+      }
+      for (const m of mids) {
+        if (used[m]) continue;
+        used[m] = true;
+        order.push(m);
+        search(m, cost + dist[last][m]);
+        order.pop();
+        used[m] = false;
+      }
+    };
+    search(0, 0);
 
-    checkCalcButtonState();
+    const changed = bestOrder.some((m, i) => m !== mids[i]);
+    if (!changed) return false;
+
+    routeState.stops = [stops[0], ...bestOrder.map((m) => stops[m]), ...(fixedEnd ? [stops[n - 1]] : [])];
+    updateRoutePointsUI();
+    refreshRoute(true);
+    return true;
   }
 
   // Проверка готовности к расчету пути
   function checkCalcButtonState() {
+    const n = routeState.stops.length;
     const calcBtn = document.querySelector('#btn-calc-route');
-    if (calcBtn) {
-      calcBtn.disabled = !(routeState.pointA && routeState.pointB);
-    }
+    if (calcBtn) calcBtn.disabled = n < 2;
+    const reverseBtn = document.querySelector('#btn-swap-points');
+    if (reverseBtn) reverseBtn.disabled = n < 2;
+    const optimizeBtn = document.querySelector('#btn-optimize-route');
+    if (optimizeBtn) optimizeBtn.disabled = n < 4;
   }
 
   let lastRouteResult = null;
+
+  const formatKmOrMi = (km, isRu) => (isRu
+    ? `${(Math.round(km * 10) / 10).toLocaleString('ru-RU')} км`
+    : `${(Math.round(km * 0.621371 * 10) / 10).toLocaleString('en-US')} mi`);
+
+  // Индекс безопасности: доля пути внутри зон риска и в буферных поясах + минимальный запас
+  function calcSafetyScore(result) {
+    const total = result.safeDistanceKm || 1;
+    let score = 100 - 35 * (result.coreKm / total) - 10 * (result.bufferKm / total);
+    if (result.minHazardClearanceKm < 40) score -= 2;
+    else if (result.minHazardClearanceKm < 80) score -= 1;
+    if (result.coreKm > 0) score = Math.min(score, 89);
+    return Math.max(40, Math.min(99.9, score));
+  }
+
+  function safetyLabel(score, isRu) {
+    if (score >= 97) return isRu ? 'Безопасно' : 'Safe';
+    if (score >= 90) return isRu ? 'Осторожно' : 'Caution';
+    return isRu ? 'Высокий риск' : 'High risk';
+  }
+
+  // Высоты MOLA вдоль траектории: профиль, набор/спуск и наибольший уклон по ходу
+  function buildElevationSeries(path) {
+    const samples = [];
+    let km = 0;
+    let min = Infinity;
+    let max = -Infinity;
+    let ascent = 0;
+    let descent = 0;
+    let maxGradeDeg = 0;
+    for (let i = 0; i < path.length; i++) {
+      const elev = molaElevation(path[i][0], path[i][1]);
+      if (i > 0) {
+        const segKm = haversineMars(path[i - 1], path[i]);
+        km += segKm;
+        const d = elev - samples[i - 1].elev;
+        if (d > 0) ascent += d;
+        else descent -= d;
+        if (segKm > 1) {
+          const grade = (Math.atan(Math.abs(d) / (segKm * 1000)) * 180) / Math.PI;
+          if (grade > maxGradeDeg) maxGradeDeg = grade;
+        }
+      }
+      if (elev < min) min = elev;
+      if (elev > max) max = elev;
+      samples.push({ km, elev });
+    }
+    return { samples, totalKm: km, min, max, ascent, descent, maxGradeDeg };
+  }
+
+  // Профиль высот вдоль траектории по данным MOLA MEGDR
+  function renderElevationProfile(result, series) {
+    const container = document.querySelector('#elevation-profile');
+    if (!container) return;
+    const isRu = currentLang === 'ru';
+    if (!hasMola) {
+      container.innerHTML = `<div class="telemetry-empty">${isRu ? 'Данные MOLA не загружены (нет файла mola-megdr-4ppd.js)' : 'MOLA data not loaded (mola-megdr-4ppd.js is missing)'}</div>`;
+      return;
+    }
+    if (!series || series.samples.length < 2) {
+      container.innerHTML = `<div class="telemetry-empty">${i18n[currentLang].telemetry_no_route}</div>`;
+      return;
+    }
+
+    const { samples, min, max, ascent, descent, maxGradeDeg } = series;
+    const totalKm = series.totalKm || 1;
+    const range = Math.max(1, max - min);
+
+    const W = 260;
+    const H = 64;
+    const PAD = 4;
+    const x = (v) => (v / totalKm) * W;
+    const y = (v) => PAD + (1 - (v - min) / range) * (H - PAD * 2);
+    const line = samples.map((s, i) => `${i ? 'L' : 'M'}${x(s.km).toFixed(1)},${y(s.elev).toFixed(1)}`).join(' ');
+    const area = `${line} L${W},${H} L0,${H} Z`;
+
+    // Вертикальные отметки промежуточных точек
+    let stopLines = '';
+    let acc = 0;
+    result.legs.slice(0, -1).forEach((leg) => {
+      acc += leg.safeDistanceKm;
+      const sx = x(Math.min(acc, totalKm)).toFixed(1);
+      stopLines += `<line class="elev-profile__stop" x1="${sx}" y1="0" x2="${sx}" y2="${H}"/>`;
+    });
+
+    container.innerHTML = `
+      <div class="elev-profile">
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${isRu ? 'Профиль высот маршрута' : 'Route elevation profile'}">
+          <path class="elev-profile__area" d="${area}"/>
+          ${stopLines}
+          <path class="elev-profile__line" d="${line}"/>
+        </svg>
+        <div class="elev-profile__meta">
+          <span>${isRu ? 'Макс.' : 'Max'} <b>${formatElev(max, isRu)}</b></span>
+          <span>${isRu ? 'Мин.' : 'Min'} <b>${formatElev(min, isRu)}</b></span>
+          <span>${isRu ? 'Набор' : 'Ascent'} <b>${formatElev(ascent, isRu)}</b></span>
+          <span>${isRu ? 'Спуск' : 'Descent'} <b>${formatElev(-descent, isRu)}</b></span>
+          <span>${isRu ? 'Макс. уклон по ходу' : 'Max along-track grade'} <b>${maxGradeDeg.toFixed(1)}°</b></span>
+          <span>${isRu ? 'Шаг сетки' : 'Grid spacing'} <b>${isRu ? '~15 км' : '~9 mi'}</b></span>
+        </div>
+      </div>
+    `;
+  }
 
   // Расчет и вывод телеметрии перехода
   function renderRouteMetrics(result) {
@@ -2610,12 +3019,12 @@
     lastRouteResult = result;
 
     const isRu = currentLang === 'ru';
-    const distKm = Math.round(result.safeDistanceKm * 10) / 10;
-    const distMi = Math.round(result.safeDistanceKm * 0.621371 * 10) / 10;
-    const directKm = Math.round(result.directDistanceKm * 10) / 10;
-    const directMi = Math.round(result.directDistanceKm * 0.621371 * 10) / 10;
+    const stops = routeState.stops;
+    const setText = (sel, text) => {
+      const el = document.querySelector(sel);
+      if (el) el.textContent = text;
+    };
 
-    // Dual traversal metrics:
     // 1. Robotic Rover (Perseverance / AutoNav nominal 0.35 km/sol)
     const roboticSols = Math.max(1, Math.round(result.safeDistanceKm / MARS_CONSTANTS.ROVER_ROBOTIC_SPEED_KMSOL));
     const roboticEarthDays = Math.round(roboticSols * 1.02749);
@@ -2623,15 +3032,15 @@
     // 2. Manned Crew Rover (NASA Space Exploration Vehicle nominal 25 km/sol)
     const crewSols = Math.max(1, Math.round(result.safeDistanceKm / MARS_CONSTANTS.ROVER_CREW_SPEED_KMSOL));
     const crewEarthDays = Math.round(crewSols * 1.02749);
-    // 3. Marswalk EVA sorties (NASA EVA standard: nominal 12 km per 6-hr EVA sortie on foot / suited traversal)
+    // 3. Marswalk EVA sorties (nominal 12 km per 6-hr EVA sortie)
     const marswalkSorties = Math.max(1, Math.ceil(result.safeDistanceKm / 12));
 
-    // Initial Azimuth / Bearing
-    const bearingDeg = calcInitialBearing(routeState.pointA, routeState.pointB);
-    const bearingStr = formatBearingCompass(bearingDeg);
+    // Высоты MOLA вдоль траектории
+    const series = buildElevationSeries(result.safePath);
 
-    // Traction energy requirement (E = m * g * Crr * d / eff)
-    const joulesRobotic = (MARS_CONSTANTS.ROVER_ROBOTIC_MASS * MARS_CONSTANTS.G_MARS_MEAN * MARS_CONSTANTS.CRR_REGOLITH * (result.safeDistanceKm * 1000)) / MARS_CONSTANTS.DRIVETRAIN_EFFICIENCY;
+    // Traction energy requirement: rolling resistance plus climbing the MOLA ascent
+    // E = m * g * (Crr * d + ascent) / eff
+    const joulesRobotic = (MARS_CONSTANTS.ROVER_ROBOTIC_MASS * MARS_CONSTANTS.G_MARS_MEAN * (MARS_CONSTANTS.CRR_REGOLITH * result.safeDistanceKm * 1000 + series.ascent)) / MARS_CONSTANTS.DRIVETRAIN_EFFICIENCY;
     const kwhRobotic = Math.round(joulesRobotic / 3.6e6);
     const mjRobotic = Math.round(joulesRobotic / 1e6);
 
@@ -2641,243 +3050,258 @@
     const remSecOneway = Math.round(secOneway % 60);
     const minRtt = Math.round((secOneway * 2) / 60);
 
-    // Dynamic Safety Score based on hazard proximity clearance
-    const minClearanceKm = result.minHazardClearanceKm !== undefined ? result.minHazardClearanceKm : 120;
-    let safetyScoreVal = 99.9;
-    if (result.hazardsAvoided.length > 0) {
-      if (minClearanceKm < 40) safetyScoreVal = 97.4;
-      else if (minClearanceKm < 80) safetyScoreVal = 98.6;
-      else safetyScoreVal = 99.4;
-    }
-    const safetyStr = `${safetyScoreVal.toFixed(1)}% (${isRu ? 'Безопасно' : 'Safe'})`;
+    const safetyScoreVal = calcSafetyScore(result);
+    const distStr = formatKmOrMi(result.safeDistanceKm, isRu);
 
-    // Update Sidebar Summary Card
+    // Сводная карточка в боковой панели
     const summaryCard = document.querySelector('#route-summary-card');
     if (summaryCard) summaryCard.classList.remove('hidden');
 
-    const scoreEl = document.querySelector('#summary-score');
-    if (scoreEl) {
-      scoreEl.textContent = isRu ? `${safetyScoreVal.toFixed(1)}% безопасность` : `${safetyScoreVal.toFixed(1)}% safety rating`;
-    }
+    setText('#summary-score', isRu ? `${safetyScoreVal.toFixed(1)}% безопасность` : `${safetyScoreVal.toFixed(1)}% safety rating`);
+    setText('#summary-distance', distStr);
+    setText('#summary-time', isRu ? `~${roboticSols.toLocaleString('ru-RU')} солов (марсоход)` : `~${roboticSols.toLocaleString('en-US')} sols (rover)`);
+    setText('#summary-avoided-list', result.hazardsAvoided.length > 0
+      ? result.hazardsAvoided.map((h) => t(h)).join(', ')
+      : (isRu ? 'Обход не потребовался' : 'No detour required'));
 
-    const distEl = document.querySelector('#summary-distance');
-    if (distEl) {
-      distEl.textContent = isRu
-        ? `${distKm.toLocaleString('ru-RU')} км`
-        : `${distMi.toLocaleString('en-US')} mi`;
-    }
+    // Вкладка телеметрии
+    setText('#telemetry-distance', distStr);
+    setText('#telemetry-duration', isRu
+      ? `~${roboticSols.toLocaleString('ru-RU')} солов (~${roboticEarthDays.toLocaleString('ru-RU')} сут.)`
+      : `~${roboticSols.toLocaleString('en-US')} sols (~${roboticEarthDays.toLocaleString('en-US')} earth days)`);
 
-    const timeEl = document.querySelector('#summary-time');
-    if (timeEl) {
-      timeEl.textContent = isRu ? `~${roboticSols.toLocaleString('ru-RU')} солов (марсоход)` : `~${roboticSols.toLocaleString('en-US')} sols (rover)`;
+    const extraKm = Math.max(0, result.safeDistanceKm - result.directDistanceKm);
+    const extraPct = Math.round((extraKm / (result.directDistanceKm || 1)) * 100);
+    setText('#telemetry-direct', `${formatKmOrMi(result.directDistanceKm, isRu)} (+${extraPct}%)`);
+    setText('#telemetry-risk', `${safetyScoreVal.toFixed(1)}% (${safetyLabel(safetyScoreVal, isRu)})`);
+    if (result.points.length >= 2) {
+      setText('#telemetry-bearing', formatBearingCompass(calcInitialBearing(result.points[0], result.points[1])));
     }
+    setText('#telemetry-energy', `${kwhRobotic.toLocaleString()} kWh (${mjRobotic.toLocaleString()} MJ)`);
+    setText('#telemetry-latency', isRu
+      ? `~${minOneway}м ${remSecOneway}с (RTT ~${minRtt}м)`
+      : `~${minOneway}m ${remSecOneway}s (RTT ~${minRtt}m)`);
+    setText('#telemetry-crew-time', isRu
+      ? `~${crewSols} солов (~${crewEarthDays} сут. / ${marswalkSorties} выходов EVA)`
+      : `~${crewSols} sols (~${crewEarthDays} days / ${marswalkSorties} EVA sorties)`);
+    setText('#telemetry-status', isRu ? 'Траектория активна' : 'Trajectory Active');
 
-    const avoidedEl = document.querySelector('#summary-avoided-list');
-    if (avoidedEl) {
-      if (result.hazardsAvoided.length > 0) {
-        avoidedEl.textContent = result.hazardsAvoided.map((h) => t(h)).join(', ');
-      } else {
-        avoidedEl.textContent = isRu
-          ? 'Сложный рельеф обойден штатно'
-          : 'Direct terrain cleared without detour';
-      }
+    // Заголовок: A → … → B
+    const names = stops.map((s, i) => stopName(s) || `${isRu ? 'Точка' : 'Point'} ${STOP_LETTERS[i]}`);
+    if (names.length >= 2) {
+      const middle = names.length - 2;
+      const title = middle > 1
+        ? `${names[0]} → … (+${middle}) → ${names[names.length - 1]}`
+        : names.join(' → ');
+      setText('#telemetry-title', routeState.roundTrip ? `${title} ↺` : title);
     }
+    const legCount = result.legs.length;
+    setText('#telemetry-subtitle', isRu
+      ? `Точек: ${stops.length} · участков: ${legCount}${routeState.roundTrip ? ' · кольцевой маршрут' : ''}. Кликните по линии маршрута, чтобы вставить точку; перетащите маркер, чтобы изменить путь.`
+      : `${stops.length} stops · ${legCount} leg${legCount === 1 ? '' : 's'}${routeState.roundTrip ? ' · round trip' : ''}. Click the route line to insert a stop; drag a marker to reroute.`);
 
-    // Update Telemetry View
-    const telemDistEl = document.querySelector('#telemetry-distance');
-    const durEl = document.querySelector('#telemetry-duration');
-    const directEl = document.querySelector('#telemetry-direct');
-    const riskEl = document.querySelector('#telemetry-risk');
-    const bearingEl = document.querySelector('#telemetry-bearing');
-    const energyEl = document.querySelector('#telemetry-energy');
-    const latencyEl = document.querySelector('#telemetry-latency');
-    const crewTimeEl = document.querySelector('#telemetry-crew-time');
-    const statusEl = document.querySelector('#telemetry-status');
-    const titleEl = document.querySelector('#telemetry-title');
+    renderElevationProfile(result, series);
+
+    // Геологический анализ: обойденные и неизбежно пересеченные зоны
     const hazardsListEl = document.querySelector('#hazards-avoided-list');
-    const waypointsEl = document.querySelector('#waypoints-timeline');
-
-    if (telemDistEl) {
-      telemDistEl.textContent = isRu
-        ? `${distKm.toLocaleString('ru-RU')} км`
-        : `${distMi.toLocaleString('en-US')} mi`;
-    }
-
-    if (durEl) {
-      durEl.textContent = isRu
-        ? `~${roboticSols.toLocaleString('ru-RU')} солов (~${roboticEarthDays} сут.)`
-        : `~${roboticSols.toLocaleString('en-US')} sols (~${roboticEarthDays} earth days)`;
-    }
-
-    const extraDist = Math.max(0, Math.round((result.safeDistanceKm - result.directDistanceKm) * 10) / 10);
-    const extraPct = Math.round((extraDist / (result.directDistanceKm || 1)) * 100);
-    if (directEl) {
-      directEl.textContent = isRu
-        ? `${directKm.toLocaleString('ru-RU')} км (+${extraPct}%)`
-        : `${directMi.toLocaleString('en-US')} mi (+${extraPct}%)`;
-    }
-
-    if (riskEl) riskEl.textContent = safetyStr;
-    if (bearingEl) bearingEl.textContent = bearingStr;
-
-    if (energyEl) {
-      energyEl.textContent = `${kwhRobotic.toLocaleString()} kWh (${mjRobotic.toLocaleString()} MJ)`;
-    }
-
-    if (latencyEl) {
-      latencyEl.textContent = isRu
-        ? `~${minOneway}м ${remSecOneway}с (RTT ~${minRtt}м)`
-        : `~${minOneway}m ${remSecOneway}s (RTT ~${minRtt}m)`;
-    }
-
-    if (crewTimeEl) {
-      crewTimeEl.textContent = isRu
-        ? `~${crewSols} солов (~${crewEarthDays} сут. / ${marswalkSorties} выходов EVA)`
-        : `~${crewSols} sols (~${crewEarthDays} days / ${marswalkSorties} EVA sorties)`;
-    }
-
-    if (statusEl) {
-      statusEl.textContent = isRu ? 'Траектория активна' : 'Trajectory Active';
-    }
-
-    if (titleEl) {
-      const nameA = t(routeState.pointAName) || (isRu ? 'Точка А' : 'Point A');
-      const nameB = t(routeState.pointBName) || (isRu ? 'Точка Б' : 'Point B');
-      titleEl.textContent = `${nameA} → ${nameB}`;
-    }
-
     if (hazardsListEl) {
-      hazardsListEl.innerHTML = '';
-      if (result.hazardsAvoided.length === 0) {
-        hazardsListEl.innerHTML = `
-          <div class="hazard-item" style="border-left-color: #38d9a9; background: rgba(56, 217, 169, 0.08);">
-            <span class="hazard-item__name" style="color: #38d9a9">${isRu ? 'Прямой безопасный коридор' : 'Direct Safe Corridor'}</span>
-            <span class="hazard-item__desc">${isRu ? 'Прямая геодезическая линия не пересекает критических геологических провалов рельефа. Траектория оптимизирована по расходу тяги.' : 'Direct geodesic path avoids critical geologic rift chasms. Trajectory is fuel- and power-optimized.'}</span>
-          </div>
-        `;
-      } else {
-        result.hazardsAvoided.forEach((haz) => {
-          const item = document.createElement('div');
-          item.className = 'hazard-item';
-          item.innerHTML = `
-            <span class="hazard-item__name">${isRu ? 'Обход: ' : 'Bypassing: '}${t(haz)}</span>
-            <span class="hazard-item__desc">${isRu ? 'Траектория скорректирована для уклонения от отвесных стен и грабенов рельефа.' : 'Trajectory adjusted to avoid sheer cliff scarps and tectonic grabens.'}</span>
-          `;
-          hazardsListEl.appendChild(item);
-        });
+      hazardsListEl.textContent = '';
+      const addItem = (cls, name, desc) => {
+        const item = document.createElement('div');
+        item.className = cls;
+        const nameEl = document.createElement('span');
+        nameEl.className = 'hazard-item__name';
+        nameEl.textContent = name;
+        const descEl = document.createElement('span');
+        descEl.className = 'hazard-item__desc';
+        descEl.textContent = desc;
+        item.append(nameEl, descEl);
+        hazardsListEl.appendChild(item);
+      };
+
+      result.hazardsCrossed.forEach((haz) => {
+        addItem(
+          'hazard-item',
+          `${isRu ? 'Пересечение: ' : 'Crossing: '}${t(haz)}`,
+          isRu
+            ? `Точка маршрута лежит внутри зоны риска — обход невозможен. Внутри зоны: ${formatKmOrMi(result.coreKm, true)}.`
+            : `A stop lies inside this hazard zone, so it cannot be bypassed. Distance inside zones: ${formatKmOrMi(result.coreKm, false)}.`,
+        );
+      });
+      result.hazardsAvoided.forEach((haz) => {
+        addItem(
+          'hazard-item hazard-item--avoided',
+          `${isRu ? 'Обход: ' : 'Bypassing: '}${t(haz)}`,
+          isRu
+            ? 'Прямая линия пересекает эту зону — траектория скорректирована для уклонения от уступов и грабенов.'
+            : 'The direct line crosses this zone — trajectory adjusted to avoid cliff scarps and grabens.',
+        );
+      });
+      if (result.hazardsCrossed.length === 0 && result.hazardsAvoided.length === 0) {
+        addItem(
+          'hazard-item hazard-item--safe',
+          isRu ? 'Прямой безопасный коридор' : 'Direct Safe Corridor',
+          isRu
+            ? 'Прямые геодезические линии между точками не пересекают зон риска.'
+            : 'Direct geodesic lines between stops do not cross any hazard zone.',
+        );
+      }
+      if (Number.isFinite(result.minHazardClearanceKm)) {
+        addItem(
+          'hazard-item hazard-item--safe',
+          isRu ? 'Минимальный запас до зоны риска' : 'Minimum hazard clearance',
+          formatKmOrMi(result.minHazardClearanceKm, isRu),
+        );
       }
     }
 
+    // Список точек маршрута с длинами участков
+    const waypointsEl = document.querySelector('#waypoints-timeline');
     if (waypointsEl) {
-      waypointsEl.innerHTML = '';
-      const sampleIndices = [0];
-      const count = result.safePath.length;
-      if (count > 4) {
-        sampleIndices.push(Math.floor(count * 0.25));
-        sampleIndices.push(Math.floor(count * 0.50));
-        sampleIndices.push(Math.floor(count * 0.75));
-      } else if (count > 2) {
-        sampleIndices.push(Math.floor(count * 0.5));
-      }
-      sampleIndices.push(count - 1);
-
-      const labels = [
-        { en: 'Expedition Departure (Base Camp / Point A)', ru: 'Старт экспедиции (Базовый лагерь / Точка А)' },
-        { en: 'Science Station Alpha: Regolith & Mineralogy Sampling', ru: 'Научная станция Альфа: отбор проб реголита и минералогии' },
-        { en: 'Science Station Beta: Geological Outcrop & Spectroscopic Survey', ru: 'Научная станция Бета: спектроскопия коренных пород' },
-        { en: 'Science Station Gamma: Subsurface Ice & Volatiles Reconnaissance', ru: 'Научная станция Гамма: зондирование подповерхностного льда' },
-        { en: 'Destination Outpost (Mission Target / Point B)', ru: 'Конечный аванпост (Цель миссии / Точка Б)' },
-      ];
-
-      sampleIndices.forEach((pathIdx, stepNum) => {
-        const pt = result.safePath[pathIdx];
-        const elev = estimateElevation(pt[0], pt[1]);
-        const elevStr = isRu
-          ? `${elev >= 0 ? '+' : ''}${elev.toLocaleString('ru-RU')} м`
-          : `${elev >= 0 ? '+' : ''}${Math.round(elev * 3.28084).toLocaleString('en-US')} ft`;
-        const labelObj = labels[Math.min(stepNum, labels.length - 1)];
+      waypointsEl.textContent = '';
+      let cumulativeKm = 0;
+      result.points.forEach((pt, i) => {
+        const isReturn = routeState.roundTrip && i === result.points.length - 1;
+        const stopIdx = isReturn ? 0 : i;
+        const stop = stops[stopIdx];
+        const leg = i > 0 ? result.legs[i - 1] : null;
+        if (leg) cumulativeKm += leg.safeDistanceKm;
 
         const row = document.createElement('div');
         row.className = 'waypoint-row';
-        row.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:baseline;">
-            <span class="waypoint-row__name">${stepNum + 1}. ${t(labelObj)}</span>
-            <span style="font-family:var(--font-mono); font-size:11px; color:#d6c083;">${elevStr}</span>
-          </div>
-          <span class="waypoint-row__coords">${formatCoordSimple(pt[0], true)}, ${formatCoordSimple(pt[1], false)}</span>
-        `;
+
+        const head = document.createElement('div');
+        head.className = 'waypoint-row__head';
+        const nameEl = document.createElement('span');
+        nameEl.className = 'waypoint-row__name';
+        const baseName = stopName(stop) || formatStopCoords(pt);
+        nameEl.textContent = `${STOP_LETTERS[stopIdx]}. ${baseName}${isReturn ? (isRu ? ' (возврат)' : ' (return)') : ''}`;
+        const elevEl = document.createElement('span');
+        elevEl.className = 'waypoint-row__elev';
+        elevEl.textContent = formatElev(molaElevation(pt[0], pt[1]), isRu);
+        head.append(nameEl, elevEl);
+
+        const coordsEl = document.createElement('span');
+        coordsEl.className = 'waypoint-row__coords';
+        coordsEl.textContent = leg
+          ? `${formatStopCoords(pt)} · ${isRu ? 'участок' : 'leg'} ${formatKmOrMi(leg.safeDistanceKm, isRu)} · ${isRu ? 'всего' : 'total'} ${formatKmOrMi(cumulativeKm, isRu)}`
+          : formatStopCoords(pt);
+
+        row.append(head, coordsEl);
         waypointsEl.appendChild(row);
       });
     }
   }
 
+  // Сброс рассчитанного маршрута (точки остаются)
+  function resetRouteOutput() {
+    routeState.routeLayer.clearLayers();
+    routeState.directLayer.clearLayers();
+    routeState.currentResult = null;
+    lastRouteResult = null;
+
+    const summaryCard = document.querySelector('#route-summary-card');
+    if (summaryCard) summaryCard.classList.add('hidden');
+
+    ['#telemetry-distance', '#telemetry-duration', '#telemetry-direct', '#telemetry-risk',
+      '#telemetry-bearing', '#telemetry-energy', '#telemetry-latency', '#telemetry-crew-time'].forEach((sel) => {
+      const el = document.querySelector(sel);
+      if (el) el.textContent = '—';
+    });
+
+    const lang = i18n[currentLang] || {};
+    const emptyHtml = `<div class="telemetry-empty">${lang.telemetry_no_route || 'No route calculated yet'}</div>`;
+    const hazardsListEl = document.querySelector('#hazards-avoided-list');
+    if (hazardsListEl) hazardsListEl.innerHTML = emptyHtml;
+    const profileEl = document.querySelector('#elevation-profile');
+    if (profileEl) profileEl.innerHTML = emptyHtml;
+    const waypointsEl = document.querySelector('#waypoints-timeline');
+    if (waypointsEl) waypointsEl.textContent = '';
+    const statusEl = document.querySelector('#telemetry-status');
+    if (statusEl) statusEl.textContent = lang.telemetry_waiting || 'Awaiting points';
+    const titleEl = document.querySelector('#telemetry-title');
+    if (titleEl) titleEl.textContent = lang.telemetry_title || 'Rover Trajectory';
+    const subtitleEl = document.querySelector('#telemetry-subtitle');
+    if (subtitleEl) subtitleEl.textContent = lang.telemetry_subtitle || '';
+
+    updateTopClearRouteButton(routeState.stops.length > 0);
+    updateShareHash();
+  }
+
+  // Пересчет маршрута после изменения точек
+  function refreshRoute(fit = true) {
+    if (routeState.stops.length >= 2) calculateAndDrawRoute({ fit });
+    else resetRouteOutput();
+  }
+
   // Построение и отрисовка маршрута
-  function calculateAndDrawRoute() {
-    if (!routeState.pointA || !routeState.pointB) return;
+  function calculateAndDrawRoute(opts) {
+    if (routeState.stops.length < 2) return;
+    const fit = !(opts && opts.fit === false);
 
     routeState.routeLayer.clearLayers();
     routeState.directLayer.clearLayers();
 
-    const result = findSafeRoverPath(routeState.pointA, routeState.pointB);
+    const result = planRoute(getRoutePoints());
     routeState.currentResult = result;
 
-    const safeSegments = splitPolylineAtAntimeridian(result.safePath);
-    const directSegments = splitPolylineAtAntimeridian(result.directPath);
+    const isRu = currentLang === 'ru';
+    const canInsert = routeState.stops.length < MAX_ROUTE_STOPS;
+    const insertTip = isRu ? 'Клик — вставить точку маршрута здесь' : 'Click to insert a stop here';
 
-    // Outer glow line
-    const outerGlow = L.polyline(safeSegments, {
-      color: '#20c997',
-      weight: 8,
-      opacity: 0.35,
-      lineCap: 'round',
-      lineJoin: 'round',
-    });
+    result.legs.forEach((leg, legIndex) => {
+      const safeSegments = splitPolylineAtAntimeridian(leg.safePath);
 
-    // Inner glowing trajectory
-    const innerTrack = L.polyline(safeSegments, {
-      color: '#38d9a9',
-      weight: 3.5,
-      opacity: 0.95,
-      lineCap: 'round',
-      lineJoin: 'round',
-    });
-
-    routeState.routeLayer.addLayer(outerGlow);
-    routeState.routeLayer.addLayer(innerTrack);
-
-    // Direct path comparison
-    const directLine = L.polyline(directSegments, {
-      color: '#ff6b6b',
-      weight: 2,
-      dashArray: '5, 8',
-      opacity: 0.75,
-    });
-    routeState.directLayer.addLayer(directLine);
-
-    // Add intermediate milestone dots
-    const sampleInterval = Math.max(1, Math.floor(result.safePath.length / 5));
-    for (let i = sampleInterval; i < result.safePath.length - 1; i += sampleInterval) {
-      const dotTip = currentLang === 'ru'
-        ? `Контрольный ориентир ${Math.round((i / result.safePath.length) * 100)}% пути`
-        : `Waypoint milestone ${Math.round((i / result.safePath.length) * 100)}% of route`;
-      const dot = L.circleMarker(result.safePath[i], {
-        radius: 3.5,
-        fillColor: '#38d9a9',
-        color: '#111315',
-        weight: 1.5,
-        fillOpacity: 1,
-      }).bindTooltip(dotTip, {
-        direction: 'top',
+      // Широкая подложка — она же зона клика для вставки точки
+      const outerGlow = L.polyline(safeSegments, {
+        color: '#6fd3b3',
+        weight: 10,
+        opacity: 0.3,
+        lineCap: 'round',
+        lineJoin: 'round',
       });
-      routeState.routeLayer.addLayer(dot);
-    }
+      const innerTrack = L.polyline(safeSegments, {
+        color: '#6fd3b3',
+        weight: 3.5,
+        opacity: 0.95,
+        lineCap: 'round',
+        lineJoin: 'round',
+        interactive: false,
+      });
 
-    // Fit bounds smoothly to show the whole route
-    const allPoints = [...result.safePath, ...result.directPath];
-    map.fitBounds(L.latLngBounds(allPoints), { padding: [50, 50], maxZoom: 6 });
+      if (canInsert) {
+        outerGlow.bindTooltip(insertTip, { sticky: true, direction: 'top' });
+        outerGlow.on('click', (e) => {
+          L.DomEvent.stopPropagation(e);
+          lastSnapTime = Date.now();
+          const res = addStop([e.latlng.lat, normLon(e.latlng.lng)], CUSTOM_STOP_NAME, legIndex + 1);
+          if (res === 'ok') {
+            updatePromptBanner();
+            calculateAndDrawRoute({ fit: false });
+          }
+        });
+      }
+
+      routeState.routeLayer.addLayer(outerGlow);
+      routeState.routeLayer.addLayer(innerTrack);
+
+      // Прямая линия для сравнения
+      routeState.directLayer.addLayer(L.polyline(splitPolylineAtAntimeridian(leg.directPath), {
+        color: '#e0705f',
+        weight: 2,
+        dashArray: '5, 8',
+        opacity: 0.75,
+        interactive: false,
+      }));
+    });
+
+    if (fit) {
+      map.fitBounds(L.latLngBounds([...result.safePath, ...result.directPath]), { padding: [50, 50], maxZoom: 6 });
+    }
 
     renderRouteMetrics(result);
     updateTopClearRouteButton(true);
+    updateShareHash();
   }
 
   // Элементы управления режимом выбора точек
@@ -2916,22 +3340,30 @@
     }
   }
 
+  // Текст подсказки для следующего действия
+  function nextStopHint() {
+    const isRu = currentLang === 'ru';
+    const n = routeState.stops.length;
+    if (n === 0) {
+      return isRu ? 'Кликните на карту, чтобы установить старт (A)' : 'Click map to set the start (A)';
+    }
+    if (n >= MAX_ROUTE_STOPS) {
+      return isRu
+        ? `Максимум ${MAX_ROUTE_STOPS} точек. Перетащите маркеры или удалите точку`
+        : `Maximum of ${MAX_ROUTE_STOPS} stops. Drag markers or remove a stop`;
+    }
+    const letter = STOP_LETTERS[n];
+    if (n === 1) {
+      return isRu ? `Кликните, чтобы добавить точку ${letter}` : `Click map to add stop ${letter}`;
+    }
+    return isRu
+      ? `Кликните, чтобы добавить точку ${letter} · Esc — завершить`
+      : `Click to add stop ${letter} · Esc to finish`;
+  }
+
   // Обновление текста подсказки на карте
   function updatePromptBanner() {
-    if (!routePromptText) return;
-    if (!routeState.pointA) {
-      routePromptText.textContent = currentLang === 'ru'
-        ? 'Кликните на карту, чтобы установить Точку А (Старт)'
-        : 'Click map to set Point A (Start)';
-    } else if (!routeState.pointB) {
-      routePromptText.textContent = currentLang === 'ru'
-        ? 'Точка А установлена. Кликните для выбора Точки Б (Финиш)'
-        : 'Point A set. Click map to set Point B (Target)';
-    } else {
-      routePromptText.textContent = currentLang === 'ru'
-        ? 'Точки заданы. Кликните для смены Точки Б или перетащите маркеры'
-        : 'Waypoints set. Click map to change Point B or drag markers';
-    }
+    if (routePromptText) routePromptText.textContent = nextStopHint();
   }
 
   if (routeModeBtn) {
@@ -2979,35 +3411,25 @@
     }
   });
 
-  // Обработка выбора точки маршрута
+  // Обработка выбора точки маршрута: каждая новая точка добавляется в конец
   function handleRoutePointSelection(coords, name = null) {
-    if (!routeState) return;
+    if (!routeState) return false;
 
-    if (!routeState.pointA) {
-      setPointA(coords, name || { en: 'Custom Waypoint', ru: 'Выбранная точка' });
-      updatePromptBanner();
-    } else if (!routeState.pointB) {
-      // Disallow clicking the exact same point for B
-      if (Math.abs(coords[0] - routeState.pointA[0]) < 0.0001 && Math.abs(coords[1] - routeState.pointA[1]) < 0.0001) {
-        if (routePromptText) {
-          routePromptText.textContent = currentLang === 'ru'
-            ? 'Точка финиша должна отличаться от старта. Выберите другую точку'
-            : 'Target must differ from start. Choose a different point';
-        }
-        return;
+    const res = addStop(coords, name);
+    if (res === 'duplicate') {
+      if (routePromptText) {
+        routePromptText.textContent = currentLang === 'ru'
+          ? 'Эта точка уже выбрана предыдущей. Выберите другую'
+          : 'This point is already the previous stop. Choose a different one';
       }
-      setPointB(coords, name || { en: 'Custom Waypoint', ru: 'Выбранная точка' });
-      setRouteMode(false);
-      calculateAndDrawRoute();
-    } else {
-      // Re-place Point B
-      if (Math.abs(coords[0] - routeState.pointA[0]) < 0.0001 && Math.abs(coords[1] - routeState.pointA[1]) < 0.0001) {
-        return;
-      }
-      setPointB(coords, name || { en: 'Custom Waypoint', ru: 'Выбранная точка' });
-      setRouteMode(false);
-      calculateAndDrawRoute();
+      return false;
     }
+    updatePromptBanner();
+    if (res !== 'ok') return false;
+
+    // Во время выбора точек карта не перецентрируется
+    refreshRoute(false);
+    return true;
   }
 
   // Визуальный отклик примагничивания к объекту
@@ -3015,11 +3437,12 @@
     if (!map || !coords) return;
     const snapPulse = L.circleMarker(coords, {
       radius: 18,
-      fillColor: '#38d9a9',
+      fillColor: '#6fd3b3',
       fillOpacity: 0.5,
-      color: '#38d9a9',
+      color: '#6fd3b3',
       weight: 2,
       className: 'snap-pulse-marker',
+      interactive: false,
     }).addTo(map);
 
     setTimeout(() => {
@@ -3028,18 +3451,9 @@
       }
     }, 750);
 
-    const displayName = t(name);
-    if (routePromptText) {
-      const isRu = currentLang === 'ru';
-      if (!routeState.pointB) {
-        routePromptText.textContent = isRu
-          ? `✓ Примагничено: ${displayName}. Выберите Точку Б`
-          : `✓ Snapped to: ${displayName}. Click to set Point B`;
-      } else {
-        routePromptText.textContent = isRu
-          ? `✓ Примагничено: ${displayName}`
-          : `✓ Snapped to: ${displayName}`;
-      }
+    const last = routeState.stops[routeState.stops.length - 1];
+    if (routePromptText && last && samePoint(last.coords, coords)) {
+      routePromptText.textContent = `✓ ${t(name)} · ${nextStopHint()}`;
     }
   }
 
@@ -3142,44 +3556,14 @@
   function clearRoute() {
     if (!routeState) return;
 
-    routeState.pointA = null;
-    routeState.pointB = null;
-    routeState.pointAName = null;
-    routeState.pointBName = null;
-    routeState.currentResult = null;
-
-    if (routeState.markerA) {
-      map.removeLayer(routeState.markerA);
-      routeState.markerA = null;
-    }
-    if (routeState.markerB) {
-      map.removeLayer(routeState.markerB);
-      routeState.markerB = null;
-    }
-
-    routeState.routeLayer.clearLayers();
-    routeState.directLayer.clearLayers();
-
-    lastRouteResult = null;
-    const labelA = document.querySelector('#point-a-coords');
-    const labelB = document.querySelector('#point-b-coords');
-    if (labelA) labelA.textContent = i18n[currentLang]?.point_unset || 'Not set (click map)';
-    if (labelB) labelB.textContent = i18n[currentLang]?.point_unset || 'Not set (click map)';
-
-    const summaryCard = document.querySelector('#route-summary-card');
-    if (summaryCard) summaryCard.classList.add('hidden');
+    routeState.stops.forEach((stop) => {
+      if (stop.marker) map.removeLayer(stop.marker);
+    });
+    routeState.stops = [];
 
     setRouteMode(false);
-    checkCalcButtonState();
-    updateTopClearRouteButton(false);
-
-    // Reset Telemetry card
-    const hazardsListEl = document.querySelector('#hazards-avoided-list');
-    if (hazardsListEl) hazardsListEl.innerHTML = `<div class="telemetry-empty">${i18n[currentLang]?.telemetry_no_route || 'Plot a route to inspect hazards'}</div>`;
-    const waypointsEl = document.querySelector('#waypoints-timeline');
-    if (waypointsEl) waypointsEl.innerHTML = '';
-    const statusEl = document.querySelector('#telemetry-status');
-    if (statusEl) statusEl.textContent = i18n[currentLang]?.telemetry_waiting || 'Awaiting route calculation...';
+    updateRoutePointsUI();
+    resetRouteOutput();
   }
 
   const topClearRouteBtn = document.querySelector('#btn-top-clear-route');
@@ -3195,16 +3579,52 @@
     clearRouteBtn.addEventListener('click', clearRoute);
   }
 
-  // Кнопка обмена точек старта и финиша
+  // Действия в списке точек: переместить / удалить
+  const stopsListEl = document.querySelector('#route-stops-list');
+  if (stopsListEl) {
+    stopsListEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('.point-action-btn');
+      if (!btn || btn.disabled) return;
+      const idx = Number(btn.dataset.idx);
+      if (btn.dataset.act === 'up') moveStop(idx, -1);
+      else if (btn.dataset.act === 'down') moveStop(idx, 1);
+      else if (btn.dataset.act === 'remove') removeStop(idx);
+    });
+  }
+
+  // Разворот маршрута в обратную сторону
   const swapBtn = document.querySelector('#btn-swap-points');
   if (swapBtn) {
     swapBtn.addEventListener('click', () => {
-      if (!routeState.pointA && !routeState.pointB) return;
-      const tempCoords = routeState.pointA;
-      const tempName = routeState.pointAName;
-      setPointA(routeState.pointB, routeState.pointBName);
-      setPointB(tempCoords, tempName);
-      if (routeState.pointA && routeState.pointB) calculateAndDrawRoute();
+      if (routeState.stops.length < 2) return;
+      routeState.stops.reverse();
+      updateRoutePointsUI();
+      refreshRoute(false);
+    });
+  }
+
+  // Оптимизация порядка промежуточных точек
+  const optimizeBtn = document.querySelector('#btn-optimize-route');
+  if (optimizeBtn) {
+    optimizeBtn.addEventListener('click', () => {
+      const changed = optimizeStopOrder();
+      const label = optimizeBtn.querySelector('[data-i18n]') || optimizeBtn;
+      const isRu = currentLang === 'ru';
+      label.textContent = changed
+        ? (isRu ? 'Порядок оптимизирован ✓' : 'Order optimized ✓')
+        : (isRu ? 'Порядок уже оптимален' : 'Already optimal');
+      setTimeout(() => {
+        label.textContent = i18n[currentLang].btn_optimize;
+      }, 1600);
+    });
+  }
+
+  // Кольцевой маршрут (возврат к старту)
+  const toggleRoundTrip = document.querySelector('#toggle-round-trip');
+  if (toggleRoundTrip) {
+    toggleRoundTrip.addEventListener('change', (e) => {
+      routeState.roundTrip = e.target.checked;
+      refreshRoute(true);
     });
   }
 
@@ -3213,27 +3633,115 @@
     perseverance: { name: { en: 'Perseverance (Jezero)', ru: 'Perseverance (Езеро)' }, coords: jezero },
     curiosity: { name: { en: 'Curiosity (Gale)', ru: 'Curiosity (Гейл)' }, coords: [-4.5895, 137.4417] },
     insight: { name: { en: 'InSight (Elysium)', ru: 'InSight (Элизий)' }, coords: [4.5024, 135.6234] },
+    zhurong: { name: { en: 'Zhurong (Utopia)', ru: 'Чжужун (Утопия)' }, coords: [25.066, 109.925] },
+    viking1: { name: { en: 'Viking 1 (Chryse)', ru: 'Viking 1 (Хриса)' }, coords: [22.2692, -47.9493] },
+    pathfinder: { name: { en: 'Pathfinder (Ares Vallis)', ru: 'Pathfinder (Долина Ареса)' }, coords: [19.3274, -33.5502] },
+    opportunity: { name: { en: 'Opportunity (Meridiani)', ru: 'Opportunity (Меридиани)' }, coords: [-1.9483, -5.5266] },
     valles: { name: { en: 'Valles Marineris (North Rim)', ru: 'Долины Маринер (Северный вал)' }, coords: [-1.0, -60.0] },
     olympus: { name: { en: 'Olympus Mons Caldera', ru: 'Гора Олимп (Olympus Mons)' }, coords: [18.65, -133.8] },
     hellas: { name: { en: 'Hellas Planitia Basin Floor', ru: 'Равнина Эллада (Hellas Planitia)' }, coords: [-42.4, 70.5] },
   };
 
-  // Обработчики кликов по готовым сценариям
+  // Замена всех точек маршрута набором [{ coords, name }]
+  function setRouteStops(list) {
+    routeState.stops.forEach((stop) => {
+      if (stop.marker) map.removeLayer(stop.marker);
+    });
+    routeState.stops = [];
+    list.slice(0, MAX_ROUTE_STOPS).forEach((item) => addStop(item.coords, item.name));
+    setRouteMode(false);
+    refreshRoute(true);
+  }
+
+  // Обработчики кликов по готовым сценариям (data-stops="a,b,c")
   document.querySelectorAll('.preset-chip').forEach((chip) => {
     chip.addEventListener('click', () => {
-      const startKey = chip.getAttribute('data-start');
-      const endKey = chip.getAttribute('data-end');
-      const startInfo = presetsData[startKey];
-      const endInfo = presetsData[endKey];
-
-      if (startInfo && endInfo) {
-        setPointA(startInfo.coords, startInfo.name);
-        setPointB(endInfo.coords, endInfo.name);
-        setRouteMode(false);
-        calculateAndDrawRoute();
-      }
+      const keys = (chip.getAttribute('data-stops') || '').split(',').map((k) => k.trim()).filter(Boolean);
+      const list = keys.map((k) => presetsData[k]).filter(Boolean);
+      if (list.length >= 2) setRouteStops(list);
     });
   });
+
+  // -------------------------------------------------------------------------
+  // Ссылка на маршрут: точки хранятся в адресе (#route=lat,lon;lat,lon&loop=1)
+  // -------------------------------------------------------------------------
+
+  function updateShareHash() {
+    try {
+      const base = window.location.pathname + window.location.search;
+      const stops = routeState.stops;
+      if (stops.length >= 2) {
+        const encoded = stops.map((s) => `${s.coords[0].toFixed(4)},${s.coords[1].toFixed(4)}`).join(';');
+        window.history.replaceState(null, '', `${base}#route=${encoded}${routeState.roundTrip ? '&loop=1' : ''}`);
+      } else if (window.location.hash.startsWith('#route=')) {
+        window.history.replaceState(null, '', base);
+      }
+    } catch {
+      // Адресная строка недоступна (например, в песочнице) — маршрут работает и без ссылки
+    }
+  }
+
+  // Имя известного объекта по координатам (для восстановления маршрута из ссылки)
+  function resolveStopName(coords) {
+    const near = (c) => Math.abs(c[0] - coords[0]) < 0.02 && Math.abs(diffLon(c[1], coords[1])) < 0.02;
+    for (const info of Object.values(markerStyles)) {
+      if (info.coords && near(info.coords)) {
+        return {
+          en: info.crater ? `${info.name} (${info.crater.en || info.crater})` : info.name,
+          ru: info.crater ? `${info.name} (${info.crater.ru || info.crater})` : info.name,
+        };
+      }
+    }
+    for (const info of Object.values(landmarkData)) {
+      if (info.coords && near(info.coords)) return info.name;
+    }
+    for (const info of Object.values(presetsData)) {
+      if (near(info.coords)) return info.name;
+    }
+    return CUSTOM_STOP_NAME;
+  }
+
+  function restoreRouteFromHash() {
+    const match = /route=([^&]+)/.exec(window.location.hash);
+    if (!match) return;
+    const list = [];
+    decodeURIComponent(match[1]).split(';').forEach((pair) => {
+      const [lat, lon] = pair.split(',').map(Number);
+      if (Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 360) {
+        const coords = [lat, normLon(lon)];
+        list.push({ coords, name: resolveStopName(coords) });
+      }
+    });
+    if (list.length < 2) return;
+
+    routeState.roundTrip = /[&#]loop=1/.test(window.location.hash);
+    if (toggleRoundTrip) toggleRoundTrip.checked = routeState.roundTrip;
+    setRouteStops(list);
+  }
+
+  // Копирование ссылки на маршрут
+  const copyLinkBtn = document.querySelector('#btn-copy-route-link');
+  if (copyLinkBtn) {
+    copyLinkBtn.addEventListener('click', async () => {
+      const isRu = currentLang === 'ru';
+      let ok = false;
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        ok = true;
+      } catch {
+        ok = false;
+      }
+      copyLinkBtn.textContent = ok
+        ? (isRu ? 'Ссылка скопирована ✓' : 'Link copied ✓')
+        : (isRu ? 'Скопируйте ссылку из адресной строки' : 'Copy the link from the address bar');
+      setTimeout(() => {
+        copyLinkBtn.textContent = i18n[currentLang].btn_copy_link;
+      }, 1800);
+    });
+  }
+
+  updateRoutePointsUI();
+  restoreRouteFromHash();
 
   // Переключатели зон риска и прямого пути
   const toggleHazards = document.querySelector('#toggle-hazards');
@@ -3846,7 +4354,7 @@
       elev = activeData.physicsElev;
     } else if (lastFocusedObject && lastFocusedObject.coords) {
       lat = lastFocusedObject.coords[0];
-      elev = estimateElevation(lastFocusedObject.coords[0], lastFocusedObject.coords[1]);
+      elev = molaElevation(lastFocusedObject.coords[0], lastFocusedObject.coords[1]);
     }
 
     const gLocal = calcLocalGravity(lat, elev);
@@ -4081,6 +4589,9 @@
         shape.setPopupContent(hazardPopupContent(shape._hazardData));
       }
     });
+
+    // Update map centre readout (elevation units depend on language)
+    mapCoordinates([map.getCenter().lat, map.getCenter().lng]);
 
     // Update route points UI
     updateRoutePointsUI();

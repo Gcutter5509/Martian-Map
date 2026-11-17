@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#111315">
+    <meta name="theme-color" content="#101214">
     <meta name="description" content="Advanced multi-layered interactive Mars atlas for future astronauts, fusing NASA planetary data, laser altimetry, thermal mosaics, weather telemetry, and autonomous routing.">
     <title>Martian Map — Interplanetary Atlas & Survival Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+    <!-- NASA MGS MOLA MEGDR: глобальная сетка высот 4 пикс/° (исходный файл PDS без изменений) -->
+    <script src="mola-megdr-4ppd.js" defer></script>
     <script src="script.js" defer></script>
   </head>
   <body>
@@ -98,7 +100,7 @@
             </span>
           </label>
           <button type="button" class="swipe-mode-trigger" id="sidebar-swipe-btn">
-            <span class="trigger-icon">◧</span>
+            <span class="trigger-icon" aria-hidden="true">◧</span>
             <span class="trigger-label" data-i18n="btn_swipe_sidebar">Swipe: Optical / MOLA Relief</span>
           </button>
         </section>
@@ -240,40 +242,36 @@
 
           <div class="route-mode-bar">
             <button type="button" class="route-btn route-btn--primary" id="btn-toggle-route-mode">
-              <span class="btn-icon">📍</span>
-              <span id="route-mode-text" data-i18n="route_mode_btn">Select points on map</span>
+              <span class="btn-icon" aria-hidden="true">⊕</span>
+              <span id="route-mode-text" data-i18n="route_mode_btn">Add stops on map</span>
             </button>
           </div>
 
-          <!-- Точки маршрута (Старт / Финиш) -->
-          <div class="route-points">
-            <div class="route-point" id="point-a-container">
-              <span class="point-badge point-badge--a">A</span>
-              <div class="point-details">
-                <span class="point-label" data-i18n="point_a_label">Start (A)</span>
-                <span class="point-coords" id="point-a-coords" data-i18n="point_unset">Not set (click map)</span>
-              </div>
-            </div>
-            <div class="route-swap-row">
-              <button type="button" class="btn-swap-points" id="btn-swap-points" title="Swap points A and B" aria-label="Swap points A and B">⇅</button>
-            </div>
-            <div class="route-point" id="point-b-container">
-              <span class="point-badge point-badge--b">B</span>
-              <div class="point-details">
-                <span class="point-label" data-i18n="point_b_label">Target (B)</span>
-                <span class="point-coords" id="point-b-coords" data-i18n="point_unset">Not set (click map)</span>
-              </div>
-            </div>
+          <!-- Точки маршрута (список формируется скриптом) -->
+          <div class="route-points" id="route-stops-list" aria-live="polite"></div>
+
+          <!-- Операции над маршрутом -->
+          <div class="route-tools">
+            <button type="button" class="route-btn route-btn--ghost" id="btn-swap-points" disabled>
+              <span class="btn-icon" aria-hidden="true">⇅</span>
+              <span data-i18n="btn_reverse">Reverse</span>
+            </button>
+            <button type="button" class="route-btn route-btn--ghost" id="btn-optimize-route" disabled>
+              <span data-i18n="btn_optimize">Optimize order</span>
+            </button>
           </div>
+          <p class="route-section__hint" data-i18n="route_edit_hint">Click the route line to insert a stop. Drag a marker to reroute, right-click it to remove.</p>
 
           <!-- Быстрые сценарии экспедиций -->
           <div class="route-presets">
             <span class="presets-label" data-i18n="presets_label">Quick scenarios:</span>
             <div class="presets-list">
-              <button type="button" class="preset-chip" data-start="perseverance" data-end="curiosity">Jezero → Gale</button>
-              <button type="button" class="preset-chip" data-start="insight" data-end="perseverance">InSight → Jezero</button>
-              <button type="button" class="preset-chip" data-start="curiosity" data-end="valles">Gale → Valles M.</button>
-              <button type="button" class="preset-chip" data-start="olympus" data-end="hellas" data-i18n="preset_olympus_hellas">Olympus → Hellas</button>
+              <button type="button" class="preset-chip" data-stops="perseverance,curiosity">Jezero → Gale</button>
+              <button type="button" class="preset-chip" data-stops="insight,perseverance">InSight → Jezero</button>
+              <button type="button" class="preset-chip" data-stops="curiosity,valles">Gale → Valles M.</button>
+              <button type="button" class="preset-chip" data-stops="olympus,hellas" data-i18n="preset_olympus_hellas">Olympus → Hellas</button>
+              <button type="button" class="preset-chip" data-stops="viking1,pathfinder,opportunity">Viking 1 → Pathfinder → Opportunity</button>
+              <button type="button" class="preset-chip" data-stops="zhurong,perseverance,insight,curiosity">Zhurong → Jezero → InSight → Gale</button>
             </div>
           </div>
 
@@ -286,6 +284,10 @@
             <label class="route-checkbox-label">
               <input type="checkbox" id="toggle-direct-path" checked>
               <span data-i18n="direct_toggle_label">Compare with direct line</span>
+            </label>
+            <label class="route-checkbox-label">
+              <input type="checkbox" id="toggle-round-trip">
+              <span data-i18n="roundtrip_toggle_label">Round trip (return to start)</span>
             </label>
           </div>
 
@@ -321,6 +323,9 @@
             </div>
             <button type="button" class="route-btn route-btn--telemetry" id="btn-show-telemetry" data-i18n="btn_telemetry">
               Open route telemetry →
+            </button>
+            <button type="button" class="route-btn route-btn--telemetry" id="btn-copy-route-link" data-i18n="btn_copy_link">
+              Copy route link
             </button>
           </div>
         </section>
@@ -390,7 +395,7 @@
         </div>
         <!-- Координаты центра карты -->
         <div class="map-coordinates" id="map-coordinates">
-          <span data-i18n="map_center_label">Map Center</span>
+          <span data-i18n="map_center_label">Map Center · MOLA Elevation</span>
           <b>18.44° N, 77.45° E</b>
         </div>
         <!-- Подсказка при выборе точек на карте -->
@@ -467,7 +472,6 @@
           <div class="weather-grid">
             <div class="weather-stat weather-stat--temp">
               <div class="weather-stat__header">
-                <span class="stat-icon" aria-hidden="true">🌡️</span>
                 <span class="weather-stat__label" data-i18n="weather_stat_temp">Air Temperature</span>
               </div>
               <b class="weather-stat__val weather-stat__val--temp" id="weather-temp">-72.4°F (-58°C)</b>
@@ -475,7 +479,6 @@
             </div>
             <div class="weather-stat weather-stat--press">
               <div class="weather-stat__header">
-                <span class="stat-icon" aria-hidden="true">🧭</span>
                 <span class="weather-stat__label" data-i18n="weather_stat_press">Atmospheric Pressure</span>
               </div>
               <b class="weather-stat__val" id="weather-pressure">0.109 psi (7.5 hPa)</b>
@@ -483,7 +486,6 @@
             </div>
             <div class="weather-stat weather-stat--wind">
               <div class="weather-stat__header">
-                <span class="stat-icon" aria-hidden="true">💨</span>
                 <span class="weather-stat__label" data-i18n="weather_stat_wind">Wind Regime</span>
               </div>
               <b class="weather-stat__val" id="weather-wind">10.7 mph (4.8 m/s)</b>
@@ -491,7 +493,6 @@
             </div>
             <div class="weather-stat weather-stat--dust">
               <div class="weather-stat__header">
-                <span class="stat-icon" aria-hidden="true">☀️</span>
                 <span class="weather-stat__label" data-i18n="weather_stat_dust">Dust & UV Radiation</span>
               </div>
               <b class="weather-stat__val" id="weather-tau">τ = 0.42</b>
@@ -499,7 +500,6 @@
             </div>
             <div class="weather-stat weather-stat--density">
               <div class="weather-stat__header">
-                <span class="stat-icon" aria-hidden="true">⚖️</span>
                 <span class="weather-stat__label" data-i18n="weather_stat_density">Air Density</span>
               </div>
               <b class="weather-stat__val" id="weather-density">18.2 g/m³</b>
@@ -507,7 +507,6 @@
             </div>
             <div class="weather-stat weather-stat--sound">
               <div class="weather-stat__header">
-                <span class="stat-icon" aria-hidden="true">🔊</span>
                 <span class="weather-stat__label" data-i18n="weather_stat_sound">Speed of Sound</span>
               </div>
               <b class="weather-stat__val" id="weather-sound">230.7 m/s (516 mph)</b>
@@ -515,7 +514,6 @@
             </div>
             <div class="weather-stat weather-stat--boil">
               <div class="weather-stat__header">
-                <span class="stat-icon" aria-hidden="true">💧</span>
                 <span class="weather-stat__label" data-i18n="weather_stat_boil">Water Boiling Point</span>
               </div>
               <b class="weather-stat__val" id="weather-boil">+2.8°C (37.1°F)</b>
@@ -523,7 +521,6 @@
             </div>
             <div class="weather-stat weather-stat--radiation">
               <div class="weather-stat__header">
-                <span class="stat-icon" aria-hidden="true">☢️</span>
                 <span class="weather-stat__label" data-i18n="weather_stat_radiation">Radiation & Solar Flux</span>
               </div>
               <b class="weather-stat__val" id="weather-radiation">0.67 mSv/sol</b>
@@ -597,14 +594,12 @@
             <div class="gravity-result-row">
               <div class="gravity-stat gravity-stat--weight">
                 <div class="gravity-stat__header">
-                  <span class="stat-icon" aria-hidden="true">⚖️</span>
                   <span data-i18n="weather_mars_weight">Weight at location:</span>
                 </div>
                 <b id="mars-weight-val">58.4 lbs</b>
               </div>
               <div class="gravity-stat gravity-stat--grav">
                 <div class="gravity-stat__header">
-                  <span class="stat-icon" aria-hidden="true">🪐</span>
                   <span data-i18n="weather_local_gravity">Local Surface Gravity:</span>
                 </div>
                 <b id="mars-gravity-val">3.721 m/s² (0.379 g)</b>
@@ -613,14 +608,12 @@
             <div class="gravity-result-row">
               <div class="gravity-stat gravity-stat--jump">
                 <div class="gravity-stat__header">
-                  <span class="stat-icon" aria-hidden="true">🦘</span>
                   <span data-i18n="weather_jump_height">Jump height:</span>
                 </div>
                 <b id="mars-jump-val" data-i18n="weather_jump_mult">2.64× higher (~4.3 ft)</b>
               </div>
               <div class="gravity-stat gravity-stat--hang">
                 <div class="gravity-stat__header">
-                  <span class="stat-icon" aria-hidden="true">⏱️</span>
                   <span data-i18n="weather_hang_time">Hang time in air:</span>
                 </div>
                 <b id="mars-hang-val">1.62× longer float</b>
@@ -642,60 +635,60 @@
           <div class="telemetry-grid">
             <div class="telemetry-stat telemetry-stat--dist">
               <div class="telemetry-stat__header">
-                <span class="stat-icon" aria-hidden="true">📏</span>
                 <span data-i18n="telemetry_stat_dist">Distance (Mars)</span>
               </div>
               <b id="telemetry-distance">—</b>
             </div>
             <div class="telemetry-stat telemetry-stat--time">
               <div class="telemetry-stat__header">
-                <span class="stat-icon" aria-hidden="true">🤖</span>
                 <span data-i18n="telemetry_stat_time">Travel Time (Robotic)</span>
               </div>
               <b id="telemetry-duration">—</b>
             </div>
             <div class="telemetry-stat telemetry-stat--direct">
               <div class="telemetry-stat__header">
-                <span class="stat-icon" aria-hidden="true">🧭</span>
                 <span data-i18n="telemetry_stat_direct">Direct Path</span>
               </div>
               <b id="telemetry-direct">—</b>
             </div>
             <div class="telemetry-stat telemetry-stat--safety">
               <div class="telemetry-stat__header">
-                <span class="stat-icon" aria-hidden="true">🛡️</span>
                 <span data-i18n="telemetry_stat_safety">Safety Index</span>
               </div>
               <b id="telemetry-risk">—</b>
             </div>
             <div class="telemetry-stat telemetry-stat--bearing">
               <div class="telemetry-stat__header">
-                <span class="stat-icon" aria-hidden="true">📐</span>
                 <span data-i18n="telemetry_stat_bearing">Initial Azimuth</span>
               </div>
               <b id="telemetry-bearing">—</b>
             </div>
             <div class="telemetry-stat telemetry-stat--energy">
               <div class="telemetry-stat__header">
-                <span class="stat-icon" aria-hidden="true">⚡</span>
                 <span data-i18n="telemetry_stat_energy">Traction Energy</span>
               </div>
               <b id="telemetry-energy">—</b>
             </div>
             <div class="telemetry-stat telemetry-stat--latency">
               <div class="telemetry-stat__header">
-                <span class="stat-icon" aria-hidden="true">📡</span>
                 <span data-i18n="telemetry_stat_latency">DSN Radio Latency</span>
               </div>
               <b id="telemetry-latency">—</b>
             </div>
             <div class="telemetry-stat telemetry-stat--crew">
               <div class="telemetry-stat__header">
-                <span class="stat-icon" aria-hidden="true">👨‍🚀</span>
                 <span data-i18n="telemetry_stat_manned_time">Crew & Marswalk Time</span>
               </div>
               <b id="telemetry-crew-time">—</b>
             </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <!-- Профиль высот вдоль маршрута -->
+          <div class="telemetry-section-title" data-i18n="telemetry_elev_title">Elevation Profile (NASA MOLA MEGDR):</div>
+          <div id="elevation-profile">
+            <div class="telemetry-empty" data-i18n="telemetry_no_route">No route calculated yet</div>
           </div>
 
           <div class="card-divider"></div>
@@ -709,7 +702,7 @@
           <div class="card-divider"></div>
 
           <!-- Контрольные навигационные станции -->
-          <div class="telemetry-section-title" data-i18n="telemetry_waypoints_title">Navigation Waypoints:</div>
+          <div class="telemetry-section-title" data-i18n="telemetry_waypoints_title">Route Stops &amp; Legs:</div>
           <div class="waypoints-timeline" id="waypoints-timeline">
             <!-- Список навигационных контрольных точек -->
           </div>
